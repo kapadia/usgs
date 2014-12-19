@@ -7,4 +7,4 @@ import usgs
 
 @click.command('usgs')
 def cli():
-    pass
+    print "boo"
