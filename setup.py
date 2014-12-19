@@ -28,6 +28,6 @@ setup(name='usgs',
       },
       entry_points="""
       [console_scripts]
-      usgs=usgs.scripts.cli:cli
+      usgs=usgs.scripts.cli:usgs
       """
       )
