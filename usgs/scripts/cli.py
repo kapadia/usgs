@@ -38,3 +38,5 @@ def search(start_date, end_date, longitude, latitude, dataset, output):
     for scene_id in scene_ids:
         print scene_id
 
+
+usgs.add_command("search")
