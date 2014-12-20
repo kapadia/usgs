@@ -58,8 +58,8 @@ def create_clear_bulk_download_order_request(dataset, node, api_key=None):
     el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
     
     create_api_key_element(el, api_key)
-    create_node_element(node)
-    create_dataset_element(dataset)
+    create_node_element(el, node)
+    create_dataset_element(el, dataset)
     
     return root
 
@@ -85,8 +85,8 @@ def create_clear_order_request(dataset, node, api_key=None):
     el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
     
     create_api_key_element(el, api_key)
-    create_node_element(node)
-    create_dataset_element(dataset)
+    create_node_element(el, node)
+    create_dataset_element(el, dataset)
     
     return root
 
@@ -139,8 +139,8 @@ def create_datasets_request(dataset, node, lower_left=None, upper_right=None, st
     el = SubElement(body, "soap:datasets")
     el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
     
-    create_node_element(node)
-    create_dataset_element(dataset)
+    create_node_element(el, node)
+    create_dataset_element(el, dataset)
     
     if api_key:
         create_api_key_element(el, api_key)
@@ -180,12 +180,81 @@ def create_datasets_request(dataset, node, lower_left=None, upper_right=None, st
     return root
 
 
-def create_dataset_fields_request():
-    raise NotImplementedError
+def create_dataset_fields_request(dataset, node, api_key=None):
+    """
+    This request is used to return the metadata filter
+    fields for the specified dataset. These values can
+    be used as additional criteria when submitting search
+    and hit queries.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param api_key:
+        API key is not required.
+    """
+    
+    root, body = create_root_request()
+    
+    el = SubElement(body, "soap:datasetFields")
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    if api_key:
+        create_api_key_element(el, api_key)
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    
+    return root
 
 
-def create_download_request():
-    raise NotImplementedError
+def create_download_request(dataset, entityIds, products, node, api_key=None):
+    """
+    The use of this request will be to obtain valid data download URLs.
+    
+    :param dataset:
+    
+    :param entityIds:
+        list
+    
+    :param products:
+        list
+    
+    :param node:
+    
+    :param api_key:
+        API key is required.
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = SubElement(body, "soap:download")
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    
+    entity_ids_el = SubElement(el, "entityIds")
+    entity_ids_el.set("xsi:type", "soap:ArrayOfString")
+    
+    for entityId in entityIds:
+        entity_id_el = SubElement(entity_ids_el, "item")
+        entity_id_el.set("xsi:type","xsd:string")
+        entity_id_el.text = entityId
+    
+    products_el = SubElement(el, "products")
+    products_el.set("xsi:type", "soap:ArrayOfString")
+    
+    for product in products:
+        product_el = SubElement(products_el, "item")
+        product_el.set("xsi:type","xsd:string")
+        product_el.text = product
+        
+    return root
 
 
 def create_download_options_request():
