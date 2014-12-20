@@ -3,6 +3,7 @@
 # Requesting data like it's 1999
 
 from xml.etree.ElementTree import Element, SubElement
+from usgs import USGSApiKeyRequiredError
 
 
 def create_root_request():
@@ -14,19 +15,169 @@ def create_root_request():
 
     header = SubElement(root, "soapenv:Header")
     body = SubElement(root, "soapenv:Body")
+    
     return (root, body)
 
 
-def create_clear_bulk_download_order_request():
-    raise NotImplementedError
+def create_api_key_element(parent, api_key):
+    api_key_el = SubElement(parent, "apiKey")
+    api_key_el.set("xsi:type", "xsd:string")
+    api_key_el.text = api_key
 
 
-def create_clear_order_request():
-    raise NotImplementedError
+def create_node_element(parent, node):
+    node_el = SubElement(parent, "node")
+    node_el.set("xsi:type", "xsd:string")
+    node_el.text = node
 
 
-def create_datasets_request():
-    raise NotImplementedError
+def create_dataset_element(parent, dataset):
+    dataset_el = SubElement(parent, "datasetName")
+    dataset_el.set("xsi:type", "xsd:string")
+    dataset_el.text = dataset
+
+
+def create_clear_bulk_download_order_request(dataset, node, api_key=None):
+    """
+    This method is used to clear bulk download order information from the item basket.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param api_key:
+        API key is required.
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = SubElement(body, "soap:clearBulkDownloadOrder")
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    create_api_key_element(el, api_key)
+    create_node_element(node)
+    create_dataset_element(dataset)
+    
+    return root
+
+
+def create_clear_order_request(dataset, node, api_key=None):
+    """
+    This method is used to clear order information from the item basket.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param api_key:
+        API key is required.
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = SubElement(body, "soap:clearOrder")
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    create_api_key_element(el, api_key)
+    create_node_element(node)
+    create_dataset_element(dataset)
+    
+    return root
+
+
+def create_datasets_request(dataset, node, lower_left=None, upper_right=None, start_date=None, end_date=None, api_key=None):
+    """
+    This method is used to find datasets available for searching.
+    By passing no parameters except node, all available datasets
+    are returned. Additional parameters such as temporal range
+    and spatial bounding box can be used to find datasets that 
+    provide more specific data. The dataset name parameter can
+    be used to limit the results based on matching the supplied
+    value against the dataset name with assumed wildcards at the
+    beginning and end. All parameters are optional except for 
+    the 'node' parameter.
+    
+    :param dataset:
+        Dataset Identifier
+    
+    :param lower_left:
+        Lower left corner of an AOI bounding box - in decimal form
+        Longitude/Latitude dictionary
+        
+        e.g. { "longitude": 0.0, "latitude": 0.0 }
+    
+    :param upper_right:
+        Upper right corner of an AOI bounding box - in decimal form
+        Longitude/Latitude dictionary
+        
+        e.g. { "longitude": 0.0, "latitude": 0.0 }
+    
+    :param start_date:
+        Used for searching scene acquisition - will accept anything
+        that the PHP strtotime function can understand
+    
+    :param end_date:
+        Used for searching scene acquisition - will accept anything
+        that the PHP strtotime function can understand
+    
+    :param node:
+        The requested Catalog
+    
+    :param api_key:
+        API key is not required.
+        
+    """
+    
+    root, body = create_root_request()
+    
+    el = SubElement(body, "soap:datasets")
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    create_node_element(node)
+    create_dataset_element(dataset)
+    
+    if api_key:
+        create_api_key_element(el, api_key)
+    
+    if lower_left and upper_right:
+        
+        lower_left_el = SubElement(el, "lowerLeft")
+        lower_left_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        
+        ll_lat_el = SubElement(lower_left_el, "latitude")
+        ll_lat_el.text = lower_left["latitude"]
+        
+        ll_lng_el = SubElement(lower_left_el, "longitude")
+        ll_lng_el.text = lower_left["longitude"]
+        
+        upper_right_el = SubElement(el, "upperRight")
+        upper_right_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        
+        ur_lat_el = SubElement(upper_right_el, "latitude")
+        ur_lat_el.text = upper_right["latitude"]
+        
+        ur_lng_el = SubElement(upper_right_el, "longitude")
+        ur_lng_el.text = upper_right["longitude"]
+        
+    if start_date:
+        
+        start_date_el = SubElement(el, "startDate")
+        start_date_el.set("xsi:type", "xsd:string")
+        start_date_el.text = start_date
+        
+    if end_date:
+        
+        end_date_el = SubElement(el, "endDate")
+        end_date_el.set("xsi:type", "xsd:string")
+        end_date_el.text = end_date
+    
+    return root
 
 
 def create_dataset_fields_request():
