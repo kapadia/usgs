@@ -2,6 +2,118 @@
 # Template XML requests required by the USGS Inventory Service
 # Requesting data like it's 1999
 
+from xml.etree.ElementTree import Element, SubElement
+
+
+def create_root_request():
+    root = Element("soapenv:Envelope")
+    root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
+    root.set("xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/")
+    root.set("xmlns:soap", "http://earthexplorer.usgs.gov/inventory/soap")
+
+    header = SubElement(root, "soapenv:Header")
+    body = SubElement(root, "soapenv:Body")
+    return (root, body)
+
+
+def create_clear_bulk_download_order_request():
+    raise NotImplementedError
+
+
+def create_clear_order_request():
+    raise NotImplementedError
+
+
+def create_datasets_request():
+    raise NotImplementedError
+
+
+def create_dataset_fields_request():
+    raise NotImplementedError
+
+
+def create_download_request():
+    raise NotImplementedError
+
+
+def create_download_options_request():
+    raise NotImplementedError
+
+
+def create_get_bulk_download_products_request():
+    raise NotImplementedError
+
+
+def create_get_order_products_request():
+    raise NotImplementedError
+
+
+def create_hits_request():
+    raise NotImplementedError
+
+
+def create_item_basket_request():
+    raise NotImplementedError
+
+
+def create_login_request():
+    raise NotImplementedError
+
+
+def create_logout_request():
+    raise NotImplementedError
+
+
+def create_metadata_request(dataset, node, sceneid):
+    root, body = create_root_request()
+    
+    metadata_el = SubElement(body, "soap:metadata")
+    metadata_el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    
+    dataset_el = SubElement(metadata_el, "datasetName")
+    dataset_el.set("xsi:type", "xsd:string")
+    dataset_el.text = dataset
+    
+    node_el = SubElement(metadata_el, "node")
+    node_el.set("xsi:type", "xsd:string")
+    node_el.text = node
+    
+    entity_id_el = SubElement(metadata_el, "entityId")
+    entity_id_el.set("xsi:type", "xsd:string")
+    entity_id_el.text = sceneid
+    
+    return root
+
+
+def create_remove_bulk_download_scene_request():
+    raise NotImplementedError
+
+
+def create_remove_order_scene_request():
+    raise NotImplementedError
+
+
+def create_search_request():
+    raise NotImplementedError
+
+
+def create_submit_bulk_order_request():
+    raise NotImplementedError
+
+
+def create_submit_order_request():
+    raise NotImplementedError
+
+
+def create_update_bulk_download_scene_request():
+    raise NotImplementedError
+
+
+def create_update_order_scene_request():
+    raise NotImplementedError
+
+
 metadata_request = """<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
    <soapenv:Header/>
    <soapenv:Body>
@@ -18,7 +130,7 @@ login_request = """<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema
     <soapenv:Body>
       <soap:login soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
          <username xsi:type="xsd:string">%(username)s</username>
-         <password xsi:type="xsd:string">%(password)s</password>
+         <raise NotImplementedErrorword xsi:type="xsd:string">%(raise NotImplementedErrorword)s</raise NotImplementedErrorword>
       </soap:login>
     </soapenv:Body>
 </soapenv:Envelope>"""
