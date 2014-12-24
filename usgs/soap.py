@@ -2,8 +2,8 @@
 # Template XML requests required by the USGS Inventory Service
 # Requesting data like it's 1999
 
-from xml.etree.ElementTree import Element, SubElement
-from usgs import USGSApiKeyRequiredError
+from xml.etree.ElementTree import Element, SubElement, tostring
+from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist
 
 
 def create_root_request():
@@ -19,25 +19,54 @@ def create_root_request():
     return (root, body)
 
 
+def create_request_type(parent, request_type):
+    el = SubElement(parent, "soap:%s" % request_type)
+    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    return el
+
+
 def create_api_key_element(parent, api_key):
-    api_key_el = SubElement(parent, "apiKey")
-    api_key_el.set("xsi:type", "xsd:string")
-    api_key_el.text = api_key
+    el = SubElement(parent, "apiKey")
+    el.set("xsi:type", "xsd:string")
+    el.text = api_key
 
 
 def create_node_element(parent, node):
-    node_el = SubElement(parent, "node")
-    node_el.set("xsi:type", "xsd:string")
-    node_el.text = node
+    
+    if node not in CATALOG_NODES:
+        raise USGSCatalogNodeDoesNotExist("Catalog nodes include %s" % ", ".join(CATALOG_NODES))
+    
+    el = SubElement(parent, "node")
+    el.set("xsi:type", "xsd:string")
+    el.text = node
 
 
 def create_dataset_element(parent, dataset):
-    dataset_el = SubElement(parent, "datasetName")
-    dataset_el.set("xsi:type", "xsd:string")
-    dataset_el.text = dataset
+    el = SubElement(parent, "datasetName")
+    el.set("xsi:type", "xsd:string")
+    el.text = dataset
 
 
-def create_clear_bulk_download_order_request(dataset, node, api_key=None):
+def create_entity_ids_element(parent, entityids):
+    
+    if type(entityids) == "str":
+        
+        el = SubElement(parent, "entityId")
+        el.set("xsi:type", "xsd:string")
+        el.text = entityids
+    
+    else:
+        
+        el = SubElement(parent, "entityIds")
+        el.set("xsi:type", "soap:ArrayOfString")
+        
+        for entityid in entityids:
+            child = SubElement(el, "item")
+            child.set("xsi:type","xsd:string")
+            child.text = entityId
+
+
+def clear_bulk_download_order(dataset, node, api_key=None):
     """
     This method is used to clear bulk download order information from the item basket.
     
@@ -54,17 +83,16 @@ def create_clear_bulk_download_order_request(dataset, node, api_key=None):
     
     root, body = create_root_request()
     
-    el = SubElement(body, "soap:clearBulkDownloadOrder")
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    el = create_request_type(body, "clearBulkDownloadOrder")
     
-    create_api_key_element(el, api_key)
     create_node_element(el, node)
     create_dataset_element(el, dataset)
+    create_api_key_element(el, api_key)
     
-    return root
+    return tostring(root)
 
 
-def create_clear_order_request(dataset, node, api_key=None):
+def clear_order(dataset, node, api_key=None):
     """
     This method is used to clear order information from the item basket.
     
@@ -81,17 +109,16 @@ def create_clear_order_request(dataset, node, api_key=None):
     
     root, body = create_root_request()
     
-    el = SubElement(body, "soap:clearOrder")
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    el = create_request_type(body, "clearOrder")
     
-    create_api_key_element(el, api_key)
     create_node_element(el, node)
     create_dataset_element(el, dataset)
+    create_api_key_element(el, api_key)
     
-    return root
+    return tostring(root)
 
 
-def create_datasets_request(dataset, node, lower_left=None, upper_right=None, start_date=None, end_date=None, api_key=None):
+def datasets(dataset, node, lower_left=None, upper_right=None, start_date=None, end_date=None, api_key=None):
     """
     This method is used to find datasets available for searching.
     By passing no parameters except node, all available datasets
@@ -136,11 +163,11 @@ def create_datasets_request(dataset, node, lower_left=None, upper_right=None, st
     
     root, body = create_root_request()
     
-    el = SubElement(body, "soap:datasets")
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    el = create_request_type(body, "datasets")
     
     create_node_element(el, node)
-    create_dataset_element(el, dataset)
+    if dataset:
+        create_dataset_element(el, dataset)
     
     if api_key:
         create_api_key_element(el, api_key)
@@ -177,10 +204,10 @@ def create_datasets_request(dataset, node, lower_left=None, upper_right=None, st
         end_date_el.set("xsi:type", "xsd:string")
         end_date_el.text = end_date
     
-    return root
+    return tostring(root)
 
 
-def create_dataset_fields_request(dataset, node, api_key=None):
+def dataset_fields(dataset, node, api_key=None):
     """
     This request is used to return the metadata filter
     fields for the specified dataset. These values can
@@ -197,19 +224,18 @@ def create_dataset_fields_request(dataset, node, api_key=None):
     
     root, body = create_root_request()
     
-    el = SubElement(body, "soap:datasetFields")
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
-    
-    if api_key:
-        create_api_key_element(el, api_key)
+    el = create_request_type(body, "datasetFields")
     
     create_dataset_element(el, dataset)
     create_node_element(el, node)
     
-    return root
+    if api_key:
+        create_api_key_element(el, api_key)
+    
+    return tostring(root)
 
 
-def create_download_request(dataset, entityIds, products, node, api_key=None):
+def download(dataset, node, entityids, products, api_key=None):
     """
     The use of this request will be to obtain valid data download URLs.
     
@@ -232,19 +258,12 @@ def create_download_request(dataset, entityIds, products, node, api_key=None):
     
     root, body = create_root_request()
     
-    el = SubElement(body, "soap:download")
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    el = create_request_type(body, "download")
     
     create_dataset_element(el, dataset)
     create_node_element(el, node)
-    
-    entity_ids_el = SubElement(el, "entityIds")
-    entity_ids_el.set("xsi:type", "soap:ArrayOfString")
-    
-    for entityId in entityIds:
-        entity_id_el = SubElement(entity_ids_el, "item")
-        entity_id_el.set("xsi:type","xsd:string")
-        entity_id_el.text = entityId
+    create_api_key_element(el, api_key)
+    create_entity_ids_element(el, entityids)
     
     products_el = SubElement(el, "products")
     products_el.set("xsi:type", "soap:ArrayOfString")
@@ -254,83 +273,223 @@ def create_download_request(dataset, entityIds, products, node, api_key=None):
         product_el.set("xsi:type","xsd:string")
         product_el.text = product
         
-    return root
+    return tostring(root)
 
 
-def create_download_options_request():
-    raise NotImplementedError
-
-
-def create_get_bulk_download_products_request():
-    raise NotImplementedError
-
-
-def create_get_order_products_request():
-    raise NotImplementedError
-
-
-def create_hits_request():
-    raise NotImplementedError
-
-
-def create_item_basket_request():
-    raise NotImplementedError
-
-
-def create_login_request():
-    raise NotImplementedError
-
-
-def create_logout_request():
-    raise NotImplementedError
-
-
-def create_metadata_request(dataset, node, sceneid):
+def download_options(dataset, node, entityids, api_key=None):
+    """
+    The use of the download options request is to discover the different download
+    options for each scene. Some download options may exist but still be unavailable
+    due to disk usage and many other factors. If a download is unavailable
+    it may need to be ordered.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param entityIds:
+    
+    :param api_key:
+        API key is not required.
+    """
+    
     root, body = create_root_request()
     
-    metadata_el = SubElement(body, "soap:metadata")
-    metadata_el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
+    el = create_request_type(body, "downloadOptions")
     
-    dataset_el = SubElement(metadata_el, "datasetName")
-    dataset_el.set("xsi:type", "xsd:string")
-    dataset_el.text = dataset
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
     
-    node_el = SubElement(metadata_el, "node")
-    node_el.set("xsi:type", "xsd:string")
-    node_el.text = node
+    if api_key:
+        create_api_key_element(el, api_key)
     
-    entity_id_el = SubElement(metadata_el, "entityId")
-    entity_id_el.set("xsi:type", "xsd:string")
-    entity_id_el.text = sceneid
+    create_entity_ids_element(el, entityids)
     
-    return root
+    return tostring(root)
 
 
-def create_remove_bulk_download_scene_request():
+def get_bulk_download_products(dataset, node, entityids, api_key):
+    """
+    Retrieve bulk download products on a scene-by-scene basis.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param entityid:
+        String or list of strings.
+    
+    :param api_key:
+        API key is required.
+        
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "getBulkDownloadProducts")
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    create_api_key_element(el, api_key)
+    create_entity_ids_element(el, entityids)
+    
+    return tostring(root)
+
+
+def get_order_products(dataset, node, entityids, api_key=None):
+    """
+    Retrieve orderable products on a scene-by-scene basis.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param entityid:
+    
+    :param api_key:
+        API key is required.
+    
+    .. todo:: Support multiple scene request.
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "getOrderProducts")
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    create_api_key_element(el, api_key)
+    create_entity_ids_element(el, entityids)
+    
+    return tostring(root)
+
+
+def hits(api_key=None):
     raise NotImplementedError
 
 
-def create_remove_order_scene_request():
+def item_basket():
+    """
+    Returns the current item basket for the current user.
+    
+    :param api_key:
+        API key is required.
+    """
+    
+    if api_key is None:
+        raise USGSApiKeyRequiredError
+    
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "itemBasket")
+    create_api_key_element(el, api_key)
+    
+    return tostring(root)
+
+
+def login(username, password):
+    """
+    This method requires SSL be used due to the sensitive nature of
+    users passwords. Upon a successful login, an API key will be
+    returned. This key will be active for one hour and should be
+    destroyed upon final use of the service by calling the logout
+    method. Users must have "Machine to Machine" access based on
+    a user-based role in the users profile.
+    
+    :param username:
+    
+    :param password:
+    """
+    
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "login")
+    
+    username_el = SubElement(el, "username")
+    username_el.set("xsi:type", "xsd:string")
+    
+    password_el = SubElement(el, "password")
+    password_el.set("xsi:type", "xsd:string")
+    
+    return tostring(root)
+
+
+def logout(api_key=None):
+    """
+    Remove the users API key from being used in the future.
+    
+    :param api_key:
+        API key is required.
+    """
+    
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "logout")
+    create_api_key_element(el, api_key)
+    
+    return tostring(root)
+
+
+def metadata(dataset, node, sceneids, api_key=None):
+    """
+    The use of the metadata request is intended for those who have
+    acquired scene IDs from a different source. It will return the
+    same metadata that is available via the search request.
+    
+    :param dataset:
+    
+    :param node:
+    
+    :param sceneid:
+    
+    :param api_key:
+    """
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "metadata")
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    
+    if api_key:
+        create_api_key_element(el, api_key)
+    
+    create_entity_ids_element(el, sceneids)
+    
+    return tostring(root)
+
+
+def remove_bulk_download_scene():
     raise NotImplementedError
 
 
-def create_search_request():
+def remove_order_scene():
     raise NotImplementedError
 
 
-def create_submit_bulk_order_request():
+def search_request():
     raise NotImplementedError
 
 
-def create_submit_order_request():
+def submit_bulk_order():
     raise NotImplementedError
 
 
-def create_update_bulk_download_scene_request():
+def submit_order():
     raise NotImplementedError
 
 
-def create_update_order_scene_request():
+def update_bulk_download_scene():
+    raise NotImplementedError
+
+
+def update_order_scene():
     raise NotImplementedError
 
 
