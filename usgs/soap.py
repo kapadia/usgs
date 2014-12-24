@@ -49,7 +49,7 @@ def create_dataset_element(parent, dataset):
 
 def create_entity_ids_element(parent, entityids):
     
-    if type(entityids) == "str":
+    if isinstance(entityids, str):
         
         el = SubElement(parent, "entityId")
         el.set("xsi:type", "xsd:string")
@@ -63,7 +63,7 @@ def create_entity_ids_element(parent, entityids):
         for entityid in entityids:
             child = SubElement(el, "item")
             child.set("xsi:type","xsd:string")
-            child.text = entityId
+            child.text = entityid
 
 
 def clear_bulk_download_order(dataset, node, api_key=None):
