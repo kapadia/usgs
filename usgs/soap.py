@@ -413,9 +413,11 @@ def login(username, password):
     
     username_el = SubElement(el, "username")
     username_el.set("xsi:type", "xsd:string")
+    username_el.text = username
     
     password_el = SubElement(el, "password")
     password_el.set("xsi:type", "xsd:string")
+    password_el.text = password
     
     return tostring(root)
 
@@ -473,7 +475,7 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search_request():
+def search():
     raise NotImplementedError
 
 
