@@ -1,10 +1,12 @@
 
 # The USGS API endpoint
-endpoint = "https://earthexplorer.usgs.gov/inventory/soap"
+USGS_API = "https://earthexplorer.usgs.gov/inventory/soap"
 
 #
 # Four catalogs are available for querying
 #
+
+CATALOG_NODES = ["CWIC", "EE", "HDDS", "LPVS"]
 
 # http://lsiexplorer.cr.usgs.gov/
 CWIC_LSI_EXPLORER_CATALOG_NODE = "CWIC"
@@ -19,4 +21,8 @@ HDDS_EXPLORER_CATALOG_NODE = "HDDS"
 LPVS_EXPLORER_CATALOG_NODE = "LPVS"
 
 class USGSApiKeyRequiredError(Exception):
+    pass
+
+
+class USGSCatalogNodeDoesNotExist(Exception):
     pass
