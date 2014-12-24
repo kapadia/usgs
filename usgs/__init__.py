@@ -23,6 +23,8 @@ LPVS_EXPLORER_CATALOG_NODE = "LPVS"
 class USGSApiKeyRequiredError(Exception):
     pass
 
-
 class USGSCatalogNodeDoesNotExist(Exception):
+    pass
+
+class USGSConnectionError(Exception):
     pass
