@@ -2,6 +2,8 @@
 # Template XML requests required by the USGS Inventory Service
 # Requesting data like it's 1999
 
+import pyproj
+from shapely import geometry
 from xml.etree.ElementTree import Element, SubElement, tostring
 from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist
 
