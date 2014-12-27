@@ -20,9 +20,7 @@ setup(name='usgs',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'click'
-      ],
+      install_requires=['click', 'pyproj', 'shapely', 'requests'],
       extras_require={
           'test': ['pytest'],
       },
