@@ -4,7 +4,8 @@ from xml.etree import ElementTree
 import requests
 
 from usgs import USGS_API, USGSConnectionError
-from usgs import soap
+from usgs import soap, xsi
+
 
 TMPFILE = os.path.join("/", "tmp", "usgs")
 NAMESPACES = {
@@ -32,15 +33,20 @@ def clear_order():
     raise NotImplementedError
     
 
-def datasets(dataset, node, lower_left=None, upper_right=None, start_date=None, end_date=None):
+def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
     
     api_key = _get_api_key()
     
-    xml = soap.datasets(dataset, node, lower_left=lower_left, upper_right=upper_right, start_date=start_date, end_date=end_date, api_key=api_key)
+    xml = soap.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
     r = requests.post(USGS_API, xml)
     
-    return r.text
+    root = ElementTree.fromstring(r.text)
+    items = root.findall("SOAP-ENV:Body/ns1:datasetsResponse/return/item", NAMESPACES)
     
+    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    return data
+
 
 def dataset_fields(dataset, node):
     
@@ -49,7 +55,11 @@ def dataset_fields(dataset, node):
     xml = soap.dataset_fields(dataset, node, api_key=api_key)
     r = requests.post(USGS_API, xml)
     
-    return r.text
+    root = ElementTree.fromstring(r.text)
+    items = root.findall("SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item", NAMESPACES)
+    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    return data
     
 
 def download():
@@ -85,10 +95,9 @@ def login(username, password):
         raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
+    element = root.find("SOAP-ENV:Body/ns1:loginResponse/return", NAMESPACES)
     
-    body = root.find("SOAP-ENV:Body", NAMESPACES)
-    login_response = body.find("ns1:loginResponse", NAMESPACES)
-    api_key = login_response.find("return").text
+    api_key = element.text
     
     with open(TMPFILE, "w") as f:
         f.write(api_key)
@@ -106,7 +115,7 @@ def logout():
     if os.path.exists(TMPFILE):
         os.remove(TMPFILE)
     
-    return r.text
+    return True
     
 
 def metadata(dataset, node, sceneids, api_key=None):
@@ -120,9 +129,11 @@ def metadata(dataset, node, sceneids, api_key=None):
         raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
-    print r.text
+    items = root.findall("SOAP-ENV:Body/ns1:metadataResponse/return/item", NAMESPACES)
     
-    return root
+    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    return data
     
 
 def remove_bulk_download_scene():
@@ -133,9 +144,31 @@ def remove_order_scene():
     raise NotImplementedError
     
 
-def search():
-    raise NotImplementedError
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+    """
+    .. todo:: Export metadata from the search results e.g.
     
+        <numberReturned xsi:type="xsd:int">41</numberReturned>
+        <totalHits xsi:type="xsd:int">41</totalHits>
+        <firstRecord xsi:type="xsd:int">1</firstRecord>
+        <lastRecord xsi:type="xsd:int">41</lastRecord>
+        <nextRecord xsi:type="xsd:int">41</nextRecord>
+    """
+    api_key = _get_api_key()
+    
+    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
+    r = requests.post(USGS_API, xml)
+    
+    if r.status_code != 200:
+        raise USGSConnectionError
+    
+    root = ElementTree.fromstring(r.text)
+    items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
+    
+    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    return data
+
 
 def submit_bulk_order():
     raise NotImplementedError
