@@ -120,7 +120,7 @@ def clear_order(dataset, node, api_key=None):
     return tostring(root)
 
 
-def datasets(dataset, node, lower_left=None, upper_right=None, start_date=None, end_date=None, api_key=None):
+def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
     """
     This method is used to find datasets available for searching.
     By passing no parameters except node, all available datasets
@@ -135,13 +135,13 @@ def datasets(dataset, node, lower_left=None, upper_right=None, start_date=None, 
     :param dataset:
         Dataset Identifier
     
-    :param lower_left:
+    :param ll:
         Lower left corner of an AOI bounding box - in decimal form
         Longitude/Latitude dictionary
         
         e.g. { "longitude": 0.0, "latitude": 0.0 }
     
-    :param upper_right:
+    :param ur:
         Upper right corner of an AOI bounding box - in decimal form
         Longitude/Latitude dictionary
         
@@ -174,25 +174,25 @@ def datasets(dataset, node, lower_left=None, upper_right=None, start_date=None, 
     if api_key:
         create_api_key_element(el, api_key)
     
-    if lower_left and upper_right:
+    if ll and ur:
         
-        lower_left_el = SubElement(el, "lowerLeft")
-        lower_left_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        ll_el = SubElement(el, "lowerLeft")
+        ll_el.set("xsi:type", "soap:Service_Class_Coordinate")
         
-        ll_lat_el = SubElement(lower_left_el, "latitude")
-        ll_lat_el.text = lower_left["latitude"]
+        ll_lat_el = SubElement(ll_el, "latitude")
+        ll_lat_el.text = ll["latitude"]
         
-        ll_lng_el = SubElement(lower_left_el, "longitude")
-        ll_lng_el.text = lower_left["longitude"]
+        ll_lng_el = SubElement(ll_el, "longitude")
+        ll_lng_el.text = ll["longitude"]
         
-        upper_right_el = SubElement(el, "upperRight")
-        upper_right_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        ur_el = SubElement(el, "upperRight")
+        ur_el.set("xsi:type", "soap:Service_Class_Coordinate")
         
-        ur_lat_el = SubElement(upper_right_el, "latitude")
-        ur_lat_el.text = upper_right["latitude"]
+        ur_lat_el = SubElement(ur_el, "latitude")
+        ur_lat_el.text = ur["latitude"]
         
-        ur_lng_el = SubElement(upper_right_el, "longitude")
-        ur_lng_el.text = upper_right["longitude"]
+        ur_lng_el = SubElement(ur_el, "longitude")
+        ur_lng_el.text = ur["longitude"]
         
     if start_date:
         
@@ -477,8 +477,108 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search():
-    raise NotImplementedError
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+    """
+    :param dataset:
+    
+    :param node:
+    
+    :param lat:
+    
+    :param lng:
+    
+    :param ll:
+    
+    :param distance:
+    
+    :param ur:
+    
+    :param start_date:
+    
+    :param end_date:
+    
+    :param max_results:
+    
+    :param starting_number:
+    
+    :param sort_order:
+    
+    :param api_key:
+        API key is not required.
+    """
+    root, body = create_root_request()
+    
+    el = create_request_type(body, "search")
+    
+    create_dataset_element(el, dataset)
+    create_node_element(el, node)
+    
+    # Latitude and longitude take precedence over ll and ur
+    if lat and lng:
+        
+        prj = pyproj.Proj(proj='aeqd', lat_0=lat, lon_0=lng)
+        half_distance = 0.5 * distance
+        box = geometry.box(-half_distance, -half_distance, half_distance, half_distance)
+        
+        lats, lngs = prj(*box.exterior.xy, inverse=True)
+        
+        ll = { "longitude": min(*lngs), "latitude": min(*lats) }
+        ur = { "longitude": max(*lngs), "latitude": max(*lats) }
+    
+    if ll and ur:
+        
+        ll_el = SubElement(el, "lowerLeft")
+        ll_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        
+        ll_lat_el = SubElement(ll_el, "latitude")
+        ll_lat_el.text = str(ll["latitude"])
+        
+        ll_lng_el = SubElement(ll_el, "longitude")
+        ll_lng_el.text = str(ll["longitude"])
+        
+        ur_el = SubElement(el, "upperRight")
+        ur_el.set("xsi:type", "soap:Service_Class_Coordinate")
+        
+        ur_lat_el = SubElement(ur_el, "latitude")
+        ur_lat_el.text = str(ur["latitude"])
+        
+        ur_lng_el = SubElement(ur_el, "longitude")
+        ur_lng_el.text = str(ur["longitude"])
+        
+    if start_date:
+        
+        start_date_el = SubElement(el, "startDate")
+        start_date_el.set("xsi:type", "xsd:string")
+        start_date_el.text = start_date
+        
+    if end_date:
+        
+        end_date_el = SubElement(el, "endDate")
+        end_date_el.set("xsi:type", "xsd:string")
+        end_date_el.text = end_date
+    
+    if max_results:
+        
+        max_results_el = SubElement(el, "maxResults")
+        max_results_el.set("xsi:type", "xsd:int")
+        max_results_el.text = str(max_results)
+        
+    if starting_number:
+        
+        starting_number_el = SubElement(el, "startingNumber")
+        starting_number_el.set("xsi:type", "xsd:int")
+        starting_number_el.text = str(starting_number)
+        
+    if sort_order:
+        
+        sort_order_el = SubElement(el, "sortOrder")
+        sort_order_el.set("xsi:type", "xsd:string")
+        sort_order_el.text = sort_order
+    
+    if api_key:
+        create_api_key_element(el, api_key)
+    
+    return tostring(root)
 
 
 def submit_bulk_order():
