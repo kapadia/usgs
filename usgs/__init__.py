@@ -28,3 +28,6 @@ class USGSCatalogNodeDoesNotExist(Exception):
 
 class USGSConnectionError(Exception):
     pass
+
+class USGSAmbiguousNode(Exception):
+    pass
