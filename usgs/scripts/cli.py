@@ -1,5 +1,5 @@
 
-
+import os, json
 import click
 import usgs
 
@@ -18,6 +18,14 @@ def metadata(dataset, scene_ids, node, api_key):
     
     if node is None:
         
+        cur_dir = os.path.dirname(os.path.realpath(__file__))
+        data_dir = os.path.join(cur_dir, "..", "..", "data")
+        dataset_path = os.path.join(data_dir, "datasets.json")
+        
+        with open(dataset_path, "r") as f:
+            datasets = json.loads(f.read())
+        
+        node = datasets[dataset].upper()
         
     print dataset
     print node
