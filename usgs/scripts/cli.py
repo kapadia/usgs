@@ -24,6 +24,18 @@ def get_node(dataset, node):
 def usgs():
     pass
 
+@click.command()
+@click.argument("username")
+@click.argument("password")
+def login(username, password):
+    api_key = api.login(username, password)
+    print api_key
+
+
+@click.command()
+def logout():
+    print api.logout()
+
 
 @click.command()
 @click.argument("dataset")
@@ -55,5 +67,7 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, a
     print json.dumps(data)
 
 
+usgs.add_command(login)
+usgs.add_command(logout)
 usgs.add_command(metadata)
 usgs.add_command(search)
