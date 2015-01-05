@@ -18,6 +18,10 @@ def get_node(dataset, node):
         node = datasets[dataset].upper()
     
     return node
+    
+
+api_key_opt = click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
+node_opt = click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
 
 
 @click.group()
@@ -40,8 +44,8 @@ def logout():
 @click.command()
 @click.argument("dataset")
 @click.argument("scene-ids", nargs=-1)
-@click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
-@click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
+@node_opt
+@api_key_opt
 def metadata(dataset, scene_ids, node, api_key):
     
     node = get_node(dataset, node)
@@ -52,13 +56,13 @@ def metadata(dataset, scene_ids, node, api_key):
 
 @click.command()
 @click.argument("dataset")
-@click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
+@node_opt
 @click.option("--start-date")
 @click.option("--end-date")
 @click.option("--longitude")
 @click.option("--latitude")
 @click.option("--distance", help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
-@click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
+@api_key_opt
 def search(dataset, node, start_date, end_date, longitude, latitude, distance, api_key):
     
     node = get_node(dataset, node)
@@ -67,7 +71,17 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, a
     print json.dumps(data)
 
 
+@click.command()
+@click.argument("dataset")
+@click.argument("scene-ids", nargs=-1)
+@node_opt
+@api_key_opt
+def download_options(dataset, scene_ids, node, api_):
+    print "download_options"
+
+
 usgs.add_command(login)
 usgs.add_command(logout)
 usgs.add_command(metadata)
 usgs.add_command(search)
+usgs.add_command(download_options, "download-options")
