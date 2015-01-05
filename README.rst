@@ -17,8 +17,13 @@ USGS CLI
 
 Get metadata for a list of scenes
 
-.. code-block:: python
+.. code-block:: pycon
     
     $ usgs metadata [dataset] [scene id 1] [scene id 2] ... [scene id n]
 
 
+Search USGS for scenes
+
+..code-block:: pycon
+
+    $ usgs search [dataset] --start-date [start date] --end-date [end date] --longitude [lng] --latitude [lat]
