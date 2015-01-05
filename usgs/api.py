@@ -10,9 +10,8 @@ from usgs import soap, xsi
 TMPFILE = os.path.join("/", "tmp", "usgs")
 NAMESPACES = {
     "SOAP-ENV": "http://schemas.xmlsoap.org/soap/envelope/",
-    "ns1": "https://earthexplorer.usgs.gov/inventory/soap"
+    "ns1": "https://earthexplorer.usgs.gov/inventory/soap",
 }
-
 
 def _get_api_key():
     
@@ -62,13 +61,29 @@ def dataset_fields(dataset, node):
     return data
     
 
-def download():
+def download(dataset, node, entityids, products):
     raise NotImplementedError
+    # api_key = _get_api_key()
+    #
+    # download(dataset, node, entityids, products, api_key=None):
+    # xml = soap.download()
     
 
-def download_options():
-    raise NotImplementedError
+def download_options(dataset, node, entityids):
     
+    api_key = _get_api_key()
+    
+    xml = soap.download_options(dataset, node, entityids, api_key=api_key)
+    r = requests.post(USGS_API, xml)
+    
+    root = ElementTree.fromstring(r.text)
+    items = root.findall("SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item", NAMESPACES)
+    print items
+    
+    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    return data
+
 
 def get_bulk_download_products():
     raise NotImplementedError
