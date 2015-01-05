@@ -11,6 +11,10 @@ def _get_xsd_int(element):
 def _get_xsd_double(element):
     return float(element.text)
 
+    
+def _get_xsd_long(element):
+    return int(element.text)
+
 
 def _get_xsd_string(element):
     return element.text
@@ -35,6 +39,7 @@ _dtypes = {
     "xsd:boolean": _get_xsd_boolean,
     "xsd:int": _get_xsd_int,
     "xsd:double": _get_xsd_double,
+    "xsd:long": _get_xsd_long,
     
     "ns1:ArrayOfService_Inventory_DisplayListValue": _get_xsd_array,
     "ns1:Service_Inventory_Bounds": _get_xsd_array,
