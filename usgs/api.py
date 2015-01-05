@@ -62,11 +62,21 @@ def dataset_fields(dataset, node):
     
 
 def download(dataset, node, entityids, products):
-    raise NotImplementedError
-    # api_key = _get_api_key()
-    #
-    # download(dataset, node, entityids, products, api_key=None):
-    # xml = soap.download()
+    
+    api_key = _get_api_key()
+
+    xml = soap.download(dataset, node, entityids, products, api_key=api_key)
+    r = requests.post(USGS_API, xml)
+    
+    root = ElementTree.fromstring(r.text)
+    items = root.findall("SOAP-ENV:Body/ns1:downloadResponse/return/item", NAMESPACES)
+    
+    # USGS returns a flat list. Turn into a nested structure.
+    n = len(products)
+    items = [ items[i:i+n] for i in range(0, len(items), n) ]
+    data = { entityid : { products[j] : xsi.get(el) for j, el in enumerate(items[i]) } for i, entityid in enumerate(entityids) }
+    
+    return data
     
 
 def download_options(dataset, node, entityids):
@@ -78,7 +88,6 @@ def download_options(dataset, node, entityids):
     
     root = ElementTree.fromstring(r.text)
     items = root.findall("SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item", NAMESPACES)
-    print items
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
     
