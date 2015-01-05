@@ -14,7 +14,9 @@ def usgs():
 @click.argument("scene-ids", nargs=-1)
 @click.option("--node")
 @click.option("--api-key")
-def metadata(dataset, scene_ids, node, api_key):
+def metadata(dataset, scene_ids, node, api_key=None):
+    
+    from usgs import api
     
     if node is None:
         
@@ -26,11 +28,9 @@ def metadata(dataset, scene_ids, node, api_key):
             datasets = json.loads(f.read())
         
         node = datasets[dataset].upper()
-        
-    print dataset
-    print node
-    print scene_ids
-    print api_key
+    
+    data = api.metadata(dataset, node, scene_ids, api_key)
+    print json.dumps(data)
 
 
 # @click.command()
