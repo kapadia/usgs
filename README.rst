@@ -82,6 +82,8 @@ Login
 Logout
 ------
 
+.. code-block:: pycon
+
     $ usgs logout
 
 ------
