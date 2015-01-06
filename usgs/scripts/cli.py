@@ -5,6 +5,9 @@ from usgs import api
 
 
 def get_node(dataset, node):
+    """
+    .. todo:: Move to more appropriate place in module.
+    """
     
     if node is None:
         
@@ -27,6 +30,7 @@ node_opt = click.option("--node", help="The node corresponding to the dataset (C
 @click.group()
 def usgs():
     pass
+
 
 @click.command()
 @click.argument("username")
@@ -76,8 +80,26 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, a
 @click.argument("scene-ids", nargs=-1)
 @node_opt
 @api_key_opt
-def download_options(dataset, scene_ids, node, api_):
-    print "download_options"
+def download_options(dataset, scene_ids, node, api_key):
+    
+    node = get_node(dataset, node)
+    
+    data = api.download_options(dataset, node, scene_ids)
+    print json.dumps(data)
+
+
+@click.command()
+@click.argument("dataset")
+@click.argument("scene_ids", nargs=-1)
+@click.option("--product", multiple=True)
+@node_opt
+@api_key_opt
+def download_url(dataset, scene_ids, product, node, api_key):
+    
+    node = get_node(dataset, node)
+    
+    data = api.download(dataset, node, scene_ids, product)
+    print json.dumps(data)
 
 
 usgs.add_command(login)
@@ -85,3 +107,4 @@ usgs.add_command(logout)
 usgs.add_command(metadata)
 usgs.add_command(search)
 usgs.add_command(download_options, "download-options")
+usgs.add_command(download_url, "download-url")
