@@ -19,6 +19,7 @@ setup(name='usgs',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
+      package_data={'usgs': ['data/datasets.json']},
       zip_safe=False,
       install_requires=['click', 'pyproj', 'shapely', 'requests'],
       extras_require={
