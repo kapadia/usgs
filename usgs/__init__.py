@@ -20,6 +20,9 @@ HDDS_EXPLORER_CATALOG_NODE = "HDDS"
 # http://lpvsexplorer.cr.usgs.gov/
 LPVS_EXPLORER_CATALOG_NODE = "LPVS"
 
+class USGSError(Exception):
+    pass
+
 class USGSApiKeyRequiredError(Exception):
     pass
 
