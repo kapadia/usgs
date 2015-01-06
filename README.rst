@@ -26,6 +26,34 @@ The US Geological Survey divides datasets into four catalogs. This module makes 
 | LPVSExplorer      | LPVS              |
 +-------------------+-------------------+
 
+USGS API
+========
+
+.. code-block:: python
+
+
+  # Running through a few examples
+
+  from usgs import api
+  
+  # username and password are defined somewhere
+  api_key = api.login(username, password)
+  
+  # Get all datasets associated with a node
+  earth_explorer_datasets = api.datasets(None, "EE")
+  
+  # Maybe we only want the get the full dataset name
+  dataset_names = map(lambda ds: ds["datasetFullName"], earth_explorer_datasets)
+  
+  # Get me some info on recent Landsat 8 scenes.
+  scenes = api.search("LANDSAT_8", "EE", lat=30, lng=-70)
+  
+  # And those juicy scene ids (or entity id)
+  scene_ids = map(lambda scene: scene["entityId"], scenes)
+  
+  # Now I want download URLs for these scenes, and I just happen to know the product type is STANDARD
+  urls = api.download("LANDSAT_8", "EE", scene_ids, ["STANDARD"])
+
 
 USGS CLI
 ========
