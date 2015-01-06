@@ -52,7 +52,7 @@ USGS API
   scene_ids = map(lambda scene: scene["entityId"], scenes)
   
   # Now I want download URLs for these scenes, and I just happen to know the product type is STANDARD
-  urls = api.download("LANDSAT_8", "EE", scene_ids, ["STANDARD"])
+  urls = api.download("LANDSAT_8", "EE", scene_ids, "STANDARD")
 
 
 USGS CLI
