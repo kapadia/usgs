@@ -70,6 +70,20 @@ Help for a specific command is shown with
 
   $ usgs [command] --help
 
+-----
+Login
+-----
+
+.. code-block:: pycon
+
+    $ usgs login [username] [password]
+    
+------
+Logout
+------
+
+    $ usgs logout
+
 ------
 Search
 ------
