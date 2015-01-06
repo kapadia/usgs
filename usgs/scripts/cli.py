@@ -37,12 +37,12 @@ def usgs():
 @click.argument("password")
 def login(username, password):
     api_key = api.login(username, password)
-    print api_key
+    print(api_key)
 
 
 @click.command()
 def logout():
-    print api.logout()
+    print(api.logout())
 
 
 @click.command()
@@ -55,7 +55,7 @@ def metadata(dataset, scene_ids, node, api_key):
     node = get_node(dataset, node)
     
     data = api.metadata(dataset, node, scene_ids, api_key)
-    print json.dumps(data)
+    print(json.dumps(data))
 
 
 @click.command()
@@ -72,7 +72,7 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, a
     node = get_node(dataset, node)
     
     data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, start_date=start_date, end_date=end_date, api_key=api_key)
-    print json.dumps(data)
+    print(json.dumps(data))
 
 
 @click.command()
@@ -85,7 +85,7 @@ def download_options(dataset, scene_ids, node, api_key):
     node = get_node(dataset, node)
     
     data = api.download_options(dataset, node, scene_ids)
-    print json.dumps(data)
+    print(json.dumps(data))
 
 
 @click.command()
@@ -99,7 +99,7 @@ def download_url(dataset, scene_ids, product, node, api_key):
     node = get_node(dataset, node)
     
     data = api.download(dataset, node, scene_ids, product)
-    print json.dumps(data)
+    print(json.dumps(data))
 
 
 usgs.add_command(login)
