@@ -74,6 +74,8 @@ def dataset_fields(dataset, node):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item", NAMESPACES)
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
     
@@ -97,6 +99,8 @@ def download(dataset, node, entityids, product):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:downloadResponse/return/item", NAMESPACES)
     
     data = map(lambda el: xsi.get(el), items)
@@ -146,6 +150,8 @@ def login(username, password):
         raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     element = root.find("SOAP-ENV:Body/ns1:loginResponse/return", NAMESPACES)
     
     api_key = element.text
@@ -180,6 +186,8 @@ def metadata(dataset, node, sceneids, api_key=None):
         raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:metadataResponse/return/item", NAMESPACES)
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
@@ -214,6 +222,8 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
