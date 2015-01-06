@@ -91,7 +91,7 @@ def download_options(dataset, scene_ids, node, api_key):
 @click.command()
 @click.argument("dataset")
 @click.argument("scene_ids", nargs=-1)
-@click.option("--product", multiple=True)
+@click.option("--product", nargs=1)
 @node_opt
 @api_key_opt
 def download_url(dataset, scene_ids, product, node, api_key):

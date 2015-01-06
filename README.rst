@@ -42,7 +42,7 @@ USGS API
   # Get all datasets associated with a node
   earth_explorer_datasets = api.datasets(None, "EE")
   
-  # Maybe we only want the get the full dataset name
+  # Maybe we only want the full dataset name
   dataset_names = map(lambda ds: ds["datasetFullName"], earth_explorer_datasets)
   
   # Get me some info on recent Landsat 8 scenes.
