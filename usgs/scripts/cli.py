@@ -12,7 +12,7 @@ def get_node(dataset, node):
     if node is None:
         
         cur_dir = os.path.dirname(os.path.realpath(__file__))
-        data_dir = os.path.join(cur_dir, "..", "..", "data")
+        data_dir = os.path.join(cur_dir, "..", "data")
         dataset_path = os.path.join(data_dir, "datasets.json")
         
         with open(dataset_path, "r") as f:
