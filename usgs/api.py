@@ -61,20 +61,26 @@ def dataset_fields(dataset, node):
     return data
     
 
-def download(dataset, node, entityids, products):
+def download(dataset, node, entityids, product):
+    """
+    Though USGS supports multiple products in a single request, there's
+    ambiguity in the returned list. This wrapper only allows a single
+    product per request.
+    
+    Additionally, the response has no indiction which URL is associated
+    with which scene/entity id. The URL can be parsed, but the structure
+    varies depending on the product.
+    """
     
     api_key = _get_api_key()
 
-    xml = soap.download(dataset, node, entityids, products, api_key=api_key)
+    xml = soap.download(dataset, node, entityids, [product], api_key=api_key)
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
     items = root.findall("SOAP-ENV:Body/ns1:downloadResponse/return/item", NAMESPACES)
     
-    # USGS returns a flat list. Turn into a nested structure.
-    n = len(products)
-    items = [ items[i:i+n] for i in range(0, len(items), n) ]
-    data = { entityid : { products[j] : xsi.get(el) for j, el in enumerate(items[i]) } for i, entityid in enumerate(entityids) }
+    data = map(lambda el: xsi.get(el), items)
     
     return data
     
