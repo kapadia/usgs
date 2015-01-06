@@ -3,7 +3,7 @@ import os
 from xml.etree import ElementTree
 import requests
 
-from usgs import USGS_API, USGSConnectionError
+from usgs import USGS_API, USGSError, USGSConnectionError
 from usgs import soap, xsi
 
 
@@ -24,6 +24,23 @@ def _get_api_key():
     return api_key
 
 
+def _check_for_error(root):
+    fault_code_el = root.find("SOAP-ENV:Body/SOAP-ENV:Fault/faultcode", NAMESPACES)
+    
+    if fault_code_el is None:
+        return
+    
+    fault_string_el = root.find("SOAP-ENV:Body/SOAP-ENV:Fault/faultstring", NAMESPACES)
+    
+    fault_code = fault_code_el.text
+    fault_string = fault_string_el.text
+    
+    if fault_code == "AUTH_UNAUTHORIZED":
+        raise USGSConnectionError(fault_string)
+    else:
+        raise USGSError(fault_string)
+
+
 def clear_bulk_download_order():
     raise NotImplementedError
 
@@ -40,6 +57,8 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:datasetsResponse/return/item", NAMESPACES)
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
@@ -93,6 +112,8 @@ def download_options(dataset, node, entityids):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
+    _check_for_error(root)
+    
     items = root.findall("SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item", NAMESPACES)
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
