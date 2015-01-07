@@ -146,9 +146,6 @@ def login(username, password):
     xml = soap.login(username, password)
     r = requests.post(USGS_API, xml)
     
-    if r.status_code != 200:
-        raise USGSConnectionError
-    
     root = ElementTree.fromstring(r.text)
     _check_for_error(root)
     
