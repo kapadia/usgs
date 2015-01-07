@@ -2,8 +2,6 @@
 # Template XML requests required by the USGS Inventory Service
 # Requesting data like it's 1999
 
-import pyproj
-from shapely import geometry
 from xml.etree.ElementTree import Element, SubElement, tostring
 from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist
 
@@ -515,6 +513,12 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     
     # Latitude and longitude take precedence over ll and ur
     if lat and lng:
+        
+        try:
+            import pyproj
+            from shapely import geometry
+        except ImportError:
+            raise USGSDependencyRequired("Shapely and PyProj are required for search.")
         
         prj = pyproj.Proj(proj='aeqd', lat_0=lat, lon_0=lng)
         half_distance = 0.5 * distance
