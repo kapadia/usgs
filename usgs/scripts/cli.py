@@ -46,6 +46,13 @@ def logout():
 
 
 @click.command()
+@click.argument("node")
+def datasets(node):
+    data = api.datasets(None, node)
+    print(json.dumps(data))
+
+
+@click.command()
 @click.argument("dataset")
 @click.argument("scene-ids", nargs=-1)
 @node_opt
@@ -104,6 +111,7 @@ def download_url(dataset, scene_ids, product, node, api_key):
 
 usgs.add_command(login)
 usgs.add_command(logout)
+usgs.add_command(datasets)
 usgs.add_command(metadata)
 usgs.add_command(search)
 usgs.add_command(download_options, "download-options")
