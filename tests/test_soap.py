@@ -175,8 +175,8 @@ class SoapTest(unittest.TestCase):
           <soapenv:Body>
             <soap:getBulkDownloadProducts soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <datasetName xsi:type="xsd:string">LANDSAT_8</datasetName>
-              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <node xsi:type="xsd:string">EE</node>
+              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <entityIds xsi:type="soap:ArrayOfString">
                 <item xsi:type="xsd:string">LC80130292014100LGN00</item>
                 <item xsi:type="xsd:string">LC80130282014100LGN00</item>
@@ -200,8 +200,8 @@ class SoapTest(unittest.TestCase):
           <soapenv:Body>
             <soap:getOrderProducts soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <datasetName xsi:type="xsd:string">LANDSAT_8</datasetName>
-              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <node xsi:type="xsd:string">EE</node>
+              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <entityIds xsi:type="soap:ArrayOfString">
                 <item xsi:type="xsd:string">LC80130292014100LGN00</item>
                 <item xsi:type="xsd:string">LC80130282014100LGN00</item>
@@ -210,7 +210,11 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-    
+        
+        request = soap.get_order_products("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     def test_item_basket(self):
@@ -225,7 +229,11 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-    
+        
+        request = soap.item_basket(api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     def test_login(self):
