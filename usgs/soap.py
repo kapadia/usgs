@@ -68,6 +68,20 @@ def create_entity_ids_element(parent, entityids):
             child.text = entityid
 
 
+def create_service_class_coordinate(parent, name, latitude=None, longitude=None):
+    
+    el = SubElement(parent, name)
+    el.set("xsi:type", "soap:Service_Class_Coordinate")
+    
+    lat_el = SubElement(el, "latitude")
+    lat_el.set("xsi:type", "xsd:double")
+    lat_el.text = str(latitude)
+    
+    lng_el = SubElement(el, "longitude")
+    lng_el.set("xsi:type", "xsd:double")
+    lng_el.text = str(longitude)
+
+
 def clear_bulk_download_order(dataset, node, api_key=None):
     """
     This method is used to clear bulk download order information from the item basket.
@@ -176,23 +190,8 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, ap
     
     if ll and ur:
         
-        ll_el = SubElement(el, "lowerLeft")
-        ll_el.set("xsi:type", "soap:Service_Class_Coordinate")
-        
-        ll_lat_el = SubElement(ll_el, "latitude")
-        ll_lat_el.text = ll["latitude"]
-        
-        ll_lng_el = SubElement(ll_el, "longitude")
-        ll_lng_el.text = ll["longitude"]
-        
-        ur_el = SubElement(el, "upperRight")
-        ur_el.set("xsi:type", "soap:Service_Class_Coordinate")
-        
-        ur_lat_el = SubElement(ur_el, "latitude")
-        ur_lat_el.text = ur["latitude"]
-        
-        ur_lng_el = SubElement(ur_el, "longitude")
-        ur_lng_el.text = ur["longitude"]
+        create_service_class_coordinate(el, "lowerLeft", latitude=ll["latitude"], longitude=ll["longitude"])
+        create_service_class_coordinate(el, "upperRight", latitude=ur["latitude"], longitude=ur["longitude"])
         
     if start_date:
         
@@ -372,11 +371,7 @@ def get_order_products(dataset, node, entityids, api_key=None):
     return tostring(root)
 
 
-def hits(api_key=None):
-    raise NotImplementedError
-
-
-def item_basket():
+def item_basket(api_key=None):
     """
     Returns the current item basket for the current user.
     
@@ -527,23 +522,8 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     
     if ll and ur:
         
-        ll_el = SubElement(el, "lowerLeft")
-        ll_el.set("xsi:type", "soap:Service_Class_Coordinate")
-        
-        ll_lat_el = SubElement(ll_el, "latitude")
-        ll_lat_el.text = str(ll["latitude"])
-        
-        ll_lng_el = SubElement(ll_el, "longitude")
-        ll_lng_el.text = str(ll["longitude"])
-        
-        ur_el = SubElement(el, "upperRight")
-        ur_el.set("xsi:type", "soap:Service_Class_Coordinate")
-        
-        ur_lat_el = SubElement(ur_el, "latitude")
-        ur_lat_el.text = str(ur["latitude"])
-        
-        ur_lng_el = SubElement(ur_el, "longitude")
-        ur_lng_el.text = str(ur["longitude"])
+        create_service_class_coordinate(el, "lowerLeft", latitude=ll["latitude"], longitude=ll["longitude"])
+        create_service_class_coordinate(el, "upperRight", latitude=ur["latitude"], longitude=ur["longitude"])
         
     if start_date:
         
