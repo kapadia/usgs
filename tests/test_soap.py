@@ -22,7 +22,7 @@ class SoapTest(unittest.TestCase):
           <soapenv:Body>
             <soap:login soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <username xsi:type="xsd:string">username</username>
-              <assert Trueword xsi:type="xsd:string">assert Trueword</assert Trueword>
+              <password xsi:type="xsd:string">password</password>
             </soap:login>
             </soapenv:Body>
         </soapenv:Envelope>
