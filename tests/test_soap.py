@@ -268,7 +268,11 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-    
+        
+        request = soap.logout(api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     def test_metadata(self):
@@ -278,9 +282,9 @@ class SoapTest(unittest.TestCase):
           <soapenv:Header/>
           <soapenv:Body>
             <soap:metadata soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <datasetName xsi:type="xsd:string">LANDSAT_8</datasetName>
               <node xsi:type="xsd:string">EE</node>
+              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <entityIds xsi:type="soap:ArrayOfString">
                 <item xsi:type="xsd:string">LC80130292014100LGN00</item>
                 <item xsi:type="xsd:string">LC80130282014100LGN00</item>
@@ -290,7 +294,11 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         
+        request = soap.metadata("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
         
+        assert compare_xml(request, expected)
+    
     
     def test_remove_bulk_download_scene(self):
         
@@ -310,7 +318,7 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-    
+        pytest.skip("Not yet implemented")
     
     
     def test_remove_order_scene(self):
@@ -331,7 +339,7 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-    
+        pytest.skip("Not yet implemented")
     
     
     def test_search(self):
@@ -342,6 +350,7 @@ class SoapTest(unittest.TestCase):
           <soapenv:Body>
             <soap:search soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <datasetName xsi:type="xsd:string">GLS2005</datasetName>
+              <node xsi:type="xsd:string">EE</node>
               <lowerLeft xsi:type="soap:Service_Class_Coordinate">
                 <latitude xsi:type="xsd:double">75</latitude>
                 <longitude xsi:type="xsd:double">-135</longitude>
@@ -352,7 +361,6 @@ class SoapTest(unittest.TestCase):
               </upperRight>
               <startDate xsi:type="xsd:string">2006-01-01T00:00:00Z</startDate>
               <endDate xsi:type="xsd:string">2007-12-01T00:00:00Z</endDate>
-              <node xsi:type="xsd:string">EE</node>
               <maxResults xsi:type="xsd:int">3</maxResults>
               <startingNumber xsi:type="xsd:int">1</startingNumber>
               <sortOrder xsi:type="xsd:string">ASC</sortOrder>
@@ -361,6 +369,16 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        
+        ll = { "longitude": -135, "latitude": 75 }
+        ur = { "longitude": -120, "latitude": 90 }
+        start_date = "2006-01-01T00:00:00Z"
+        end_date = "2007-12-01T00:00:00Z"
+        
+        request = soap.search("GLS2005", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=3, sort_order="ASC", api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     
