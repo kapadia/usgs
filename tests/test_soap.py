@@ -118,13 +118,13 @@ class SoapTest(unittest.TestCase):
     def test_download(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:download soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <datasetName xsi:type="xsd:string">LANDSAT_8</datasetName>
-              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <node xsi:type="xsd:string">EE</node>
+              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <entityIds xsi:type="soap:ArrayOfString">
                 <item xsi:type="xsd:string">LC80130292014100LGN00</item>
               </entityIds>
@@ -135,6 +135,11 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        
+        request = soap.download("LANDSAT_8", "EE", ["LC80130292014100LGN00"], ["STANDARD"], api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     def test_download_options(self):
