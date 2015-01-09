@@ -28,7 +28,7 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         
-        request = soap.login("username", "assert Trueword")
+        request = soap.login("username", "password")
         request = minidom.parseString(request).toprettyxml()
         
         assert compare_xml(request, expected)
