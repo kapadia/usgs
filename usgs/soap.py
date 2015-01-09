@@ -180,19 +180,23 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, ap
         ll_el.set("xsi:type", "soap:Service_Class_Coordinate")
         
         ll_lat_el = SubElement(ll_el, "latitude")
-        ll_lat_el.text = ll["latitude"]
+        ll_lat_el.set("xsi:type", "xsd:double")
+        ll_lat_el.text = str(ll["latitude"])
         
         ll_lng_el = SubElement(ll_el, "longitude")
-        ll_lng_el.text = ll["longitude"]
+        ll_lng_el.set("xsi:type", "xsd:double")
+        ll_lng_el.text = str(ll["longitude"])
         
         ur_el = SubElement(el, "upperRight")
         ur_el.set("xsi:type", "soap:Service_Class_Coordinate")
         
         ur_lat_el = SubElement(ur_el, "latitude")
-        ur_lat_el.text = ur["latitude"]
+        ur_lat_el.set("xsi:type", "xsd:double")
+        ur_lat_el.text = str(ur["latitude"])
         
         ur_lng_el = SubElement(ur_el, "longitude")
-        ur_lng_el.text = ur["longitude"]
+        ur_lng_el.set("xsi:type", "xsd:double")
+        ur_lng_el.text = str(ur["longitude"])
         
     if start_date:
         
