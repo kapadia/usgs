@@ -395,6 +395,7 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        pytest.skip("Not yet implemented")
     
     
     
@@ -411,6 +412,7 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        pytest.skip("Not yet implemented")
     
     
     
@@ -432,6 +434,7 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        pytest.skip("Not yet implemented")
     
     
     
@@ -453,3 +456,5 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        pytest.skip("Not yet implemented")
+        
