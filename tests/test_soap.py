@@ -145,13 +145,13 @@ class SoapTest(unittest.TestCase):
     def test_download_options(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:downloadOptions soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
               <datasetName xsi:type="xsd:string">LANDSAT_8</datasetName>
-              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <node xsi:type="xsd:string">EE</node>
+              <apiKey xsi:type="xsd:string">USERS API KEY</apiKey>
               <entityIds xsi:type="soap:ArrayOfString">
                 <item xsi:type="xsd:string">LC80130292014100LGN00</item>
                 <item xsi:type="xsd:string">LC80130282014100LGN00</item>
@@ -161,11 +161,16 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         
+        request = soap.download_options("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
+    
     
     def test_get_bulk_download_products(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:getBulkDownloadProducts soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -185,7 +190,7 @@ class SoapTest(unittest.TestCase):
     def test_get_order_products(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:getOrderProducts soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -206,7 +211,7 @@ class SoapTest(unittest.TestCase):
     def test_item_basket(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:itemBasket soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -349,7 +354,7 @@ class SoapTest(unittest.TestCase):
     def test_submit_bulk_order(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:submitBulkDownloadOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -365,7 +370,7 @@ class SoapTest(unittest.TestCase):
     def test_submit_order(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:submitOrder soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -381,7 +386,7 @@ class SoapTest(unittest.TestCase):
     def test_update_bulk_download_scene(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:updateBulkDownloadScene soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -402,7 +407,7 @@ class SoapTest(unittest.TestCase):
     def test_update_order_scene(self):
         
         expected = """
-        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="https://earthexplorer.usgs.gov/inventory/soap">
+        <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
           <soapenv:Body>
             <soap:updateOrderScene soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
