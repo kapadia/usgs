@@ -371,11 +371,7 @@ def get_order_products(dataset, node, entityids, api_key=None):
     return tostring(root)
 
 
-def hits(api_key=None):
-    raise NotImplementedError
-
-
-def item_basket():
+def item_basket(api_key=None):
     """
     Returns the current item basket for the current user.
     

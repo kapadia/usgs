@@ -185,6 +185,11 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
+        
+        request = soap.get_bulk_download_products("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
+        request = minidom.parseString(request).toprettyxml()
+        
+        assert compare_xml(request, expected)
     
     
     def test_get_order_products(self):
