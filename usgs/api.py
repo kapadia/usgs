@@ -179,9 +179,6 @@ def metadata(dataset, node, sceneids, api_key=None):
     xml = soap.metadata(dataset, node, sceneids, api_key=api_key)
     r = requests.post(USGS_API, xml)
     
-    if r.status_code != 200:
-        raise USGSConnectionError
-    
     root = ElementTree.fromstring(r.text)
     _check_for_error(root)
     
@@ -214,9 +211,6 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     
     xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
     r = requests.post(USGS_API, xml)
-    
-    if r.status_code != 200:
-        raise USGSConnectionError
     
     root = ElementTree.fromstring(r.text)
     _check_for_error(root)
