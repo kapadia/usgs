@@ -34,3 +34,6 @@ class USGSConnectionError(Exception):
 
 class USGSAmbiguousNode(Exception):
     pass
+
+class USGSDependencyRequired(ImportError):
+    pass

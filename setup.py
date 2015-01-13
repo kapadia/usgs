@@ -21,7 +21,7 @@ setup(name='usgs',
       include_package_data=True,
       package_data={'usgs': ['data/datasets.json']},
       zip_safe=False,
-      install_requires=['click', 'pyproj', 'shapely', 'requests'],
+      install_requires=['click', 'requests'],
       extras_require={
           'test': ['pytest'],
       },
