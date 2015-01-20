@@ -13,8 +13,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   soap
-   api
+   reference/cli
+   reference/api
+   reference/soap
+   
 
 
 
