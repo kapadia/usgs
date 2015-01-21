@@ -1,0 +1,396 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>usgs.api &mdash; usgs 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="usgs 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> usgs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/cli.html">USGS CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">USGS API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/ee.html">EarthExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/hdds.html">HDDSExplorer</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">usgs</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>usgs.api</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for usgs.api</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">xml.etree</span> <span class="kn">import</span> <span class="n">ElementTree</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">USGS_API</span><span class="p">,</span> <span class="n">USGSError</span><span class="p">,</span> <span class="n">USGSConnectionError</span>
+<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">soap</span><span class="p">,</span> <span class="n">xsi</span>
+
+
+<span class="n">TMPFILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot;tmp&quot;</span><span class="p">,</span> <span class="s">&quot;usgs&quot;</span><span class="p">)</span>
+<span class="n">NAMESPACES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&quot;SOAP-ENV&quot;</span><span class="p">:</span> <span class="s">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="p">,</span>
+    <span class="s">&quot;ns1&quot;</span><span class="p">:</span> <span class="s">&quot;https://earthexplorer.usgs.gov/inventory/soap&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">_get_api_key</span><span class="p">():</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">TMPFILE</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">TMPFILE</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">api_key</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">api_key</span>
+
+
+<span class="k">def</span> <span class="nf">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">fault_code_el</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/SOAP-ENV:Fault/faultcode&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">fault_code_el</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span>
+    
+    <span class="n">fault_string_el</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/SOAP-ENV:Fault/faultstring&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">fault_code</span> <span class="o">=</span> <span class="n">fault_code_el</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">fault_string</span> <span class="o">=</span> <span class="n">fault_string_el</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="k">if</span> <span class="n">fault_code</span> <span class="o">==</span> <span class="s">&quot;AUTH_UNAUTHORIZED&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSConnectionError</span><span class="p">(</span><span class="n">fault_string</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSError</span><span class="p">(</span><span class="n">fault_string</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clear_bulk_download_order</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    
+<span class="k">def</span> <span class="nf">clear_order</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="n">ll</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="n">ur</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:datasetsResponse/return/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">dataset_fields</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">dataset_fields</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+    
+
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">product</span><span class="p">):</span>
+<div class="viewcode-block" id="download"><a class="viewcode-back" href="../../reference/api.html#usgs.api.download">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Though USGS supports multiple products in a single request, there&#39;s</span>
+<span class="sd">    ambiguity in the returned list. This wrapper only allows a single</span>
+<span class="sd">    product per request.</span>
+<span class="sd">    </span>
+<span class="sd">    Additionally, the response has no indiction which URL is associated</span>
+<span class="sd">    with which scene/entity id. The URL can be parsed, but the structure</span>
+<span class="sd">    varies depending on the product.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="p">[</span><span class="n">product</span><span class="p">],</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:downloadResponse/return/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">el</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">),</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+    
+
+<span class="k">def</span> <span class="nf">download_options</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">):</span></div>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">download_options</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">get_bulk_download_products</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">get_order_products</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">hits</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">item_basket</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">element</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:loginResponse/return&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">TMPFILE</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">api_key</span>
+    
+    
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">TMPFILE</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">TMPFILE</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="bp">True</span>
+    
+
+<span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sceneids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">metadata</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sceneids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:metadataResponse/return/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+    
+
+<span class="k">def</span> <span class="nf">remove_bulk_download_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">remove_order_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="search"><a class="viewcode-back" href="../../reference/api.html#usgs.api.search">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    .. todo:: Export metadata from the search results e.g.</span>
+<span class="sd">    </span>
+<span class="sd">        &lt;numberReturned xsi:type=&quot;xsd:int&quot;&gt;41&lt;/numberReturned&gt;</span>
+<span class="sd">        &lt;totalHits xsi:type=&quot;xsd:int&quot;&gt;41&lt;/totalHits&gt;</span>
+<span class="sd">        &lt;firstRecord xsi:type=&quot;xsd:int&quot;&gt;1&lt;/firstRecord&gt;</span>
+<span class="sd">        &lt;lastRecord xsi:type=&quot;xsd:int&quot;&gt;41&lt;/lastRecord&gt;</span>
+<span class="sd">        &lt;nextRecord xsi:type=&quot;xsd:int&quot;&gt;41&lt;/nextRecord&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
+    
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="n">lng</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="n">ll</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="n">ur</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="n">max_results</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="n">starting_number</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="n">sort_order</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
+    
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">_check_for_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+    
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:searchResponse/return/results/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span>
+
+
+<span class="k">def</span> <span class="nf">submit_bulk_order</span><span class="p">():</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">submit_order</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">update_bulk_download_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+
+<span class="k">def</span> <span class="nf">update_order_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Amit Kapadia.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

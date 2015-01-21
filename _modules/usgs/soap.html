@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>usgs.soap &mdash; usgs 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="usgs 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> usgs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/cli.html">USGS CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">USGS API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/ee.html">EarthExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/hdds.html">HDDSExplorer</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">usgs</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>usgs.soap</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for usgs.soap</h1><div class="highlight"><pre>
+<span class="c"># Template XML requests required by the USGS Inventory Service</span>
+<span class="c"># Requesting data like it&#39;s 1999</span>
+
+<span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">SubElement</span><span class="p">,</span> <span class="n">tostring</span>
+<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">CATALOG_NODES</span><span class="p">,</span> <span class="n">USGSApiKeyRequiredError</span><span class="p">,</span> <span class="n">USGSCatalogNodeDoesNotExist</span>
+
+
+<span class="k">def</span> <span class="nf">create_root_request</span><span class="p">():</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s">&quot;soapenv:Envelope&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xmlns:xsi&quot;</span><span class="p">,</span> <span class="s">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xmlns:xsd&quot;</span><span class="p">,</span> <span class="s">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xmlns:soapenv&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xmlns:soap&quot;</span><span class="p">,</span> <span class="s">&quot;http://earthexplorer.usgs.gov/inventory/soap&quot;</span><span class="p">)</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;soapenv:Header&quot;</span><span class="p">)</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s">&quot;soapenv:Body&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_request_type</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">request_type</span><span class="p">):</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;soap:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">request_type</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;soapenv:encodingStyle&quot;</span><span class="p">,</span> <span class="s">&quot;http://schemas.xmlsoap.org/soap/encoding/&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">el</span>
+
+
+<span class="k">def</span> <span class="nf">create_api_key_element</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;apiKey&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">api_key</span>
+
+
+<span class="k">def</span> <span class="nf">create_node_element</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    
+    <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CATALOG_NODES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSCatalogNodeDoesNotExist</span><span class="p">(</span><span class="s">&quot;Catalog nodes include </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CATALOG_NODES</span><span class="p">))</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;node&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">node</span>
+
+
+<span class="k">def</span> <span class="nf">create_dataset_element</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;datasetName&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">dataset</span>
+
+
+<span class="k">def</span> <span class="nf">create_entity_ids_element</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">entityids</span><span class="p">):</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entityids</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        
+        <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;entityId&quot;</span><span class="p">)</span>
+        <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">entityids</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="s">&quot;entityIds&quot;</span><span class="p">)</span>
+        <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;soap:ArrayOfString&quot;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">entityid</span> <span class="ow">in</span> <span class="n">entityids</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;item&quot;</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span><span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">entityid</span>
+
+
+<span class="k">def</span> <span class="nf">create_service_class_coordinate</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;soap:Service_Class_Coordinate&quot;</span><span class="p">)</span>
+    
+    <span class="n">lat_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;latitude&quot;</span><span class="p">)</span>
+    <span class="n">lat_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:double&quot;</span><span class="p">)</span>
+    <span class="n">lat_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">latitude</span><span class="p">)</span>
+    
+    <span class="n">lng_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;longitude&quot;</span><span class="p">)</span>
+    <span class="n">lng_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:double&quot;</span><span class="p">)</span>
+    <span class="n">lng_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">longitude</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clear_bulk_download_order</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="clear_bulk_download_order"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.clear_bulk_download_order">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method is used to clear bulk download order information from the item basket.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;clearBulkDownloadOrder&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clear_order</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="clear_order"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.clear_order">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method is used to clear order information from the item basket.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;clearOrder&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.datasets">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method is used to find datasets available for searching.</span>
+<span class="sd">    By passing no parameters except node, all available datasets</span>
+<span class="sd">    are returned. Additional parameters such as temporal range</span>
+<span class="sd">    and spatial bounding box can be used to find datasets that </span>
+<span class="sd">    provide more specific data. The dataset name parameter can</span>
+<span class="sd">    be used to limit the results based on matching the supplied</span>
+<span class="sd">    value against the dataset name with assumed wildcards at the</span>
+<span class="sd">    beginning and end. All parameters are optional except for </span>
+<span class="sd">    the &#39;node&#39; parameter.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">        Dataset Identifier</span>
+<span class="sd">    </span>
+<span class="sd">    :param ll:</span>
+<span class="sd">        Lower left corner of an AOI bounding box - in decimal form</span>
+<span class="sd">        Longitude/Latitude dictionary</span>
+<span class="sd">        </span>
+<span class="sd">        e.g. { &quot;longitude&quot;: 0.0, &quot;latitude&quot;: 0.0 }</span>
+<span class="sd">    </span>
+<span class="sd">    :param ur:</span>
+<span class="sd">        Upper right corner of an AOI bounding box - in decimal form</span>
+<span class="sd">        Longitude/Latitude dictionary</span>
+<span class="sd">        </span>
+<span class="sd">        e.g. { &quot;longitude&quot;: 0.0, &quot;latitude&quot;: 0.0 }</span>
+<span class="sd">    </span>
+<span class="sd">    :param start_date:</span>
+<span class="sd">        Used for searching scene acquisition - will accept anything</span>
+<span class="sd">        that the PHP strtotime function can understand</span>
+<span class="sd">    </span>
+<span class="sd">    :param end_date:</span>
+<span class="sd">        Used for searching scene acquisition - will accept anything</span>
+<span class="sd">        that the PHP strtotime function can understand</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">        The requested Catalog</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is not required.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;datasets&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">ll</span> <span class="ow">and</span> <span class="n">ur</span><span class="p">:</span>
+        
+        <span class="n">create_service_class_coordinate</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;lowerLeft&quot;</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">ll</span><span class="p">[</span><span class="s">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ll</span><span class="p">[</span><span class="s">&quot;longitude&quot;</span><span class="p">])</span>
+        <span class="n">create_service_class_coordinate</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;upperRight&quot;</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">ur</span><span class="p">[</span><span class="s">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ur</span><span class="p">[</span><span class="s">&quot;longitude&quot;</span><span class="p">])</span>
+        
+    <span class="k">if</span> <span class="n">start_date</span><span class="p">:</span>
+        
+        <span class="n">start_date_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;startDate&quot;</span><span class="p">)</span>
+        <span class="n">start_date_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">start_date_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">start_date</span>
+        
+    <span class="k">if</span> <span class="n">end_date</span><span class="p">:</span>
+        
+        <span class="n">end_date_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;endDate&quot;</span><span class="p">)</span>
+        <span class="n">end_date_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">end_date_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">end_date</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">dataset_fields</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="dataset_fields"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.dataset_fields">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This request is used to return the metadata filter</span>
+<span class="sd">    fields for the specified dataset. These values can</span>
+<span class="sd">    be used as additional criteria when submitting search</span>
+<span class="sd">    and hit queries.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is not required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;datasetFields&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="download"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.download">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The use of this request will be to obtain valid data download URLs.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param entityIds:</span>
+<span class="sd">        list</span>
+<span class="sd">    </span>
+<span class="sd">    :param products:</span>
+<span class="sd">        list</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;download&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    <span class="n">create_entity_ids_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">entityids</span><span class="p">)</span>
+    
+    <span class="n">products_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;products&quot;</span><span class="p">)</span>
+    <span class="n">products_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;soap:ArrayOfString&quot;</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">product</span> <span class="ow">in</span> <span class="n">products</span><span class="p">:</span>
+        <span class="n">product_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">products_el</span><span class="p">,</span> <span class="s">&quot;item&quot;</span><span class="p">)</span>
+        <span class="n">product_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span><span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">product_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">product</span>
+        
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">download_options</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="download_options"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.download_options">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The use of the download options request is to discover the different download</span>
+<span class="sd">    options for each scene. Some download options may exist but still be unavailable</span>
+<span class="sd">    due to disk usage and many other factors. If a download is unavailable</span>
+<span class="sd">    it may need to be ordered.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param entityIds:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is not required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;downloadOptions&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="n">create_entity_ids_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">entityids</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_bulk_download_products</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="get_bulk_download_products"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.get_bulk_download_products">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve bulk download products on a scene-by-scene basis.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param entityid:</span>
+<span class="sd">        String or list of strings.</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;getBulkDownloadProducts&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    <span class="n">create_entity_ids_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">entityids</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_order_products</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">entityids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="get_order_products"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.get_order_products">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve orderable products on a scene-by-scene basis.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param entityid:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    </span>
+<span class="sd">    .. todo:: Support multiple scene request.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;getOrderProducts&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    <span class="n">create_entity_ids_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">entityids</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">item_basket</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="item_basket"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.item_basket">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the current item basket for the current user.</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">USGSApiKeyRequiredError</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;itemBasket&quot;</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span></div>
+<div class="viewcode-block" id="login"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.login">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method requires SSL be used due to the sensitive nature of</span>
+<span class="sd">    users passwords. Upon a successful login, an API key will be</span>
+<span class="sd">    returned. This key will be active for one hour and should be</span>
+<span class="sd">    destroyed upon final use of the service by calling the logout</span>
+<span class="sd">    method. Users must have &quot;Machine to Machine&quot; access based on</span>
+<span class="sd">    a user-based role in the users profile.</span>
+<span class="sd">    </span>
+<span class="sd">    :param username:</span>
+<span class="sd">    </span>
+<span class="sd">    :param password:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;login&quot;</span><span class="p">)</span>
+    
+    <span class="n">username_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;username&quot;</span><span class="p">)</span>
+    <span class="n">username_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+    <span class="n">username_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">username</span>
+    
+    <span class="n">password_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;password&quot;</span><span class="p">)</span>
+    <span class="n">password_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+    <span class="n">password_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">password</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.logout">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove the users API key from being used in the future.</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;logout&quot;</span><span class="p">)</span>
+    <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">sceneids</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span></div>
+<div class="viewcode-block" id="metadata"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.metadata">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The use of the metadata request is intended for those who have</span>
+<span class="sd">    acquired scene IDs from a different source. It will return the</span>
+<span class="sd">    same metadata that is available via the search request.</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param sceneid:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;metadata&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="n">create_entity_ids_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">sceneids</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">remove_bulk_download_scene</span><span class="p">():</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">def</span> <span class="nf">remove_order_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="search"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.search">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">    </span>
+<span class="sd">    :param node:</span>
+<span class="sd">    </span>
+<span class="sd">    :param lat:</span>
+<span class="sd">    </span>
+<span class="sd">    :param lng:</span>
+<span class="sd">    </span>
+<span class="sd">    :param ll:</span>
+<span class="sd">    </span>
+<span class="sd">    :param distance:</span>
+<span class="sd">    </span>
+<span class="sd">    :param ur:</span>
+<span class="sd">    </span>
+<span class="sd">    :param start_date:</span>
+<span class="sd">    </span>
+<span class="sd">    :param end_date:</span>
+<span class="sd">    </span>
+<span class="sd">    :param max_results:</span>
+<span class="sd">    </span>
+<span class="sd">    :param starting_number:</span>
+<span class="sd">    </span>
+<span class="sd">    :param sort_order:</span>
+<span class="sd">    </span>
+<span class="sd">    :param api_key:</span>
+<span class="sd">        API key is not required.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">create_root_request</span><span class="p">()</span>
+    
+    <span class="n">el</span> <span class="o">=</span> <span class="n">create_request_type</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;search&quot;</span><span class="p">)</span>
+    
+    <span class="n">create_dataset_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+    <span class="n">create_node_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    
+    <span class="c"># Latitude and longitude take precedence over ll and ur</span>
+    <span class="k">if</span> <span class="n">lat</span> <span class="ow">and</span> <span class="n">lng</span><span class="p">:</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">pyproj</span>
+            <span class="kn">from</span> <span class="nn">shapely</span> <span class="kn">import</span> <span class="n">geometry</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">USGSDependencyRequired</span><span class="p">(</span><span class="s">&quot;Shapely and PyProj are required for search.&quot;</span><span class="p">)</span>
+        
+        <span class="n">prj</span> <span class="o">=</span> <span class="n">pyproj</span><span class="o">.</span><span class="n">Proj</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s">&#39;aeqd&#39;</span><span class="p">,</span> <span class="n">lat_0</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="n">lng</span><span class="p">)</span>
+        <span class="n">half_distance</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">-</span><span class="n">half_distance</span><span class="p">,</span> <span class="o">-</span><span class="n">half_distance</span><span class="p">,</span> <span class="n">half_distance</span><span class="p">,</span> <span class="n">half_distance</span><span class="p">)</span>
+        
+        <span class="n">lats</span><span class="p">,</span> <span class="n">lngs</span> <span class="o">=</span> <span class="n">prj</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">xy</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="n">ll</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">lngs</span><span class="p">),</span> <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">lats</span><span class="p">)</span> <span class="p">}</span>
+        <span class="n">ur</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">lngs</span><span class="p">),</span> <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">lats</span><span class="p">)</span> <span class="p">}</span>
+    
+    <span class="k">if</span> <span class="n">ll</span> <span class="ow">and</span> <span class="n">ur</span><span class="p">:</span>
+        
+        <span class="n">create_service_class_coordinate</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;lowerLeft&quot;</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">ll</span><span class="p">[</span><span class="s">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ll</span><span class="p">[</span><span class="s">&quot;longitude&quot;</span><span class="p">])</span>
+        <span class="n">create_service_class_coordinate</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;upperRight&quot;</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">ur</span><span class="p">[</span><span class="s">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">longitude</span><span class="o">=</span><span class="n">ur</span><span class="p">[</span><span class="s">&quot;longitude&quot;</span><span class="p">])</span>
+        
+    <span class="k">if</span> <span class="n">start_date</span><span class="p">:</span>
+        
+        <span class="n">start_date_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;startDate&quot;</span><span class="p">)</span>
+        <span class="n">start_date_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">start_date_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">start_date</span>
+        
+    <span class="k">if</span> <span class="n">end_date</span><span class="p">:</span>
+        
+        <span class="n">end_date_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;endDate&quot;</span><span class="p">)</span>
+        <span class="n">end_date_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">end_date_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">end_date</span>
+    
+    <span class="k">if</span> <span class="n">max_results</span><span class="p">:</span>
+        
+        <span class="n">max_results_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;maxResults&quot;</span><span class="p">)</span>
+        <span class="n">max_results_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:int&quot;</span><span class="p">)</span>
+        <span class="n">max_results_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_results</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">starting_number</span><span class="p">:</span>
+        
+        <span class="n">starting_number_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;startingNumber&quot;</span><span class="p">)</span>
+        <span class="n">starting_number_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:int&quot;</span><span class="p">)</span>
+        <span class="n">starting_number_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">starting_number</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">sort_order</span><span class="p">:</span>
+        
+        <span class="n">sort_order_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;sortOrder&quot;</span><span class="p">)</span>
+        <span class="n">sort_order_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
+        <span class="n">sort_order_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">sort_order</span>
+    
+    <span class="k">if</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="n">create_api_key_element</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">api_key</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">tostring</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">submit_bulk_order</span><span class="p">():</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">def</span> <span class="nf">submit_order</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">def</span> <span class="nf">update_bulk_download_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">def</span> <span class="nf">update_order_scene</span><span class="p">():</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Amit Kapadia.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

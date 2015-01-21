@@ -1,0 +1,6 @@
+usgs/
+usgs.egg-info/
+docs/
+.buildinfo
+.DS_Store
+
