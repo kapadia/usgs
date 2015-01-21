@@ -32,20 +32,6 @@ USGS organizes datasets into four catalogs. Each catalog is specified by a node 
 | LPVSExplorer      | LPVS              | http://lpvsexplorer.cr.usgs.gov/ |
 +-------------------+-------------------+----------------------------------+
 
-Datasets
---------
-
-CWIC/LSI Explorer
------------------
-
-EarthExplorer
--------------
-
-HDDSExplorer
-------------
-
-
-
 
 Indices and tables
 ==================
