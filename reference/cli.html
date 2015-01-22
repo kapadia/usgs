@@ -101,11 +101,24 @@
   <span class="target" id="module-usgs.scripts"></span><div class="section" id="usgs-cli">
 <h1>USGS CLI<a class="headerlink" href="#usgs-cli" title="Permalink to this headline">¶</a></h1>
 <p>This library comes with a command line interface to expose many common requests, such as authenticating, searching, downloading, and obtaining metadata.</p>
-<span class="target" id="module-usgs.scripts.cli"></span><dl class="function">
-<dt id="usgs.scripts.cli.get_node">
-<tt class="descclassname">usgs.scripts.cli.</tt><tt class="descname">get_node</tt><big>(</big><em>dataset</em>, <em>node</em><big>)</big><a class="reference internal" href="../_modules/usgs/scripts/cli.html#get_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.scripts.cli.get_node" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<div class="highlight-bash"><div class="highlight"><pre>usgs login <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>usgs <span class="nb">logout</span> <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>usgs search <span class="o">[</span>dataset<span class="o">]</span> --start-date <span class="o">[</span>start date<span class="o">]</span> --end-date <span class="o">[</span>end date<span class="o">]</span> --longitude <span class="o">[</span>lng<span class="o">]</span> --latitude <span class="o">[</span>lat<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>usgs metadata <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id 1<span class="o">]</span> <span class="o">[</span>entity/scene id 2<span class="o">]</span> ... <span class="o">[</span>entity/scene id n<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>usgs download-options <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
+</pre></div>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre>usgs download-url <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span> --product <span class="o">[</span>product<span class="o">]</span>
+</pre></div>
+</div>
 </div>
 
 
