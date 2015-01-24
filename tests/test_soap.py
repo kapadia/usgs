@@ -89,8 +89,6 @@ class SoapTest(unittest.TestCase):
         request = soap.datasets("L8", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
         
-        print request
-        
         assert compare_xml(request, expected)
         
     

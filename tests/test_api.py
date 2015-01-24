@@ -27,7 +27,7 @@ def test_datasets():
     results = api.datasets(None, "EE")
     for item in results:
         for key in expected_keys:
-            assert item.has_key(key)
+            assert item.get(key) is not None
 
 
 def test_dataset_fields():
@@ -37,7 +37,7 @@ def test_dataset_fields():
     results = api.dataset_fields("LANDSAT_8", "EE")
     for item in results:
         for key in expected_keys:
-            assert item.has_key(key)
+            assert item.get(key) is not None
     
     
 def test_download():
@@ -92,9 +92,10 @@ def test_metadata():
     ]
     
     results = api.metadata("LANDSAT_8", "EE", "LC80360332014357LGN00")
+    print(results)
     for item in results:
         for key in expected_keys:
-            assert item.has_key(key)
+            assert item.get(key) is not None
     
     
 def test_remove_bulk_download_scene():
