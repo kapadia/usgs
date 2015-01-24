@@ -88,11 +88,10 @@ def test_metadata():
         "upperRightCoordinate", "lowerRightCoordinate",
         "sceneBounds", "browseUrl", "dataAccessUrl",
         "downloadUrl", "entityId", "metadataUrl",
-        "modifiedDate", "orderUrl", "summary"
+        "modifiedDate", "summary"
     ]
     
     results = api.metadata("LANDSAT_8", "EE", "LC80360332014357LGN00")
-    print(results)
     for item in results:
         for key in expected_keys:
             assert item.get(key) is not None
