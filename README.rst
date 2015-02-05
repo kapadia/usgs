@@ -92,6 +92,12 @@ Searching USGS may be done by date, location or both.
 .. code-block:: pycon
 
     $ usgs search [dataset] --start-date [start date] --end-date [end date] --longitude [lng] --latitude [lat] --node [node]
+    
+Add the `geojson` flag for GeoJSON output
+
+.. code-block:: pycon
+
+    $ usgs search [dataset] --start-date [start date] --end-date [end date] --longitude [lng] --latitude [lat] --node [node] --geojson
 
 --------
 Metadata
