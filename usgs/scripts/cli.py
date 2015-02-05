@@ -21,7 +21,33 @@ def get_node(dataset, node):
         node = datasets[dataset].upper()
     
     return node
+
+
+def to_coordinates(bounds):
+    xmin, ymin, xmax, ymax = bounds
     
+    return [[
+        [xmin, ymin],
+        [xmin, ymax],
+        [xmax, ymax],
+        [xmax, ymin],
+        [xmin, ymin]
+    ]]
+
+
+def to_geojson_feature(entry):
+    bounds = map(float, entry.pop("sceneBounds").split(','))
+    
+    coordinates = to_coordinates(bounds)
+    
+    return {
+        "type": "Feature",
+        "properties": entry,
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": coordinates
+        }
+    }
 
 api_key_opt = click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
 node_opt = click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
@@ -73,12 +99,17 @@ def metadata(dataset, scene_ids, node, api_key):
 @click.option("--longitude")
 @click.option("--latitude")
 @click.option("--distance", help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
+@click.option('--geojson', is_flag=True)
 @api_key_opt
-def search(dataset, node, start_date, end_date, longitude, latitude, distance, api_key):
-    
+def search(dataset, node, start_date, end_date, longitude, latitude, distance, api_key, geojson):
     node = get_node(dataset, node)
     
     data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, start_date=start_date, end_date=end_date, api_key=api_key)
+    
+    if geojson:
+        features = map(to_geojson_feature, data)
+        data = { 'type': 'FeatureCollection', 'features': features }
+    
     print(json.dumps(data))
 
 
