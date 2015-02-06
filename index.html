@@ -100,6 +100,45 @@
   <div class="section" id="usgs">
 <h1>usgs<a class="headerlink" href="#usgs" title="Permalink to this headline">¶</a></h1>
 <p>usgs is a Python library for interfacing with the US Geologic Survey&#8217;s Inventory Service. The Inventory Service supports a variety of requests for accessing USGS datasets, including searching datasets, downloading data products, and accessing metadata on data products.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Some requests require an account with <a class="reference external" href="https://earthexplorer.usgs.gov/register/">USGS&#8217;s EROS service</a>. The account must also have Machine to Machine privileges.</p>
+</div>
+<div class="section" id="catalogs">
+<h2>Catalogs<a class="headerlink" href="#catalogs" title="Permalink to this headline">¶</a></h2>
+<p>USGS provides four catalogs, each containing various datasets. All requests made to the Inventory Service must have an associated node.</p>
+<p>Check each catalog for a list of datasets.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="20%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Catalog</th>
+<th class="head">Node Value</th>
+<th class="head">URI</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="reference/catalog/cwic.html#cwic"><em>CWIC/LSI Explorer</em></a></td>
+<td>CWIC</td>
+<td><a class="reference external" href="http://lsiexplorer.cr.usgs.gov">http://lsiexplorer.cr.usgs.gov</a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="reference/catalog/ee.html#ee"><em>EarthExplorer</em></a></td>
+<td>EE</td>
+<td><a class="reference external" href="http://earthexplorer.usgs.gov">http://earthexplorer.usgs.gov</a></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="reference/catalog/hdds.html#hdds"><em>HDDSExplorer</em></a></td>
+<td>HDDS</td>
+<td><a class="reference external" href="http://hddsexplorer.usgs.gov">http://hddsexplorer.usgs.gov</a></td>
+</tr>
+<tr class="row-odd"><td>LPVSExplorer</td>
+<td>LPVS</td>
+<td><a class="reference external" href="http://lpvsexplorer.cr.usgs.gov/">http://lpvsexplorer.cr.usgs.gov/</a></td>
+</tr>
+</tbody>
+</table>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -111,40 +150,6 @@
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/hdds.html">HDDSExplorer</a></li>
 </ul>
 </div>
-<div class="section" id="catalogs">
-<h2>Catalogs<a class="headerlink" href="#catalogs" title="Permalink to this headline">¶</a></h2>
-<p>USGS organizes datasets into four catalogs. Each catalog is specified by a node value. All requests made to the Inventory Service must have an associated node.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="26%" />
-<col width="26%" />
-<col width="47%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Catalog</th>
-<th class="head">Node Value</th>
-<th class="head">URI</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>CWIC/LSI Explorer</td>
-<td>CWIC</td>
-<td><a class="reference external" href="http://lsiexplorer.cr.usgs.gov">http://lsiexplorer.cr.usgs.gov</a></td>
-</tr>
-<tr class="row-odd"><td>EarthExplorer</td>
-<td>EE</td>
-<td><a class="reference external" href="http://earthexplorer.usgs.gov">http://earthexplorer.usgs.gov</a></td>
-</tr>
-<tr class="row-even"><td>HDDSExplorer</td>
-<td>HDDS</td>
-<td><a class="reference external" href="http://hddsexplorer.usgs.gov">http://hddsexplorer.usgs.gov</a></td>
-</tr>
-<tr class="row-odd"><td>LPVSExplorer</td>
-<td>LPVS</td>
-<td><a class="reference external" href="http://lpvsexplorer.cr.usgs.gov/">http://lpvsexplorer.cr.usgs.gov/</a></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
