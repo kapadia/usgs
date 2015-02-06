@@ -1,3 +1,5 @@
+.. _cwic:
+
 CWIC/LSI Explorer
 =================
 
