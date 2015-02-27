@@ -58,12 +58,12 @@
         
         
             <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="catalog/ee.html">EarthExplorer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">USGS API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog/ee.html">EarthExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
 </ul>
 
         
@@ -114,7 +114,16 @@ varies depending on the product.</p>
 <dl class="function">
 <dt id="usgs.api.search">
 <tt class="descclassname">usgs.api.</tt><tt class="descname">search</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>lat=None</em>, <em>lng=None</em>, <em>distance=100</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>max_results=50000</em>, <em>starting_number=1</em>, <em>sort_order='DESC'</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/api.html#search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p>Export metadata from the search results e.g.</p>
+<p class="last">&lt;numberReturned xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/numberReturned&gt;
+&lt;totalHits xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/totalHits&gt;
+&lt;firstRecord xsi:type=&#8221;xsd:int&#8221;&gt;1&lt;/firstRecord&gt;
+&lt;lastRecord xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/lastRecord&gt;
+&lt;nextRecord xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/nextRecord&gt;</p>
+</div>
+</dd></dl>
 
 </div>
 
