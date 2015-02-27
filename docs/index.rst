@@ -6,6 +6,16 @@ usgs is a Python library for interfacing with the US Geologic Survey's Inventory
 
 .. note:: Some requests require an account with `USGS's EROS service <https://earthexplorer.usgs.gov/register/>`_. The account must also have Machine to Machine privileges.
 
+Installation
+------------
+
+.. todo:: Post on PyPI
+
+.. code-block:: bash
+
+    pip install git+https://github.com/mapbox/usgs.git
+
+
 Catalogs
 --------
 
