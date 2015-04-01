@@ -519,7 +519,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         half_distance = 0.5 * distance
         box = geometry.box(-half_distance, -half_distance, half_distance, half_distance)
         
-        lats, lngs = prj(*box.exterior.xy, inverse=True)
+        lngs, lats = prj(*box.exterior.xy, inverse=True)
         
         ll = { "longitude": min(*lngs), "latitude": min(*lats) }
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
