@@ -3,7 +3,7 @@
 # Requesting data like it's 1999
 
 from xml.etree.ElementTree import Element, SubElement, tostring
-from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist
+from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist, USGSDependencyRequired
 
 
 def create_root_request():
