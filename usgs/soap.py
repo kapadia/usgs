@@ -549,11 +549,10 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         # TODO: Support more than AND key/value equality queries
         additional_criteria_el = SubElement(el, "additionalCriteria")
         
-        item_el = SubElement(additional_criteria_el, "item")
-        filter_type_el = SubElement(item_el, "filterType")
+        filter_type_el = SubElement(additional_criteria_el, "filterType")
         filter_type_el.text = "and"
         
-        child_filters_el = SubElement(item_el, "childFilters")
+        child_filters_el = SubElement(additional_criteria_el, "childFilters")
         for field_id, value in where.iteritems():
             child_item_el = SubElement(child_filters_el, "item")
             field_id_el = SubElement(child_item_el, "fieldId")
@@ -586,7 +585,6 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     if api_key:
         create_api_key_element(el, api_key)
     
-    print tostring(root)
     return tostring(root)
 
 
