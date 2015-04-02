@@ -94,17 +94,40 @@ def metadata(dataset, scene_ids, node, api_key):
 @click.command()
 @click.argument("dataset")
 @node_opt
+def dataset_fields(dataset, node):
+    node = get_node(dataset, node)
+    
+    data = api.dataset_fields(dataset, node)
+    
+    print(json.dumps(data))
+
+
+@click.command()
+@click.argument("dataset")
+@node_opt
 @click.option("--start-date")
 @click.option("--end-date")
 @click.option("--longitude")
 @click.option("--latitude")
 @click.option("--distance", help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
+@click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
 @click.option('--geojson', is_flag=True)
 @api_key_opt
-def search(dataset, node, start_date, end_date, longitude, latitude, distance, api_key, geojson):
+def search(dataset, node, start_date, end_date, longitude, latitude, distance, where, api_key, geojson):
+    
     node = get_node(dataset, node)
     
-    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, start_date=start_date, end_date=end_date, api_key=api_key)
+    if where:
+        # Query the dataset fields endpoint for queryable fields
+        fields = api.dataset_fields(dataset, node)
+        
+        def format_fieldname(s):
+            return ''.join(c for c in s if c.isalnum()).lower()
+        
+        field_lut = { format_fieldname(field['name']): field['fieldId'] for field in fields }
+        where = { field_lut[format_fieldname(k)]: v for k, v in where if format_fieldname(k) in field_lut }
+    
+    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
     
     if geojson:
         features = map(to_geojson_feature, data)
@@ -143,6 +166,7 @@ def download_url(dataset, scene_ids, product, node, api_key):
 usgs.add_command(login)
 usgs.add_command(logout)
 usgs.add_command(datasets)
+usgs.add_command(dataset_fields, "dataset-fields")
 usgs.add_command(metadata)
 usgs.add_command(search)
 usgs.add_command(download_options, "download-options")

@@ -470,7 +470,7 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
     """
     :param dataset:
     
@@ -489,6 +489,9 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     :param start_date:
     
     :param end_date:
+    
+    :param where:
+        Specify additional search criteria
     
     :param max_results:
     
@@ -513,7 +516,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
             import pyproj
             from shapely import geometry
         except ImportError:
-            raise USGSDependencyRequired("Shapely and PyProj are required for search.")
+            raise USGSDependencyRequired("Shapely and PyProj are required for spatial searches.")
         
         prj = pyproj.Proj(proj='aeqd', lat_0=lat, lon_0=lng)
         half_distance = 0.5 * distance
@@ -541,6 +544,26 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         end_date_el.set("xsi:type", "xsd:string")
         end_date_el.text = end_date
     
+    if where:
+        
+        # TODO: Support more than AND key/value equality queries
+        additional_criteria_el = SubElement(el, "additionalCriteria")
+        
+        filter_type_el = SubElement(additional_criteria_el, "filterType")
+        filter_type_el.text = "and"
+        
+        child_filters_el = SubElement(additional_criteria_el, "childFilters")
+        for field_id, value in where.iteritems():
+            child_item_el = SubElement(child_filters_el, "item")
+            field_id_el = SubElement(child_item_el, "fieldId")
+            field_id_el.text = str(field_id)
+            item_filter_type_el = SubElement(child_item_el, "filterType")
+            item_filter_type_el.text = "value"
+            operand_el = SubElement(child_item_el, "operand")
+            operand_el.text = "="
+            value_el = SubElement(child_item_el, "value")
+            value_el.text = str(value)
+
     if max_results:
         
         max_results_el = SubElement(el, "maxResults")
