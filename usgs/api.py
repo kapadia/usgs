@@ -197,7 +197,7 @@ def remove_order_scene():
     raise NotImplementedError
     
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
     """
     .. todo:: Export metadata from the search results e.g.
     
@@ -209,7 +209,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     """
     api_key = _get_api_key()
     
-    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
+    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, where=where, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
