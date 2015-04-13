@@ -24,7 +24,7 @@ def _get_api_key():
     return api_key
 
 
-def _check_for_error(root):
+def _check_for_usgs_error(root):
     fault_code_el = root.find("SOAP-ENV:Body/SOAP-ENV:Fault/faultcode", NAMESPACES)
     
     if fault_code_el is None:
@@ -57,7 +57,7 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:datasetsResponse/return/item", NAMESPACES)
     
@@ -74,7 +74,7 @@ def dataset_fields(dataset, node):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item", NAMESPACES)
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
@@ -99,7 +99,7 @@ def download(dataset, node, entityids, product):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:downloadResponse/return/item", NAMESPACES)
     
@@ -116,7 +116,7 @@ def download_options(dataset, node, entityids):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item", NAMESPACES)
     
@@ -142,12 +142,14 @@ def item_basket():
     
     
 def login(username, password):
-    
     xml = soap.login(username, password)
     r = requests.post(USGS_API, xml)
     
+    if r.status_code is not 200:
+        raise Exception(r.text)
+
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     element = root.find("SOAP-ENV:Body/ns1:loginResponse/return", NAMESPACES)
     
@@ -180,7 +182,7 @@ def metadata(dataset, node, sceneids, api_key=None):
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:metadataResponse/return/item", NAMESPACES)
     
@@ -213,7 +215,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
-    _check_for_error(root)
+    _check_for_usgs_error(root)
     
     items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
     
