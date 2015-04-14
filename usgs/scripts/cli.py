@@ -110,10 +110,12 @@ def dataset_fields(dataset, node):
 @click.option("--longitude")
 @click.option("--latitude")
 @click.option("--distance", help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
+@click.option("--lower-left", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
+@click.option("--upper-right", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
 @click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
 @click.option('--geojson', is_flag=True)
 @api_key_opt
-def search(dataset, node, start_date, end_date, longitude, latitude, distance, where, api_key, geojson):
+def search(dataset, node, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, api_key, geojson):
     
     node = get_node(dataset, node)
     
@@ -127,7 +129,11 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, w
         field_lut = { format_fieldname(field['name']): field['fieldId'] for field in fields }
         where = { field_lut[format_fieldname(k)]: v for k, v in where if format_fieldname(k) in field_lut }
     
-    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
+    if lower_left:
+        ll = dict(zip(['longitude', 'latitude'], lower_left))
+        ur = dict(zip(['longitude', 'latitude'], upper_right))
+        
+    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=ll, ur=ur, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
     
     if geojson:
         features = map(to_geojson_feature, data)
