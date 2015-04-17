@@ -130,10 +130,10 @@ def search(dataset, node, start_date, end_date, longitude, latitude, distance, l
         where = { field_lut[format_fieldname(k)]: v for k, v in where if format_fieldname(k) in field_lut }
     
     if lower_left:
-        ll = dict(zip(['longitude', 'latitude'], lower_left))
-        ur = dict(zip(['longitude', 'latitude'], upper_right))
-        
-    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=ll, ur=ur, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
+        lower_left = dict(zip(['longitude', 'latitude'], lower_left))
+        upper_right = dict(zip(['longitude', 'latitude'], upper_right))
+    
+    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=lower_left, ur=upper_right, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
     
     if geojson:
         features = map(to_geojson_feature, data)
