@@ -146,7 +146,7 @@ def login(username, password):
     r = requests.post(USGS_API, xml)
     
     if r.status_code is not 200:
-        raise Exception(r.text)
+        raise USGSError(r.text)
 
     root = ElementTree.fromstring(r.text)
     _check_for_usgs_error(root)
