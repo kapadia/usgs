@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>USGS API &mdash; usgs 0.1.0 documentation</title>
+  <title>USGS API &mdash; usgs 0.1.1 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,12 +28,14 @@
   
 
   
-    <link rel="top" title="usgs 0.1.0 documentation" href="../index.html"/>
+
+  
+    <link rel="top" title="usgs 0.1.1 documentation" href="../index.html"/>
         <link rel="next" title="USGS SOAP" href="soap.html"/>
         <link rel="prev" title="USGS CLI" href="cli.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,21 +46,41 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> usgs</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> usgs
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a></li>
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#login">Login</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#logout">Logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search">Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#metadata">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#download-options">Download Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#download-url">Download URL</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">USGS API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="soap.html">USGS SOAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
@@ -66,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -90,19 +113,21 @@
     <li>USGS API</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/reference/api.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../_sources/reference/api.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <span class="target" id="module-usgs"></span><div class="section" id="module-usgs.api">
 <span id="usgs-api"></span><h1>USGS API<a class="headerlink" href="#module-usgs.api" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="usgs.api.download">
-<tt class="descclassname">usgs.api.</tt><tt class="descname">download</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>product</em><big>)</big><a class="reference internal" href="../_modules/usgs/api.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.download" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.api.</code><code class="descname">download</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>product</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Though USGS supports multiple products in a single request, there&#8217;s
 ambiguity in the returned list. This wrapper only allows a single
 product per request.</p>
@@ -112,8 +137,29 @@ varies depending on the product.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="usgs.api.metadata">
+<code class="descclassname">usgs.api.</code><code class="descname">metadata</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>sceneids</em>, <em>extended=False</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request metadata for a given scene in a USGS dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataset</strong> &#8211; </li>
+<li><strong>node</strong> &#8211; </li>
+<li><strong>sceneids</strong> &#8211; </li>
+<li><strong>extended</strong> &#8211; Send a second request to the metadata url to get extended metadata on the scene.</li>
+<li><strong>api_key</strong> &#8211; </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="usgs.api.search">
-<tt class="descclassname">usgs.api.</tt><tt class="descname">search</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>lat=None</em>, <em>lng=None</em>, <em>distance=100</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>max_results=50000</em>, <em>starting_number=1</em>, <em>sort_order='DESC'</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/api.html#search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.search" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.api.</code><code class="descname">search</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>lat=None</em>, <em>lng=None</em>, <em>distance=100</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>where=None</em>, <em>max_results=50000</em>, <em>starting_number=1</em>, <em>sort_order='DESC'</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.search" title="Permalink to this definition">¶</a></dt>
 <dd><div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p>Export metadata from the search results e.g.</p>
@@ -133,10 +179,10 @@ varies depending on the product.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="soap.html" class="btn btn-neutral float-right" title="USGS SOAP"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="soap.html" class="btn btn-neutral float-right" title="USGS SOAP" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cli.html" class="btn btn-neutral" title="USGS CLI"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral" title="USGS CLI" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -148,9 +194,10 @@ varies depending on the product.</p>
         &copy; Copyright 2015, Amit Kapadia.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -165,7 +212,7 @@ varies depending on the product.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

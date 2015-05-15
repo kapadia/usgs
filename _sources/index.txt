@@ -9,11 +9,9 @@ usgs is a Python library for interfacing with the US Geologic Survey's Inventory
 Installation
 ------------
 
-.. todo:: Post on PyPI
-
 .. code-block:: bash
 
-    pip install git+https://github.com/mapbox/usgs.git
+    pip install usgs
 
 
 Catalogs

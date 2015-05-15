@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>USGS SOAP &mdash; usgs 0.1.0 documentation</title>
+  <title>USGS SOAP &mdash; usgs 0.1.1 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,12 +28,14 @@
   
 
   
-    <link rel="top" title="usgs 0.1.0 documentation" href="../index.html"/>
+
+  
+    <link rel="top" title="usgs 0.1.1 documentation" href="../index.html"/>
         <link rel="next" title="CWIC/LSI Explorer" href="catalog/cwic.html"/>
         <link rel="prev" title="USGS API" href="api.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,21 +46,41 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> usgs</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> usgs
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a></li>
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#login">Login</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#logout">Logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search">Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#metadata">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#download-options">Download Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#download-url">Download URL</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">USGS API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">USGS SOAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
@@ -66,6 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -90,13 +113,15 @@
     <li>USGS SOAP</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/reference/soap.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../_sources/reference/soap.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <span class="target" id="module-usgs"></span><div class="section" id="usgs-soap">
 <h1>USGS SOAP<a class="headerlink" href="#usgs-soap" title="Permalink to this headline">¶</a></h1>
@@ -107,7 +132,7 @@
 </div>
 <span class="target" id="module-usgs.soap"></span><dl class="function">
 <dt id="usgs.soap.clear_bulk_download_order">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">clear_bulk_download_order</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#clear_bulk_download_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.clear_bulk_download_order" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">clear_bulk_download_order</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#clear_bulk_download_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.clear_bulk_download_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method is used to clear bulk download order information from the item basket.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -126,7 +151,7 @@
 
 <dl class="function">
 <dt id="usgs.soap.clear_order">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">clear_order</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#clear_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.clear_order" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">clear_order</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#clear_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.clear_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method is used to clear order information from the item basket.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,7 +170,7 @@
 
 <dl class="function">
 <dt id="usgs.soap.dataset_fields">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">dataset_fields</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#dataset_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.dataset_fields" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">dataset_fields</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#dataset_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.dataset_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>This request is used to return the metadata filter
 fields for the specified dataset. These values can
 be used as additional criteria when submitting search
@@ -167,7 +192,7 @@ and hit queries.</p>
 
 <dl class="function">
 <dt id="usgs.soap.datasets">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">datasets</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.datasets" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">datasets</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method is used to find datasets available for searching.
 By passing no parameters except node, all available datasets
 are returned. Additional parameters such as temporal range
@@ -206,7 +231,7 @@ that the PHP strtotime function can understand</li>
 
 <dl class="function">
 <dt id="usgs.soap.download">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">download</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>products</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.download" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">download</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>products</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>The use of this request will be to obtain valid data download URLs.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -227,7 +252,7 @@ that the PHP strtotime function can understand</li>
 
 <dl class="function">
 <dt id="usgs.soap.download_options">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">download_options</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#download_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.download_options" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">download_options</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#download_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.download_options" title="Permalink to this definition">¶</a></dt>
 <dd><p>The use of the download options request is to discover the different download
 options for each scene. Some download options may exist but still be unavailable
 due to disk usage and many other factors. If a download is unavailable
@@ -250,7 +275,7 @@ it may need to be ordered.</p>
 
 <dl class="function">
 <dt id="usgs.soap.get_bulk_download_products">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">get_bulk_download_products</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#get_bulk_download_products"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.get_bulk_download_products" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">get_bulk_download_products</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#get_bulk_download_products"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.get_bulk_download_products" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve bulk download products on a scene-by-scene basis.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -270,7 +295,7 @@ it may need to be ordered.</p>
 
 <dl class="function">
 <dt id="usgs.soap.get_order_products">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">get_order_products</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#get_order_products"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.get_order_products" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">get_order_products</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#get_order_products"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.get_order_products" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve orderable products on a scene-by-scene basis.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -294,7 +319,7 @@ it may need to be ordered.</p>
 
 <dl class="function">
 <dt id="usgs.soap.item_basket">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">item_basket</tt><big>(</big><em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#item_basket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.item_basket" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">item_basket</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#item_basket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.item_basket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the current item basket for the current user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -308,7 +333,7 @@ it may need to be ordered.</p>
 
 <dl class="function">
 <dt id="usgs.soap.login">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">login</tt><big>(</big><em>username</em>, <em>password</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.login" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">login</code><span class="sig-paren">(</span><em>username</em>, <em>password</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#login"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.login" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method requires SSL be used due to the sensitive nature of
 users passwords. Upon a successful login, an API key will be
 returned. This key will be active for one hour and should be
@@ -331,7 +356,7 @@ a user-based role in the users profile.</p>
 
 <dl class="function">
 <dt id="usgs.soap.logout">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">logout</tt><big>(</big><em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.logout" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">logout</code><span class="sig-paren">(</span><em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#logout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.logout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the users API key from being used in the future.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -345,7 +370,7 @@ a user-based role in the users profile.</p>
 
 <dl class="function">
 <dt id="usgs.soap.metadata">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">metadata</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>sceneids</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.metadata" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">metadata</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>sceneids</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>The use of the metadata request is intended for those who have
 acquired scene IDs from a different source. It will return the
 same metadata that is available via the search request.</p>
@@ -367,7 +392,7 @@ same metadata that is available via the search request.</p>
 
 <dl class="function">
 <dt id="usgs.soap.search">
-<tt class="descclassname">usgs.soap.</tt><tt class="descname">search</tt><big>(</big><em>dataset</em>, <em>node</em>, <em>lat=None</em>, <em>lng=None</em>, <em>distance=100</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>max_results=50000</em>, <em>starting_number=1</em>, <em>sort_order='DESC'</em>, <em>api_key=None</em><big>)</big><a class="reference internal" href="../_modules/usgs/soap.html#search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.search" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.soap.</code><code class="descname">search</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>lat=None</em>, <em>lng=None</em>, <em>distance=100</em>, <em>ll=None</em>, <em>ur=None</em>, <em>start_date=None</em>, <em>end_date=None</em>, <em>where=None</em>, <em>max_results=50000</em>, <em>starting_number=1</em>, <em>sort_order='DESC'</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/soap.html#search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.soap.search" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -382,6 +407,7 @@ same metadata that is available via the search request.</p>
 <li><strong>ur</strong> &#8211; </li>
 <li><strong>start_date</strong> &#8211; </li>
 <li><strong>end_date</strong> &#8211; </li>
+<li><strong>where</strong> &#8211; Specify additional search criteria</li>
 <li><strong>max_results</strong> &#8211; </li>
 <li><strong>starting_number</strong> &#8211; </li>
 <li><strong>sort_order</strong> &#8211; </li>
@@ -401,10 +427,10 @@ same metadata that is available via the search request.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="catalog/cwic.html" class="btn btn-neutral float-right" title="CWIC/LSI Explorer"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="catalog/cwic.html" class="btn btn-neutral float-right" title="CWIC/LSI Explorer" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="api.html" class="btn btn-neutral" title="USGS API"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="api.html" class="btn btn-neutral" title="USGS API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -416,9 +442,10 @@ same metadata that is available via the search request.</p>
         &copy; Copyright 2015, Amit Kapadia.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -433,7 +460,7 @@ same metadata that is available via the search request.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.0',
+            VERSION:'0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

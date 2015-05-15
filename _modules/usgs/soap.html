@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>usgs.soap &mdash; usgs 0.1.0 documentation</title>
+  <title>usgs.soap &mdash; usgs 0.1.1 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   
   
@@ -28,11 +28,13 @@
   
 
   
-    <link rel="top" title="usgs 0.1.0 documentation" href="../../index.html"/>
+
+  
+    <link rel="top" title="usgs 0.1.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -43,21 +45,41 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../../index.html" class="fa fa-home"> usgs</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+        
+
+        
+          <a href="../../index.html" class="icon icon-home"> usgs
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+
+        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/cli.html">USGS CLI</a></li>
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/cli.html">USGS CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#login">Login</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#logout">Logout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#search">Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#metadata">Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#download-options">Download Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#download-url">Download URL</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">USGS API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/soap.html">USGS SOAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
@@ -65,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/hdds.html">HDDSExplorer</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -91,18 +114,20 @@
     <li>usgs.soap</li>
       <li class="wy-breadcrumbs-aside">
         
+          
+        
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <h1>Source code for usgs.soap</h1><div class="highlight"><pre>
 <span class="c"># Template XML requests required by the USGS Inventory Service</span>
 <span class="c"># Requesting data like it&#39;s 1999</span>
 
 <span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">SubElement</span><span class="p">,</span> <span class="n">tostring</span>
-<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">CATALOG_NODES</span><span class="p">,</span> <span class="n">USGSApiKeyRequiredError</span><span class="p">,</span> <span class="n">USGSCatalogNodeDoesNotExist</span>
+<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">CATALOG_NODES</span><span class="p">,</span> <span class="n">USGSApiKeyRequiredError</span><span class="p">,</span> <span class="n">USGSCatalogNodeDoesNotExist</span><span class="p">,</span> <span class="n">USGSDependencyRequired</span>
 
 
 <span class="k">def</span> <span class="nf">create_root_request</span><span class="p">():</span>
@@ -569,7 +594,7 @@
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 <div class="viewcode-block" id="search"><a class="viewcode-back" href="../../reference/soap.html#usgs.soap.search">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :param dataset:</span>
 <span class="sd">    </span>
@@ -588,6 +613,9 @@
 <span class="sd">    :param start_date:</span>
 <span class="sd">    </span>
 <span class="sd">    :param end_date:</span>
+<span class="sd">    </span>
+<span class="sd">    :param where:</span>
+<span class="sd">        Specify additional search criteria</span>
 <span class="sd">    </span>
 <span class="sd">    :param max_results:</span>
 <span class="sd">    </span>
@@ -612,13 +640,13 @@
             <span class="kn">import</span> <span class="nn">pyproj</span>
             <span class="kn">from</span> <span class="nn">shapely</span> <span class="kn">import</span> <span class="n">geometry</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">USGSDependencyRequired</span><span class="p">(</span><span class="s">&quot;Shapely and PyProj are required for search.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">USGSDependencyRequired</span><span class="p">(</span><span class="s">&quot;Shapely and PyProj are required for spatial searches.&quot;</span><span class="p">)</span>
         
         <span class="n">prj</span> <span class="o">=</span> <span class="n">pyproj</span><span class="o">.</span><span class="n">Proj</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s">&#39;aeqd&#39;</span><span class="p">,</span> <span class="n">lat_0</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon_0</span><span class="o">=</span><span class="n">lng</span><span class="p">)</span>
         <span class="n">half_distance</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance</span>
         <span class="n">box</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="o">-</span><span class="n">half_distance</span><span class="p">,</span> <span class="o">-</span><span class="n">half_distance</span><span class="p">,</span> <span class="n">half_distance</span><span class="p">,</span> <span class="n">half_distance</span><span class="p">)</span>
         
-        <span class="n">lats</span><span class="p">,</span> <span class="n">lngs</span> <span class="o">=</span> <span class="n">prj</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">xy</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">lngs</span><span class="p">,</span> <span class="n">lats</span> <span class="o">=</span> <span class="n">prj</span><span class="p">(</span><span class="o">*</span><span class="n">box</span><span class="o">.</span><span class="n">exterior</span><span class="o">.</span><span class="n">xy</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         
         <span class="n">ll</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">lngs</span><span class="p">),</span> <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">lats</span><span class="p">)</span> <span class="p">}</span>
         <span class="n">ur</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">lngs</span><span class="p">),</span> <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">lats</span><span class="p">)</span> <span class="p">}</span>
@@ -640,6 +668,26 @@
         <span class="n">end_date_el</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&quot;xsi:type&quot;</span><span class="p">,</span> <span class="s">&quot;xsd:string&quot;</span><span class="p">)</span>
         <span class="n">end_date_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">end_date</span>
     
+    <span class="k">if</span> <span class="n">where</span><span class="p">:</span>
+        
+        <span class="c"># TODO: Support more than AND key/value equality queries</span>
+        <span class="n">additional_criteria_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;additionalCriteria&quot;</span><span class="p">)</span>
+        
+        <span class="n">filter_type_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">additional_criteria_el</span><span class="p">,</span> <span class="s">&quot;filterType&quot;</span><span class="p">)</span>
+        <span class="n">filter_type_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;and&quot;</span>
+        
+        <span class="n">child_filters_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">additional_criteria_el</span><span class="p">,</span> <span class="s">&quot;childFilters&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_id</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">where</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">child_item_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">child_filters_el</span><span class="p">,</span> <span class="s">&quot;item&quot;</span><span class="p">)</span>
+            <span class="n">field_id_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">child_item_el</span><span class="p">,</span> <span class="s">&quot;fieldId&quot;</span><span class="p">)</span>
+            <span class="n">field_id_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">field_id</span><span class="p">)</span>
+            <span class="n">item_filter_type_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">child_item_el</span><span class="p">,</span> <span class="s">&quot;filterType&quot;</span><span class="p">)</span>
+            <span class="n">item_filter_type_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;value&quot;</span>
+            <span class="n">operand_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">child_item_el</span><span class="p">,</span> <span class="s">&quot;operand&quot;</span><span class="p">)</span>
+            <span class="n">operand_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">&quot;=&quot;</span>
+            <span class="n">value_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">child_item_el</span><span class="p">,</span> <span class="s">&quot;value&quot;</span><span class="p">)</span>
+            <span class="n">value_el</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">max_results</span><span class="p">:</span>
         
         <span class="n">max_results_el</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="s">&quot;maxResults&quot;</span><span class="p">)</span>
@@ -691,9 +739,10 @@
         &copy; Copyright 2015, Amit Kapadia.
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
 </footer>
+
         </div>
       </div>
 
@@ -708,7 +757,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.0',
+            VERSION:'0.1.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
