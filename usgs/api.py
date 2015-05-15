@@ -1,4 +1,4 @@
-
+   
 import os
 from xml.etree import ElementTree
 import requests
@@ -11,6 +11,7 @@ TMPFILE = os.path.join("/", "tmp", "usgs")
 NAMESPACES = {
     "SOAP-ENV": "http://schemas.xmlsoap.org/soap/envelope/",
     "ns1": "https://earthexplorer.usgs.gov/inventory/soap",
+    "eemetadata": "http://earthexplorer.usgs.gov/eemetadata.xsd"
 }
 
 def _get_api_key():
@@ -174,8 +175,17 @@ def logout():
     return True
     
 
-def metadata(dataset, node, sceneids, api_key=None):
+def metadata(dataset, node, sceneids, extended=False, api_key=None):
+    """
+    Request metadata for a given scene in a USGS dataset.
     
+    :param dataset:
+    :param node:
+    :param sceneids:
+    :param extended:
+        Send a second request to the metadata url to get extended metadata on the scene.
+    :param api_key:
+    """
     api_key = _get_api_key()
     
     xml = soap.metadata(dataset, node, sceneids, api_key=api_key)
@@ -187,6 +197,20 @@ def metadata(dataset, node, sceneids, api_key=None):
     items = root.findall("SOAP-ENV:Body/ns1:metadataResponse/return/item", NAMESPACES)
     
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    if extended:
+        
+        def get_extended(scene):
+            metadata_url = scene.get('metadataUrl')
+            
+            r = requests.get(metadata_url)
+            root = ElementTree.fromstring(r.text)
+            items = root.findall("eemetadata:metadataFields/eemetadata:metadataField", NAMESPACES)
+            scene['extended'] = { item.attrib.get('name').strip(): xsi.get(item[0]) for item in items }
+            
+            return scene
+        
+        data = map(get_extended, data)
     
     return data
     

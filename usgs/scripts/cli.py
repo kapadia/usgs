@@ -82,12 +82,13 @@ def datasets(node):
 @click.argument("dataset")
 @click.argument("scene-ids", nargs=-1)
 @node_opt
+@click.option("--extended", is_flag=True, help="Probe for more metadata.")
 @api_key_opt
-def metadata(dataset, scene_ids, node, api_key):
+def metadata(dataset, scene_ids, node, extended, api_key):
     
     node = get_node(dataset, node)
     
-    data = api.metadata(dataset, node, scene_ids, api_key)
+    data = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
     print(json.dumps(data))
 
 
