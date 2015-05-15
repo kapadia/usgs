@@ -86,6 +86,9 @@ def datasets(node):
 @api_key_opt
 def metadata(dataset, scene_ids, node, extended, api_key):
     
+    if len(scene_ids) == 0:
+        scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines()) 
+    
     node = get_node(dataset, node)
     
     data = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
