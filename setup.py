@@ -8,7 +8,7 @@ with codecs_open('README.rst', encoding='utf-8') as f:
 
 
 setup(name='usgs',
-      version='0.1.2',
+      version='0.1.3',
       description=u"Access the USGS inventory service",
       long_description=long_description,
       classifiers=[],
