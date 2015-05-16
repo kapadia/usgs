@@ -17,7 +17,7 @@ Installation
 Examples
 --------
 
-These two examples demonstrate how to access metadata for a Hyperion scene and Landsat 8 scene. Both datasets are part of the EarthExplorer node. Hyperion is designated by the dataset ``EO1_HYP_PUB``, Landsat 8 is designated by ``LANDSAT_8``.
+These two examples demonstrate how to access metadata for a Hyperion scene and Landsat 8 scene. Both datasets are part of the EarthExplorer catalog. Hyperion is designated by the dataset ``EO1_HYP_PUB``, Landsat 8 is designated by ``LANDSAT_8``.
 
 
 Python
@@ -84,7 +84,7 @@ Command Line
       }
     ]
     
-    $ usgs amitkapadia$ usgs metadata --node EE LANDSAT_8 LC80290462015135LGN00
+    $ usgs metadata --node EE LANDSAT_8 LC80290462015135LGN00
     [
       {
         "metadataUrl": "http://earthexplorer.usgs.gov/metadata/xml/4923/LC80290462015135LGN00/",
