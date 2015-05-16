@@ -130,9 +130,20 @@
 <div class="highlight-bash"><div class="highlight"><pre>usgs search --node EE EO1_HYP_PUB --start-date <span class="m">20150401</span> --end-date <span class="m">20150501</span> --geojson <span class="p">|</span> gist -f hyperion-20150401-20150501.geojson
 </pre></div>
 </div>
-<div style="margin-top:10px;">
-  <iframe width="560" height="315" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
-</div><div class="section" id="login">
+<div style="margin-top:10px; margin-bottom:20px">
+  <iframe id='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
+</div>
+
+<script>
+window.onresize = function(e) {
+  var mainEl = document.querySelector('div[role="main"]');
+
+  var mapEl = document.getElementById('ghmap');
+  mapEl.width = mainEl.clientWidth;
+}
+
+window.onresize();
+</script><div class="section" id="login">
 <h2>Login<a class="headerlink" href="#login" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre>usgs login <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
 </pre></div>
