@@ -15,9 +15,20 @@ Here's an example of what can be done using the cli and GitHub Gists.
 
 .. raw:: html
 
-    <div style="margin-top:10px;">
-      <iframe width="560" height="315" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
+    <div style="margin-top:10px; margin-bottom:20px">
+      <iframe id='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
     </div>
+    
+    <script>
+    window.onresize = function(e) {
+      var mainEl = document.querySelector('div[role="main"]');
+      
+      var mapEl = document.getElementById('ghmap');
+      mapEl.width = mainEl.clientWidth;
+    }
+    
+    window.onresize();
+    </script>
 
 
 Login
