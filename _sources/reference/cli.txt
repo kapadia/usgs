@@ -16,19 +16,8 @@ Here's an example of what can be done using the cli and GitHub Gists.
 .. raw:: html
 
     <div style="margin-top:10px; margin-bottom:20px">
-      <iframe id='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
+      <iframe class='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
     </div>
-    
-    <script>
-    window.onresize = function(e) {
-      var mainEl = document.querySelector('div[role="main"]');
-      
-      var mapEl = document.getElementById('ghmap');
-      mapEl.width = mainEl.clientWidth;
-    }
-    
-    window.onresize();
-    </script>
 
 
 Login
@@ -51,6 +40,32 @@ Search
 .. code-block:: bash
 
     usgs search [dataset] --start-date [start date] --end-date [end date] --longitude [lng] --latitude [lat] --node [node]
+
+Suppose you're interested in declassified satellite imagery. The datasets ``CORONA2`` or ``DECLASSII`` can be queried. If you have a GeoJSON file with an AOI, you can pipe the file to ``usgs search``.
+
+.. code-block:: bash
+
+    cat chile.geojson | usgs search --node EE DECLASSII --start-date 19700101 --end-date 19800101 --geojson | gist -f declassii-chile-1970s.geojson
+
+.. raw:: html
+
+    <div style="margin-top:10px; margin-bottom:20px">
+      <iframe class='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2Ffd15d4082da2ec47dbc5%2Fraw%2Fdeclassii-chile-1970s.geojson#08b6ad6d-046d-4fac-9ada-553356358235" frameborder="0"></iframe>
+    </div>
+    
+    <script>
+    window.onresize = function(e) {
+      var mainEl = document.querySelector('div[role="main"]');
+      
+      var mapElems = document.querySelectorAll('.ghmap');
+      for (var i = 0; i < mapElems.length; i++) {
+        mapElems[i].width = mainEl.clientWidth;
+      }
+    }
+    
+    window.onresize();
+    </script>
+
 
 Metadata
 --------

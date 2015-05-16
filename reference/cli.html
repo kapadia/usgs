@@ -5,7 +5,6 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>USGS CLI &mdash; usgs 0.1.3 documentation</title>
@@ -15,6 +14,7 @@
   
 
   
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -35,7 +35,7 @@
         <link rel="prev" title="usgs" href="../index.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
 
 </head>
 
@@ -47,14 +47,8 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
         
-
+          <a href="../index.html" class="fa fa-home"> usgs</a>
         
-          <a href="../index.html" class="icon icon-home"> usgs
-        
-
-        
-        </a>
-
         
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -63,8 +57,6 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-        
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
@@ -113,9 +105,7 @@
     <li>USGS CLI</li>
       <li class="wy-breadcrumbs-aside">
         
-          
-            <a href="../_sources/reference/cli.txt" rel="nofollow"> View page source</a>
-          
+          <a href="../_sources/reference/cli.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -131,19 +121,8 @@
 </pre></div>
 </div>
 <div style="margin-top:10px; margin-bottom:20px">
-  <iframe id='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
-</div>
-
-<script>
-window.onresize = function(e) {
-  var mainEl = document.querySelector('div[role="main"]');
-
-  var mapEl = document.getElementById('ghmap');
-  mapEl.width = mainEl.clientWidth;
-}
-
-window.onresize();
-</script><div class="section" id="login">
+  <iframe class='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
+</div><div class="section" id="login">
 <h2>Login<a class="headerlink" href="#login" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre>usgs login <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
 </pre></div>
@@ -160,7 +139,26 @@ window.onresize();
 <div class="highlight-bash"><div class="highlight"><pre>usgs search <span class="o">[</span>dataset<span class="o">]</span> --start-date <span class="o">[</span>start date<span class="o">]</span> --end-date <span class="o">[</span>end date<span class="o">]</span> --longitude <span class="o">[</span>lng<span class="o">]</span> --latitude <span class="o">[</span>lat<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
 </pre></div>
 </div>
+<p>Suppose you&#8217;re interested in declassified satellite imagery. The datasets <code class="docutils literal"><span class="pre">CORONA2</span></code> or <code class="docutils literal"><span class="pre">DECLASSII</span></code> can be queried. If you have a GeoJSON file with an AOI, you can pipe the file to <code class="docutils literal"><span class="pre">usgs</span> <span class="pre">search</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>cat chile.geojson <span class="p">|</span> usgs search --node EE DECLASSII --start-date <span class="m">19700101</span> --end-date <span class="m">19800101</span> --geojson <span class="p">|</span> gist -f declassii-chile-1970s.geojson
+</pre></div>
 </div>
+<div style="margin-top:10px; margin-bottom:20px">
+  <iframe class='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2Ffd15d4082da2ec47dbc5%2Fraw%2Fdeclassii-chile-1970s.geojson#08b6ad6d-046d-4fac-9ada-553356358235" frameborder="0"></iframe>
+</div>
+
+<script>
+window.onresize = function(e) {
+  var mainEl = document.querySelector('div[role="main"]');
+
+  var mapElems = document.querySelectorAll('.ghmap');
+  for (var i = 0; i < mapElems.length; i++) {
+    mapElems[i].width = mainEl.clientWidth;
+  }
+}
+
+window.onresize();
+</script></div>
 <div class="section" id="metadata">
 <h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-bash"><div class="highlight"><pre>usgs metadata <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id 1<span class="o">]</span> <span class="o">[</span>entity/scene id 2<span class="o">]</span> ... <span class="o">[</span>entity/scene id n<span class="o">]</span>
@@ -403,10 +401,10 @@ window.onresize();
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="USGS API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="USGS API">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral" title="usgs" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral" title="usgs"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -418,10 +416,10 @@ window.onresize();
         &copy; Copyright 2015, Amit Kapadia.
     </p>
   </div>
+
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-
+  
 </footer>
-
         </div>
       </div>
 
