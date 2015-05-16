@@ -7,6 +7,19 @@ USGS CLI
 
 This library comes with a command line interface to expose many common requests, such as authenticating, searching, downloading, and obtaining metadata.
 
+Here's an example of what can be done using the cli and GitHub Gists.
+
+.. code-block:: bash
+
+    usgs search --node EE EO1_HYP_PUB --start-date 20150401 --end-date 20150501 --geojson | gist -f hyperion-20150401-20150501.geojson
+
+.. raw:: html
+
+    <div style="margin-top:10px;">
+      <iframe width="560" height="315" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
+    </div>
+
+
 Login
 -----
 
