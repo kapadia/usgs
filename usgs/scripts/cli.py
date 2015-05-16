@@ -49,6 +49,21 @@ def to_geojson_feature(entry):
         }
     }
 
+
+def explode(coords):
+    for e in coords:
+        if isinstance(e, (float, int, long)):
+            yield coords
+            break
+        else:
+            for f in explode(e):
+                yield f
+
+def get_bbox(f):
+    x, y = zip(*list(explode(f['geometry']['coordinates'])))
+    return min(x), min(y), max(x), max(y)
+
+
 api_key_opt = click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
 node_opt = click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
 
@@ -90,7 +105,6 @@ def metadata(dataset, scene_ids, node, extended, api_key):
         scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines()) 
     
     node = get_node(dataset, node)
-    
     data = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
     print(json.dumps(data))
 
@@ -109,6 +123,7 @@ def dataset_fields(dataset, node):
 @click.command()
 @click.argument("dataset")
 @node_opt
+@click.argument("aoi", default="-")
 @click.option("--start-date")
 @click.option("--end-date")
 @click.option("--longitude")
@@ -119,9 +134,17 @@ def dataset_fields(dataset, node):
 @click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
 @click.option('--geojson', is_flag=True)
 @api_key_opt
-def search(dataset, node, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, api_key, geojson):
+def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, api_key, geojson):
     
     node = get_node(dataset, node)
+    
+    if aoi == "-":
+        src = click.open_file('-').readlines()
+        aoi = json.loads(''.join([ line.strip() for line in src ]))
+        
+        bbox = map(get_bbox, aoi.get('features'))[0]
+        lower_left = bbox[0:2]
+        upper_right = bbox[2:4]
     
     if where:
         # Query the dataset fields endpoint for queryable fields
