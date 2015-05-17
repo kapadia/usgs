@@ -211,8 +211,6 @@ def metadata(dataset, node, sceneids, extended=False, api_key=None):
     api_key = _get_api_key()
     
     xml = soap.metadata(dataset, node, sceneids, api_key=api_key)
-    print USGS_API
-    print xml
     r = requests.post(USGS_API, xml)
     
     root = ElementTree.fromstring(r.text)
