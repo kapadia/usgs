@@ -123,7 +123,7 @@ def dataset_fields(dataset, node):
 @click.command()
 @click.argument("dataset")
 @node_opt
-@click.argument("aoi", default="-")
+@click.argument("aoi", default="-", required=False)
 @click.option("--start-date")
 @click.option("--end-date")
 @click.option("--longitude")
@@ -133,18 +133,21 @@ def dataset_fields(dataset, node):
 @click.option("--upper-right", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
 @click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
 @click.option('--geojson', is_flag=True)
+@click.option("--extended", is_flag=True, help="Probe for more metadata.")
 @api_key_opt
-def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, api_key, geojson):
-    
+def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, geojson, extended, api_key):
+
     node = get_node(dataset, node)
     
     if aoi == "-":
-        src = click.open_file('-').readlines()
-        aoi = json.loads(''.join([ line.strip() for line in src ]))
+        src = click.open_file('-')
+        if not src.isatty():
+            lines = src.readlines()
+            aoi = json.loads(''.join([ line.strip() for line in lines ]))
         
-        bbox = map(get_bbox, aoi.get('features'))[0]
-        lower_left = bbox[0:2]
-        upper_right = bbox[2:4]
+            bbox = map(get_bbox, aoi.get('features'))[0]
+            lower_left = bbox[0:2]
+            upper_right = bbox[2:4]
     
     if where:
         # Query the dataset fields endpoint for queryable fields
@@ -160,7 +163,7 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
         lower_left = dict(zip(['longitude', 'latitude'], lower_left))
         upper_right = dict(zip(['longitude', 'latitude'], upper_right))
     
-    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=lower_left, ur=upper_right, start_date=start_date, end_date=end_date, where=where, api_key=api_key)
+    data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=lower_left, ur=upper_right, start_date=start_date, end_date=end_date, where=where, extended=extended, api_key=api_key)
     
     if geojson:
         features = map(to_geojson_feature, data)

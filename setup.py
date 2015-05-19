@@ -8,20 +8,24 @@ with codecs_open('README.rst', encoding='utf-8') as f:
 
 
 setup(name='usgs',
-      version='0.1.3',
+      version='0.1.4',
       description=u"Access the USGS inventory service",
       long_description=long_description,
       classifiers=[],
       keywords='',
       author=u"Amit Kapadia",
-      author_email='amit@mapbox.com',
+      author_email='amit@planet.com',
       url='https://github.com/mapbox/usgs',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       package_data={'usgs': ['data/datasets.json']},
       zip_safe=False,
-      install_requires=['click', 'requests'],
+      install_requires=[
+          'click>=4.0',
+          'requests>=2.7.0',
+          'requests_futures>=0.9.5'
+      ],
       extras_require={
           'test': ['pytest'],
       },

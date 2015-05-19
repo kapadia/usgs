@@ -2,6 +2,7 @@
 import os
 from xml.etree import ElementTree
 import requests
+from requests_futures.sessions import FuturesSession
 
 from usgs import USGS_API, USGSError, USGSConnectionError
 from usgs import soap, xsi
@@ -26,6 +27,7 @@ def _get_api_key():
 
 
 def _check_for_usgs_error(root):
+
     fault_code_el = root.find("SOAP-ENV:Body/SOAP-ENV:Fault/faultcode", NAMESPACES)
     
     if fault_code_el is None:
@@ -40,6 +42,40 @@ def _check_for_usgs_error(root):
         raise USGSConnectionError(fault_string)
     else:
         raise USGSError(fault_string)
+
+
+def _get_extended(scene, resp):
+    """
+    Parse metadata returned from the metadataUrl of a USGS scene.
+    
+    :param scene:
+        Dictionary representation of a USGS scene
+    :param resp:
+        Response object from requests/grequests
+    """
+    root = ElementTree.fromstring(resp.text)
+    items = root.findall("eemetadata:metadataFields/eemetadata:metadataField", NAMESPACES)
+    scene['extended'] = { item.attrib.get('name').strip(): xsi.get(item[0]) for item in items }
+    
+    return scene
+
+
+def _async_requests(urls):
+    """
+    Sends multiple non-blocking requests. Returns
+    a list of responses.
+    
+    :param urls:
+        List of urls
+    """
+    
+    session = FuturesSession(max_workers=30)
+    futures = [ session.get(url) for url in urls ]
+    return [ future.result() for future in futures ]
+
+
+def _get_metadata_url(scene):
+    return scene.get('metadataUrl')
 
 
 def clear_bulk_download_order():
@@ -199,18 +235,9 @@ def metadata(dataset, node, sceneids, extended=False, api_key=None):
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
     
     if extended:
-        
-        def get_extended(scene):
-            metadata_url = scene.get('metadataUrl')
-            
-            r = requests.get(metadata_url)
-            root = ElementTree.fromstring(r.text)
-            items = root.findall("eemetadata:metadataFields/eemetadata:metadataField", NAMESPACES)
-            scene['extended'] = { item.attrib.get('name').strip(): xsi.get(item[0]) for item in items }
-            
-            return scene
-        
-        data = map(get_extended, data)
+        metadata_urls = map(_get_metadata_url, data)
+        results = _async_requests(metadata_urls)
+        data = map(lambda idx: _get_extended(data[idx], results[idx]), range(len(data)))
     
     return data
     
@@ -223,7 +250,7 @@ def remove_order_scene():
     raise NotImplementedError
     
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
     """
     .. todo:: Export metadata from the search results e.g.
     
@@ -234,16 +261,21 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         <nextRecord xsi:type="xsd:int">41</nextRecord>
     """
     api_key = _get_api_key()
-    
+
     xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, where=where, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
     r = requests.post(USGS_API, xml)
-    
+
     root = ElementTree.fromstring(r.text)
     _check_for_usgs_error(root)
-    
+
     items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
-    
+
     data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    
+    if extended:
+        metadata_urls = map(_get_metadata_url, data)
+        results = _async_requests(metadata_urls)
+        data = map(lambda idx: _get_extended(data[idx], results[idx]), range(len(data)))
     
     return data
 
