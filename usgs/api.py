@@ -2,7 +2,7 @@
 import os
 from xml.etree import ElementTree
 import requests
-import grequests
+from requests_futures.sessions import FuturesSession
 
 from usgs import USGS_API, USGSError, USGSConnectionError
 from usgs import soap, xsi
@@ -58,6 +58,20 @@ def _get_extended(scene, resp):
     scene['extended'] = { item.attrib.get('name').strip(): xsi.get(item[0]) for item in items }
     
     return scene
+
+
+def _async_requests(urls):
+    """
+    Sends multiple non-blocking requests. Returns
+    a list of responses.
+    
+    :param urls:
+        List of urls
+    """
+    
+    session = FuturesSession(max_workers=30)
+    futures = [ session.get(url) for url in urls ]
+    return [ future.result() for future in futures ]
 
 
 def _get_metadata_url(scene):
@@ -222,9 +236,8 @@ def metadata(dataset, node, sceneids, extended=False, api_key=None):
     
     if extended:
         metadata_urls = map(_get_metadata_url, data)
-        rs = grequests.map([grequests.get(url) for url in metadata_urls], size=20)
-        
-        data = map(lambda idx: _get_extended(data[idx], rs[idx]), range(len(data)))
+        results = _async_requests(metadata_urls)
+        data = map(lambda idx: _get_extended(data[idx], results[idx]), range(len(data)))
     
     return data
     
@@ -261,9 +274,8 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     
     if extended:
         metadata_urls = map(_get_metadata_url, data)
-        rs = grequests.map([grequests.get(url) for url in metadata_urls], size=20)
-        
-        data = map(lambda idx: _get_extended(data[idx], rs[idx]), range(len(data)))
+        results = _async_requests(metadata_urls)
+        data = map(lambda idx: _get_extended(data[idx], results[idx]), range(len(data)))
     
     return data
 
