@@ -22,9 +22,9 @@ setup(name='usgs',
       package_data={'usgs': ['data/datasets.json']},
       zip_safe=False,
       install_requires=[
-          'click',
-          'requests',
-          'requests_futures'
+          'click>=4.0',
+          'requests>=2.7.0',
+          'requests_futures>=0.9.5'
       ],
       extras_require={
           'test': ['pytest'],
