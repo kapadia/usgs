@@ -88,8 +88,10 @@ def logout():
 
 @click.command()
 @click.argument("node")
-def datasets(node):
-    data = api.datasets(None, node)
+@click.option("--start-date")
+@click.option("--end-date")
+def datasets(node, start_date, end_date):
+    data = api.datasets(None, node, start_date=start_date, end_date=end_date)
     print(json.dumps(data))
 
 
