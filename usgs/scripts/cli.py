@@ -100,14 +100,20 @@ def datasets(node, start_date, end_date):
 @click.argument("scene-ids", nargs=-1)
 @node_opt
 @click.option("--extended", is_flag=True, help="Probe for more metadata.")
+@click.option('--geojson', is_flag=True)
 @api_key_opt
-def metadata(dataset, scene_ids, node, extended, api_key):
+def metadata(dataset, scene_ids, node, extended, geojson, api_key):
     
     if len(scene_ids) == 0:
         scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines()) 
     
     node = get_node(dataset, node)
     data = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
+    
+    if geojson:
+        features = map(to_geojson_feature, data)
+        data = { 'type': 'FeatureCollection', 'features': features }
+    
     print(json.dumps(data))
 
 
