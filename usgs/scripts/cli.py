@@ -151,11 +151,14 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
         src = click.open_file('-')
         if not src.isatty():
             lines = src.readlines()
-            aoi = json.loads(''.join([ line.strip() for line in lines ]))
             
-            bbox = map(get_bbox, aoi.get('features') or [aoi])[0]
-            lower_left = bbox[0:2]
-            upper_right = bbox[2:4]
+            if len(lines) > 0:
+                
+                aoi = json.loads(''.join([ line.strip() for line in lines ]))
+            
+                bbox = map(get_bbox, aoi.get('features') or [aoi])[0]
+                lower_left = bbox[0:2]
+                upper_right = bbox[2:4]
     
     if where:
         # Query the dataset fields endpoint for queryable fields
