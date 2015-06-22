@@ -88,8 +88,10 @@ def logout():
 
 @click.command()
 @click.argument("node")
-def datasets(node):
-    data = api.datasets(None, node)
+@click.option("--start-date")
+@click.option("--end-date")
+def datasets(node, start_date, end_date):
+    data = api.datasets(None, node, start_date=start_date, end_date=end_date)
     print(json.dumps(data))
 
 
@@ -98,14 +100,20 @@ def datasets(node):
 @click.argument("scene-ids", nargs=-1)
 @node_opt
 @click.option("--extended", is_flag=True, help="Probe for more metadata.")
+@click.option('--geojson', is_flag=True)
 @api_key_opt
-def metadata(dataset, scene_ids, node, extended, api_key):
+def metadata(dataset, scene_ids, node, extended, geojson, api_key):
     
     if len(scene_ids) == 0:
-        scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines()) 
+        scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines())
     
     node = get_node(dataset, node)
     data = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
+    
+    if geojson:
+        features = map(to_geojson_feature, data)
+        data = { 'type': 'FeatureCollection', 'features': features }
+    
     print(json.dumps(data))
 
 
@@ -143,11 +151,14 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
         src = click.open_file('-')
         if not src.isatty():
             lines = src.readlines()
-            aoi = json.loads(''.join([ line.strip() for line in lines ]))
-        
-            bbox = map(get_bbox, aoi.get('features'))[0]
-            lower_left = bbox[0:2]
-            upper_right = bbox[2:4]
+            
+            if len(lines) > 0:
+                
+                aoi = json.loads(''.join([ line.strip() for line in lines ]))
+            
+                bbox = map(get_bbox, aoi.get('features') or [aoi])[0]
+                lower_left = bbox[0:2]
+                upper_right = bbox[2:4]
     
     if where:
         # Query the dataset fields endpoint for queryable fields
