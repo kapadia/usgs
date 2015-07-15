@@ -207,7 +207,8 @@ def download_url(dataset, scene_ids, product, node, api_key):
     node = get_node(dataset, node)
     
     data = api.download(dataset, node, scene_ids, product)
-    print(json.dumps(data))
+    for d in data:
+        click.echo(d)
 
 
 usgs.add_command(login)
