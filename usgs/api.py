@@ -1,10 +1,11 @@
    
 import os
+import json
 from xml.etree import ElementTree
 import requests
 from requests_futures.sessions import FuturesSession
 
-from usgs import USGS_API, USGSError, USGSConnectionError
+from usgs import USGS_API, USGSError
 from usgs import soap, xsi
 
 
@@ -37,11 +38,8 @@ def _check_for_usgs_error(root):
     
     fault_code = fault_code_el.text
     fault_string = fault_string_el.text
-    
-    if fault_code == "AUTH_UNAUTHORIZED":
-        raise USGSConnectionError(fault_string)
-    else:
-        raise USGSError(fault_string)
+
+    raise USGSError('%s: %s' % (fault_code, fault_string))
 
 
 def _get_extended(scene, resp):

@@ -31,9 +31,6 @@ class USGSApiKeyRequiredError(Exception):
 class USGSCatalogNodeDoesNotExist(Exception):
     pass
 
-class USGSConnectionError(Exception):
-    pass
-
 class USGSAmbiguousNode(Exception):
     pass
 
