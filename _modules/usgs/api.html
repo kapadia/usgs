@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>usgs.api &mdash; usgs 0.1.3 documentation</title>
+  <title>usgs.api &mdash; usgs 0.1.5 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="usgs 0.1.3 documentation" href="../../index.html"/>
+    <link rel="top" title="usgs 0.1.5 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -72,7 +72,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference/cli.html#download-url">Download URL</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">USGS API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/api.html">USGS API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/api.html#examples">Examples</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/soap.html">USGS SOAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference/catalog/ee.html">EarthExplorer</a></li>
@@ -115,10 +118,12 @@
   <h1>Source code for usgs.api</h1><div class="highlight"><pre>
    
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">xml.etree</span> <span class="kn">import</span> <span class="n">ElementTree</span>
 <span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">requests_futures.sessions</span> <span class="kn">import</span> <span class="n">FuturesSession</span>
 
-<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">USGS_API</span><span class="p">,</span> <span class="n">USGSError</span><span class="p">,</span> <span class="n">USGSConnectionError</span>
+<span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">USGS_API</span><span class="p">,</span> <span class="n">USGSError</span>
 <span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">soap</span><span class="p">,</span> <span class="n">xsi</span>
 
 
@@ -141,6 +146,7 @@
 
 
 <span class="k">def</span> <span class="nf">_check_for_usgs_error</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+
     <span class="n">fault_code_el</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/SOAP-ENV:Fault/faultcode&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">fault_code_el</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -150,11 +156,42 @@
     
     <span class="n">fault_code</span> <span class="o">=</span> <span class="n">fault_code_el</span><span class="o">.</span><span class="n">text</span>
     <span class="n">fault_string</span> <span class="o">=</span> <span class="n">fault_string_el</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">raise</span> <span class="n">USGSError</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fault_code</span><span class="p">,</span> <span class="n">fault_string</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_get_extended</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse metadata returned from the metadataUrl of a USGS scene.</span>
+<span class="sd">    </span>
+<span class="sd">    :param scene:</span>
+<span class="sd">        Dictionary representation of a USGS scene</span>
+<span class="sd">    :param resp:</span>
+<span class="sd">        Response object from requests/grequests</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;eemetadata:metadataFields/eemetadata:metadataField&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
+    <span class="n">scene</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">item</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="p">}</span>
     
-    <span class="k">if</span> <span class="n">fault_code</span> <span class="o">==</span> <span class="s">&quot;AUTH_UNAUTHORIZED&quot;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">USGSConnectionError</span><span class="p">(</span><span class="n">fault_string</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">USGSError</span><span class="p">(</span><span class="n">fault_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scene</span>
+
+
+<span class="k">def</span> <span class="nf">_async_requests</span><span class="p">(</span><span class="n">urls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sends multiple non-blocking requests. Returns</span>
+<span class="sd">    a list of responses.</span>
+<span class="sd">    </span>
+<span class="sd">    :param urls:</span>
+<span class="sd">        List of urls</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">session</span> <span class="o">=</span> <span class="n">FuturesSession</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span> <span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span> <span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">futures</span> <span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_metadata_url</span><span class="p">(</span><span class="n">scene</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">scene</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadataUrl&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">clear_bulk_download_order</span><span class="p">():</span>
@@ -314,18 +351,9 @@
     <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">extended</span><span class="p">:</span>
-        
-        <span class="k">def</span> <span class="nf">get_extended</span><span class="p">(</span><span class="n">scene</span><span class="p">):</span>
-            <span class="n">metadata_url</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;metadataUrl&#39;</span><span class="p">)</span>
-            
-            <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metadata_url</span><span class="p">)</span>
-            <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-            <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;eemetadata:metadataFields/eemetadata:metadataField&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
-            <span class="n">scene</span><span class="p">[</span><span class="s">&#39;extended&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="n">item</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="p">}</span>
-            
-            <span class="k">return</span> <span class="n">scene</span>
-        
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">get_extended</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">metadata_urls</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">_get_metadata_url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">_async_requests</span><span class="p">(</span><span class="n">metadata_urls</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">idx</span><span class="p">:</span> <span class="n">_get_extended</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
     
     <span class="k">return</span> <span class="n">data</span>
     
@@ -338,8 +366,46 @@
     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
     
 
-<div class="viewcode-block" id="search"><a class="viewcode-back" href="../../reference/api.html#usgs.api.search">[docs]</a><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="search"><a class="viewcode-back" href="../../reference/api.html#usgs.api.search">[docs]</a><span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="s">&quot;DESC&quot;</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    :param dataset:</span>
+<span class="sd">        USGS dataset (e.g. EO1_HYP_PUB, LANDSAT_8)</span>
+<span class="sd">    :param node:</span>
+<span class="sd">        USGS node representing a dataset catalog (e.g. CWIC, EE, HDDS, LPVS)</span>
+<span class="sd">    :param lat:</span>
+<span class="sd">        Latitude</span>
+<span class="sd">    :param lng:</span>
+<span class="sd">        Longitude</span>
+<span class="sd">    :param distance:</span>
+<span class="sd">        Distance in meters used to for a radial search</span>
+<span class="sd">    :param ll:</span>
+<span class="sd">        Dictionary of longitude/latitude coordinates for the lower left corner</span>
+<span class="sd">        of a bounding box search. e.g. { &quot;longitude&quot;: 0.0, &quot;latitude&quot;: 0.0 }</span>
+<span class="sd">    :param ur:</span>
+<span class="sd">        Dictionary of longitude/latitude coordinates for the upper right corner</span>
+<span class="sd">        of a bounding box search. e.g. { &quot;longitude&quot;: 0.0, &quot;latitude&quot;: 0.0 }</span>
+<span class="sd">    :param start_date:</span>
+<span class="sd">        Start date for when a scene has been acquired</span>
+<span class="sd">    :param end_date:</span>
+<span class="sd">        End date for when a scene has been acquired</span>
+<span class="sd">    :where:</span>
+<span class="sd">        Dictionary representing key/values for finer grained conditional</span>
+<span class="sd">        queries. Only a subset of metadata fields are supported. Available</span>
+<span class="sd">        fields depend on the value of `dataset`, and maybe be found by</span>
+<span class="sd">        submitting a dataset_fields query.</span>
+<span class="sd">    :max_results:</span>
+<span class="sd">        Maximum results returned by the server</span>
+<span class="sd">    :starting_number:</span>
+<span class="sd">        Starting offset for results of a query.</span>
+<span class="sd">    :sort_order:</span>
+<span class="sd">        Order in which results are sorted. Ascending or descending w.r.t the acquisition date.</span>
+<span class="sd">    :extended:</span>
+<span class="sd">        Boolean flag. When true a subsequent query will be sent to the `metadataUrl` returned by</span>
+<span class="sd">        the first query.</span>
+<span class="sd">    :api_key:</span>
+<span class="sd">        API key for EROS. Not required for searching.</span>
+<span class="sd">    </span>
 <span class="sd">    .. todo:: Export metadata from the search results e.g.</span>
 <span class="sd">    </span>
 <span class="sd">        &lt;numberReturned xsi:type=&quot;xsd:int&quot;&gt;41&lt;/numberReturned&gt;</span>
@@ -349,16 +415,21 @@
 <span class="sd">        &lt;nextRecord xsi:type=&quot;xsd:int&quot;&gt;41&lt;/nextRecord&gt;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">api_key</span> <span class="o">=</span> <span class="n">_get_api_key</span><span class="p">()</span>
-    
+
     <span class="n">xml</span> <span class="o">=</span> <span class="n">soap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">lng</span><span class="o">=</span><span class="n">lng</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ll</span><span class="o">=</span><span class="n">ll</span><span class="p">,</span> <span class="n">ur</span><span class="o">=</span><span class="n">ur</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end_date</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="n">max_results</span><span class="p">,</span> <span class="n">starting_number</span><span class="o">=</span><span class="n">starting_number</span><span class="p">,</span> <span class="n">sort_order</span><span class="o">=</span><span class="n">sort_order</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">)</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">USGS_API</span><span class="p">,</span> <span class="n">xml</span><span class="p">)</span>
-    
+
     <span class="n">root</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
     <span class="n">_check_for_usgs_error</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
-    
+
     <span class="n">items</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&quot;SOAP-ENV:Body/ns1:searchResponse/return/results/item&quot;</span><span class="p">,</span> <span class="n">NAMESPACES</span><span class="p">)</span>
-    
+
     <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="p">{</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="n">xsi</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">item</span> <span class="p">},</span> <span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">extended</span><span class="p">:</span>
+        <span class="n">metadata_urls</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">_get_metadata_url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">_async_requests</span><span class="p">(</span><span class="n">metadata_urls</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">idx</span><span class="p">:</span> <span class="n">_get_extended</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
     
     <span class="k">return</span> <span class="n">data</span>
 
@@ -409,7 +480,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.3',
+            VERSION:'0.1.5',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
