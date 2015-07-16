@@ -250,8 +250,46 @@ def remove_order_scene():
 
 def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
     """
+
+    :param dataset:
+        USGS dataset (e.g. EO1_HYP_PUB, LANDSAT_8)
+    :param node:
+        USGS node representing a dataset catalog (e.g. CWIC, EE, HDDS, LPVS)
+    :param lat:
+        Latitude
+    :param lng:
+        Longitude
+    :param distance:
+        Distance in meters used to for a radial search
+    :param ll:
+        Dictionary of longitude/latitude coordinates for the lower left corner
+        of a bounding box search. e.g. { "longitude": 0.0, "latitude": 0.0 }
+    :param ur:
+        Dictionary of longitude/latitude coordinates for the upper right corner
+        of a bounding box search. e.g. { "longitude": 0.0, "latitude": 0.0 }
+    :param start_date:
+        Start date for when a scene has been acquired
+    :param end_date:
+        End date for when a scene has been acquired
+    :where:
+        Dictionary representing key/values for finer grained conditional
+        queries. Only a subset of metadata fields are supported. Available
+        fields depend on the value of `dataset`, and maybe be found by
+        submitting a dataset_fields query.
+    :max_results:
+        Maximum results returned by the server
+    :starting_number:
+        Starting offset for results of a query.
+    :sort_order:
+        Order in which results are sorted. Ascending or descending w.r.t the acquisition date.
+    :extended:
+        Boolean flag. When true a subsequent query will be sent to the `metadataUrl` returned by
+        the first query.
+    :api_key:
+        API key for EROS. Not required for searching.
+
     .. todo:: Export metadata from the search results e.g.
-    
+
         <numberReturned xsi:type="xsd:int">41</numberReturned>
         <totalHits xsi:type="xsd:int">41</totalHits>
         <firstRecord xsi:type="xsd:int">1</firstRecord>
