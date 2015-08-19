@@ -4,7 +4,7 @@ usgs
 usgs is a Python library for interfacing with the US Geologic Survey's Inventory Service. The Inventory Service supports a variety of requests for accessing USGS datasets, including searching datasets, downloading data products, and accessing metadata on data products.
 
 
-.. note:: Some requests require an account with `USGS's EROS service <https://earthexplorer.usgs.gov/register/>`_. The account must also have Machine to Machine privileges.
+.. note:: Some requests require an account with `USGS's EROS service <https://ers.cr.usgs.gov/register/>`_. The account must also have Machine to Machine privileges.
 
 Installation
 ------------
