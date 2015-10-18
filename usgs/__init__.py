@@ -1,5 +1,5 @@
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 
 # The USGS API endpoint
 USGS_API = "https://earthexplorer.usgs.gov/inventory/soap"
