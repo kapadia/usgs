@@ -74,8 +74,8 @@ def usgs():
 
 
 @click.command()
-@click.argument("username")
-@click.argument("password")
+@click.argument("username", envvar='USGS_USERNAME')
+@click.argument("password", envvar='USGS_PASSWORD')
 def login(username, password):
     api_key = api.login(username, password)
     print(api_key)
