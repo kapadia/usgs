@@ -117,7 +117,7 @@ def dataset_fields(dataset, node):
     return data
 
 
-def download(dataset, node, entityids, product, api_key=None):
+def download(dataset, node, entityids, product='STANDARD', api_key=None):
     """
     Though USGS supports multiple products in a single request, there's
     ambiguity in the returned list. This wrapper only allows a single
