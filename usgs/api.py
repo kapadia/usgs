@@ -1,5 +1,6 @@
 
 import os
+from os.path import expanduser
 from xml.etree import ElementTree
 import requests
 from requests_futures.sessions import FuturesSession
@@ -8,7 +9,7 @@ from usgs import USGS_API, USGSError
 from usgs import soap, xsi
 
 
-TMPFILE = os.path.join("/", "tmp", "usgs")
+TMPFILE = os.path.join(expanduser("~"), ".usgs")
 NAMESPACES = {
     "SOAP-ENV": "http://schemas.xmlsoap.org/soap/envelope/",
     "ns1": "https://earthexplorer.usgs.gov/inventory/soap",
