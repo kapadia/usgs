@@ -9,3 +9,14 @@ USGS API
 Documentation is available at:
 
 http://mapbox.github.io/usgs/
+
+
+Development
++++++++++++
+
+Install dependencies::
+
+.. code::
+
+    $ pip install -r requirements.txt
+
