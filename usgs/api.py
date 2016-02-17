@@ -15,6 +15,7 @@ NAMESPACES = {
     "eemetadata": "http://earthexplorer.usgs.gov/eemetadata.xsd"
 }
 
+
 def _get_api_key():
 
     api_key = None
@@ -52,7 +53,7 @@ def _get_extended(scene, resp):
     """
     root = ElementTree.fromstring(resp.text)
     items = root.findall("eemetadata:metadataFields/eemetadata:metadataField", NAMESPACES)
-    scene['extended'] = { item.attrib.get('name').strip(): xsi.get(item[0]) for item in items }
+    scene['extended'] = {item.attrib.get('name').strip(): xsi.get(item[0]) for item in items}
 
     return scene
 
@@ -67,8 +68,8 @@ def _async_requests(urls):
     """
 
     session = FuturesSession(max_workers=30)
-    futures = [ session.get(url) for url in urls ]
-    return [ future.result() for future in futures ]
+    futures = [session.get(url) for url in urls]
+    return [future.result() for future in futures]
 
 
 def _get_metadata_url(scene):
@@ -95,7 +96,7 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
 
     items = root.findall("SOAP-ENV:Body/ns1:datasetsResponse/return/item", NAMESPACES)
 
-    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
     return data
 
@@ -111,7 +112,7 @@ def dataset_fields(dataset, node):
     _check_for_usgs_error(root)
 
     items = root.findall("SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item", NAMESPACES)
-    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
     return data
 
@@ -154,7 +155,7 @@ def download_options(dataset, node, entityids):
 
     items = root.findall("SOAP-ENV:Body/ns1:downloadOptionsResponse/return/item/downloadOptions/item", NAMESPACES)
 
-    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
     return data
 
@@ -201,7 +202,7 @@ def logout():
     api_key = _get_api_key()
 
     xml = soap.logout(api_key=api_key)
-    r = requests.post(USGS_API, xml)
+    requests.post(USGS_API, xml)
 
     if os.path.exists(TMPFILE):
         os.remove(TMPFILE)
@@ -230,7 +231,7 @@ def metadata(dataset, node, sceneids, extended=False, api_key=None):
 
     items = root.findall("SOAP-ENV:Body/ns1:metadataResponse/return/item", NAMESPACES)
 
-    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
     if extended:
         metadata_urls = map(_get_metadata_url, data)
@@ -248,7 +249,8 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
+def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None,
+           where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
     """
 
     :param dataset:
@@ -298,7 +300,9 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     """
     api_key = _get_api_key()
 
-    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date, end_date=end_date, where=where, max_results=max_results, starting_number=starting_number, sort_order=sort_order, api_key=api_key)
+    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date,
+                      end_date=end_date, where=where, max_results=max_results, starting_number=starting_number,
+                      sort_order=sort_order, api_key=api_key)
     r = requests.post(USGS_API, xml)
 
     # Find out what's going on with usgs servers!
@@ -312,7 +316,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
 
     items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
 
-    data = map(lambda item: { el.tag: xsi.get(el) for el in item }, items)
+    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
     if extended:
         metadata_urls = map(_get_metadata_url, data)
@@ -336,4 +340,3 @@ def update_bulk_download_scene():
 
 def update_order_scene():
     raise NotImplementedError
-
