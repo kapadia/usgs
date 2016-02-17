@@ -117,7 +117,7 @@ def dataset_fields(dataset, node):
     return data
 
 
-def download(dataset, node, entityids, product):
+def download(dataset, node, entityids, product, api_key=None):
     """
     Though USGS supports multiple products in a single request, there's
     ambiguity in the returned list. This wrapper only allows a single
@@ -128,7 +128,7 @@ def download(dataset, node, entityids, product):
     varies depending on the product.
     """
 
-    api_key = _get_api_key()
+    api_key = api_key if api_key else _get_api_key()
 
     xml = soap.download(dataset, node, entityids, [product], api_key=api_key)
     r = requests.post(USGS_API, xml)
