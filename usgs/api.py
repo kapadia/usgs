@@ -176,7 +176,7 @@ def item_basket():
     raise NotImplementedError
 
 
-def login(username, password, save=False):
+def login(username, password, save=True):
     xml = soap.login(username, password)
     r = requests.post(USGS_API, xml)
 
