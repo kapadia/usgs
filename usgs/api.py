@@ -1,6 +1,5 @@
 
 import os
-import json
 from xml.etree import ElementTree
 import requests
 from requests_futures.sessions import FuturesSession
