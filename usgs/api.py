@@ -310,7 +310,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     try:
         r.raise_for_status()
     except:
-        print r.text
+        print(r.text)
 
     root = ElementTree.fromstring(r.text)
     _check_for_usgs_error(root)
