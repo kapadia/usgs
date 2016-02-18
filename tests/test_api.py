@@ -1,8 +1,10 @@
 
 import os
 import pytest
+import mock
 
 from usgs import api
+from .fakes import FakePostMetadata, FakeDataSets, FakeDataSetsFields
 
 
 def test_clear_bulk_download_order():
@@ -13,6 +15,7 @@ def test_clear_order():
     pytest.skip()
 
 
+@mock.patch('usgs.api.requests.post', FakeDataSets)
 def test_datasets():
 
     expected_keys = [
@@ -28,6 +31,7 @@ def test_datasets():
             assert item.get(key) is not None
 
 
+@mock.patch('usgs.api.requests.post', FakeDataSetsFields)
 def test_dataset_fields():
 
     expected_keys = ["fieldId", "name", "valueList", "fieldLink"]
@@ -62,8 +66,8 @@ def test_item_basket():
     pytest.skip()
 
 
-@pytest.mark.skipif(os.environ.get("USGS_USERNAME") == None, reason="requires USGS credentials")
-@pytest.mark.skipif(os.environ.get("USGS_PASSWORD") == None, reason="requires USGS credentials")
+@pytest.mark.skipif(os.environ.get("USGS_USERNAME") is None, reason="requires USGS credentials")
+@pytest.mark.skipif(os.environ.get("USGS_PASSWORD") is None, reason="requires USGS credentials")
 def test_login():
 
     username = os.environ.get("USGS_USERNAME")
@@ -78,6 +82,7 @@ def test_logout():
     assert api.logout()
 
 
+@mock.patch('usgs.api.requests.post', FakePostMetadata)
 def test_metadata():
 
     expected_keys = [
