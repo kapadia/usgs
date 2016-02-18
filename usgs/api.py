@@ -222,7 +222,7 @@ def metadata(dataset, node, sceneids, extended=False, api_key=None):
         Send a second request to the metadata url to get extended metadata on the scene.
     :param api_key:
     """
-    api_key = _get_api_key()
+    api_key = api_key if api_key else _get_api_key()
 
     xml = soap.metadata(dataset, node, sceneids, api_key=api_key)
     r = requests.post(USGS_API, xml)
@@ -299,7 +299,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         <lastRecord xsi:type="xsd:int">41</lastRecord>
         <nextRecord xsi:type="xsd:int">41</nextRecord>
     """
-    api_key = _get_api_key()
+    api_key = api_key if api_key else _get_api_key()
 
     xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date,
                       end_date=end_date, where=where, max_results=max_results, starting_number=starting_number,
