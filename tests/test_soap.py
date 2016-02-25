@@ -1,21 +1,109 @@
-
+import re
 import pytest
 import unittest
 from usgs import soap
 from xml.dom import minidom
 
-try:
-    from django.test.utils import compare_xml
-except ImportError:
-    compare_xml = None
+
+def strip_quotes(want, got):
+    """
+    Strip quotes of doctests output values:
+    >>> strip_quotes("'foo'")
+    "foo"
+    >>> strip_quotes('"foo"')
+    "foo"
+    """
+    def is_quoted_string(s):
+        s = s.strip()
+        return (len(s) >= 2
+                and s[0] == s[-1]
+                and s[0] in ('"', "'"))
+
+    def is_quoted_unicode(s):
+        s = s.strip()
+        return (len(s) >= 3
+                and s[0] == 'u'
+                and s[1] == s[-1]
+                and s[1] in ('"', "'"))
+
+    if is_quoted_string(want) and is_quoted_string(got):
+        want = want.strip()[1:-1]
+        got = got.strip()[1:-1]
+    elif is_quoted_unicode(want) and is_quoted_unicode(got):
+        want = want.strip()[2:-1]
+        got = got.strip()[2:-1]
+    return want, got
 
 
-@unittest.skipIf(compare_xml is None, "Django's test utilities are required.")
+def compare_xml(want, got):
+    """Tries to do a 'xml-comparison' of want and got.  Plain string
+    comparison doesn't always work because, for example, attribute
+    ordering should not be important. Comment nodes are not considered in the
+    comparison. Leading and trailing whitespace is ignored on both chunks.
+    Based on http://codespeak.net/svn/lxml/trunk/src/lxml/doctestcompare.py
+    """
+    _norm_whitespace_re = re.compile(r'[ \t\n][ \t\n]+')
+
+    def norm_whitespace(v):
+        return _norm_whitespace_re.sub(' ', v)
+
+    def child_text(element):
+        return ''.join(c.data for c in element.childNodes
+                       if c.nodeType == minidom.Node.TEXT_NODE)
+
+    def children(element):
+        return [c for c in element.childNodes
+                if c.nodeType == minidom.Node.ELEMENT_NODE]
+
+    def norm_child_text(element):
+        return norm_whitespace(child_text(element))
+
+    def attrs_dict(element):
+        return dict(element.attributes.items())
+
+    def check_element(want_element, got_element):
+        if want_element.tagName != got_element.tagName:
+            return False
+        if norm_child_text(want_element) != norm_child_text(got_element):
+            return False
+        if attrs_dict(want_element) != attrs_dict(got_element):
+            return False
+        want_children = children(want_element)
+        got_children = children(got_element)
+        if len(want_children) != len(got_children):
+            return False
+        for want, got in zip(want_children, got_children):
+            if not check_element(want, got):
+                return False
+        return True
+
+    def first_node(document):
+        for node in document.childNodes:
+            if node.nodeType != minidom.Node.COMMENT_NODE:
+                return node
+
+    want, got = strip_quotes(want, got)
+    want = want.strip().replace('\\n', '\n')
+    got = got.strip().replace('\\n', '\n')
+
+    # If the string is not a complete xml document, we may need to add a
+    # root element. This allow us to compare fragments, like "<foo/><bar/>"
+    if not want.startswith('<?xml'):
+        wrapper = '<root>%s</root>'
+        want = wrapper % want
+        got = wrapper % got
+
+    # Parse the want and got strings, and compare the parsings.
+    want_root = first_node(minidom.parseString(want))
+    got_root = first_node(minidom.parseString(got))
+
+    return check_element(want_root, got_root)
+
+
 class SoapTest(unittest.TestCase):
 
-
     def test_clear_bulk_download_order(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -28,15 +116,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.clear_bulk_download_order("LANDSAT_8", "EE", api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-        
-        
+
     def test_clear_order(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -49,15 +136,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.clear_order("LANDSAT_8", "EE", api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-        
-    
+
     def test_datasets(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -80,20 +166,20 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
-        ll = { "longitude": -99.69639, "latitude": 44.60847 }
-        ur = { "longitude": -99.69639, "latitude": 44.60847 }
+
+        ll = {"longitude": -99.69639, "latitude": 44.60847}
+        ur = {"longitude": -99.69639, "latitude": 44.60847}
         start_date = "2014-10-01T00:00:00Z"
         end_date = "2014-10-01T23:59:59Z"
-        
-        request = soap.datasets("L8", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key="USERS API KEY")
+
+        request = soap.datasets("L8", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date,
+                                api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-        
-    
+
     def test_dataset_fields(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -106,15 +192,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.dataset_fields("LANDSAT_8", "EE", api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-       
+
     def test_download(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -133,15 +218,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.download("LANDSAT_8", "EE", ["LC80130292014100LGN00"], ["STANDARD"], api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_download_options(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -158,15 +242,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.download_options("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_get_bulk_download_products(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -183,15 +266,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.get_bulk_download_products("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_get_order_products(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -208,15 +290,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.get_order_products("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_item_basket(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -227,15 +308,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.item_basket(api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_login(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -247,15 +327,14 @@ class SoapTest(unittest.TestCase):
             </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.login("username", "password")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_logout(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -266,15 +345,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.logout(api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_metadata(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -291,15 +369,14 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
+
         request = soap.metadata("LANDSAT_8", "EE", ["LC80130292014100LGN00", "LC80130282014100LGN00"], api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
+
     def test_remove_bulk_download_scene(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -317,10 +394,9 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-    
-    
+
     def test_remove_order_scene(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -338,10 +414,9 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-    
-    
+
     def test_search(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -367,21 +442,20 @@ class SoapTest(unittest.TestCase):
           </soapenv:Body>
         </soapenv:Envelope>
         """
-        
-        ll = { "longitude": -135, "latitude": 75 }
-        ur = { "longitude": -120, "latitude": 90 }
+
+        ll = {"longitude": -135, "latitude": 75}
+        ur = {"longitude": -120, "latitude": 90}
         start_date = "2006-01-01T00:00:00Z"
         end_date = "2007-12-01T00:00:00Z"
-        
-        request = soap.search("GLS2005", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=3, sort_order="ASC", api_key="USERS API KEY")
+
+        request = soap.search("GLS2005", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=3,
+                              sort_order="ASC", api_key="USERS API KEY")
         request = minidom.parseString(request).toprettyxml()
-        
+
         assert compare_xml(request, expected)
-    
-    
-    
+
     def test_submit_bulk_order(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -394,11 +468,9 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-    
-    
-    
+
     def test_submit_order(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -411,11 +483,9 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-    
-    
-    
+
     def test_update_bulk_download_scene(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -433,11 +503,9 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-    
-    
-    
+
     def test_update_order_scene(self):
-        
+
         expected = """
         <soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://earthexplorer.usgs.gov/inventory/soap">
           <soapenv:Header/>
@@ -455,4 +523,3 @@ class SoapTest(unittest.TestCase):
         </soapenv:Envelope>
         """
         pytest.skip("Not yet implemented")
-        
