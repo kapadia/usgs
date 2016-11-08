@@ -553,7 +553,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         filter_type_el.text = "and"
         
         child_filters_el = SubElement(additional_criteria_el, "childFilters")
-        for field_id, value in where.iteritems():
+        for field_id, value in where.items():
             child_item_el = SubElement(child_filters_el, "item")
             field_id_el = SubElement(child_item_el, "fieldId")
             field_id_el.text = str(field_id)
