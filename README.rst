@@ -1,5 +1,3 @@
-**UNMAINTAINED** this project is no longer maintained by its author(s) 
-
 ========
 USGS API
 ========
