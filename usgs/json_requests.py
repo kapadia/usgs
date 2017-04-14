@@ -270,101 +270,96 @@ def download_options(dataset, node, entityids, api_key=None):
     :param api_key:
         API key is not required.
     """
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "downloadOptions")
-    
-    create_dataset_element(el, dataset)
-    create_node_element(el, node)
-    
-    if api_key:
-        create_api_key_element(el, api_key)
-    
-    create_entity_ids_element(el, entityids)
-    
-    return tostring(root)
+
+    payload = {
+        "apiKey": api_key,
+        "datasetName": dataset,
+        "node": node,
+        "entityIds": entityids
+    }
+
+    return json.dumps(payload)
 
 
-def get_bulk_download_products(dataset, node, entityids, api_key):
-    """
-    Retrieve bulk download products on a scene-by-scene basis.
-    
-    :param dataset:
-    
-    :param node:
-    
-    :param entityid:
-        String or list of strings.
-    
-    :param api_key:
-        API key is required.
-        
-    """
-    
-    if api_key is None:
-        raise USGSApiKeyRequiredError
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "getBulkDownloadProducts")
-    
-    create_dataset_element(el, dataset)
-    create_node_element(el, node)
-    create_api_key_element(el, api_key)
-    create_entity_ids_element(el, entityids)
-    
-    return tostring(root)
-
-
-def get_order_products(dataset, node, entityids, api_key=None):
-    """
-    Retrieve orderable products on a scene-by-scene basis.
-    
-    :param dataset:
-    
-    :param node:
-    
-    :param entityid:
-    
-    :param api_key:
-        API key is required.
-    
-    .. todo:: Support multiple scene request.
-    """
-    
-    if api_key is None:
-        raise USGSApiKeyRequiredError
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "getOrderProducts")
-    
-    create_dataset_element(el, dataset)
-    create_node_element(el, node)
-    create_api_key_element(el, api_key)
-    create_entity_ids_element(el, entityids)
-    
-    return tostring(root)
-
-
-def item_basket(api_key=None):
-    """
-    Returns the current item basket for the current user.
-    
-    :param api_key:
-        API key is required.
-    """
-    
-    if api_key is None:
-        raise USGSApiKeyRequiredError
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "itemBasket")
-    create_api_key_element(el, api_key)
-    
-    return tostring(root)
+# def get_bulk_download_products(dataset, node, entityids, api_key):
+#     """
+#     Retrieve bulk download products on a scene-by-scene basis.
+#
+#     :param dataset:
+#
+#     :param node:
+#
+#     :param entityid:
+#         String or list of strings.
+#
+#     :param api_key:
+#         API key is required.
+#
+#     """
+#
+#     if api_key is None:
+#         raise USGSApiKeyRequiredError
+#
+#     root, body = create_root_request()
+#
+#     el = create_request_type(body, "getBulkDownloadProducts")
+#
+#     create_dataset_element(el, dataset)
+#     create_node_element(el, node)
+#     create_api_key_element(el, api_key)
+#     create_entity_ids_element(el, entityids)
+#
+#     return tostring(root)
+#
+#
+# def get_order_products(dataset, node, entityids, api_key=None):
+#     """
+#     Retrieve orderable products on a scene-by-scene basis.
+#
+#     :param dataset:
+#
+#     :param node:
+#
+#     :param entityid:
+#
+#     :param api_key:
+#         API key is required.
+#
+#     .. todo:: Support multiple scene request.
+#     """
+#
+#     if api_key is None:
+#         raise USGSApiKeyRequiredError
+#
+#     root, body = create_root_request()
+#
+#     el = create_request_type(body, "getOrderProducts")
+#
+#     create_dataset_element(el, dataset)
+#     create_node_element(el, node)
+#     create_api_key_element(el, api_key)
+#     create_entity_ids_element(el, entityids)
+#
+#     return tostring(root)
+#
+#
+# def item_basket(api_key=None):
+#     """
+#     Returns the current item basket for the current user.
+#
+#     :param api_key:
+#         API key is required.
+#     """
+#
+#     if api_key is None:
+#         raise USGSApiKeyRequiredError
+#
+#     root, body = create_root_request()
+#
+#     el = create_request_type(body, "itemBasket")
+#     create_api_key_element(el, api_key)
+#
+#     return tostring(root)
 
 
 def login(username, password):
@@ -380,39 +375,30 @@ def login(username, password):
     
     :param password:
     """
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "login")
-    
-    username_el = SubElement(el, "username")
-    username_el.set("xsi:type", "xsd:string")
-    username_el.text = username
-    
-    password_el = SubElement(el, "password")
-    password_el.set("xsi:type", "xsd:string")
-    password_el.text = password
-    
-    return tostring(root)
+
+    payload = {
+        "username": username,
+        "password": password
+    }
+
+    return json.dumps(payload)
 
 
-def logout(api_key=None):
+def logout(api_key):
     """
     Remove the users API key from being used in the future.
     
     :param api_key:
         API key is required.
     """
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "logout")
-    create_api_key_element(el, api_key)
-    
-    return tostring(root)
+
+    payload = {
+        "apiKey": api_key
+    }
+    return json.dumps(payload)
 
 
-def metadata(dataset, node, sceneids, api_key=None):
+def metadata(dataset, node, entityids, api_key=None):
     """
     The use of the metadata request is intended for those who have
     acquired scene IDs from a different source. It will return the
@@ -426,19 +412,15 @@ def metadata(dataset, node, sceneids, api_key=None):
     
     :param api_key:
     """
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "metadata")
-    
-    create_dataset_element(el, dataset)
-    create_node_element(el, node)
-    
-    if api_key:
-        create_api_key_element(el, api_key)
-    
-    create_entity_ids_element(el, sceneids)
-    
-    return tostring(root)
+
+    payload = {
+        "apiKey": api_key,
+        "datasetName": dataset,
+        "node": node,
+        "entityIds": entityids
+    }
+
+    return json.dumps(payload)
 
 
 def remove_bulk_download_scene():
