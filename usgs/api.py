@@ -6,15 +6,11 @@ import requests
 from requests_futures.sessions import FuturesSession
 
 from usgs import USGS_API, USGSError
-from usgs import soap, xsi, json_requests
-
-USGS_API_JSON = "https://earthexplorer.usgs.gov/inventory/json"
+from usgs import xsi, payloads
 
 
 TMPFILE = os.path.join(expanduser("~"), ".usgs")
 NAMESPACES = {
-    "SOAP-ENV": "http://schemas.xmlsoap.org/soap/envelope/",
-    "ns1": "https://earthexplorer.usgs.gov/inventory/soap",
     "eemetadata": "http://earthexplorer.usgs.gov/eemetadata.xsd"
 }
 
@@ -63,10 +59,12 @@ def _async_requests(urls):
     :param urls:
         List of urls
     """
-
     session = FuturesSession(max_workers=30)
-    futures = [session.get(url) for url in urls]
-    return [future.result() for future in futures]
+    futures = [
+        session.get(url)
+        for url in urls
+    ]
+    return [ future.result() for future in futures ]
 
 
 def _get_metadata_url(scene):
@@ -86,9 +84,9 @@ def dataset_fields(dataset, node, api_key=None):
     api_key = _get_api_key(api_key)
 
     payload = {
-        "jsonRequest": json_requests.dataset_fields(dataset, node, api_key=api_key)
+        "jsonRequest": payloads.dataset_fields(dataset, node, api_key=api_key)
     }
-    url = '{}/datasetfields'.format(USGS_API_JSON)
+    url = '{}/datasetfields'.format(USGS_API)
     r = requests.post(url, payload)
     response = r.json()
 
@@ -101,10 +99,10 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, ap
 
     api_key = _get_api_key(api_key)
     
-    url = '{}/datasets'.format(USGS_API_JSON)
+    url = '{}/datasets'.format(USGS_API)
 
     payload = {
-        "jsonRequest": json_requests.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
+        "jsonRequest": payloads.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
     }
     r = requests.post(url, payload)
     response = r.json()
@@ -127,9 +125,9 @@ def download(dataset, node, entityids, product='STANDARD', api_key=None):
 
     api_key = _get_api_key(api_key)
 
-    url = '{}/download'.format(USGS_API_JSON)
+    url = '{}/download'.format(USGS_API)
     payload = {
-        "jsonRequest": json_requests.download(dataset, node, entityids, [product], api_key=api_key)
+        "jsonRequest": payloads.download(dataset, node, entityids, [product], api_key=api_key)
     }
 
     r = requests.post(url, payload)
@@ -144,9 +142,9 @@ def download_options(dataset, node, entityids, api_key=None):
 
     api_key = _get_api_key(api_key)
 
-    url = '{}/downloadoptions'.format(USGS_API_JSON)
+    url = '{}/downloadoptions'.format(USGS_API)
     payload = {
-        "jsonRequest": json_requests.download_options(dataset, node, entityids, api_key=api_key)
+        "jsonRequest": payloads.download_options(dataset, node, entityids, api_key=api_key)
     }
 
     r = requests.post(url, payload)
@@ -175,9 +173,9 @@ def item_basket():
 
 def login(username, password, save=True):
 
-    url = '{}/login'.format(USGS_API_JSON)
+    url = '{}/login'.format(USGS_API)
     payload = {
-        "jsonRequest": json_requests.login(username, password)
+        "jsonRequest": payloads.login(username, password)
     }
 
     r = requests.post(url, payload)
@@ -198,9 +196,9 @@ def logout(api_key=None):
 
     api_key = _get_api_key(api_key)
 
-    url = '{}/logout'.format(USGS_API_JSON)
+    url = '{}/logout'.format(USGS_API)
     payload = {
-        "jsonRequest": json_requests.logout(api_key)
+        "jsonRequest": payloads.logout(api_key)
     }
     r = requests.post(url, payload)
     response = r.json()
@@ -219,16 +217,16 @@ def metadata(dataset, node, entityids, extended=False, api_key=None):
 
     :param dataset:
     :param node:
-    :param sceneids:
+    :param entityids:
     :param extended:
         Send a second request to the metadata url to get extended metadata on the scene.
     :param api_key:
     """
     api_key = _get_api_key(api_key)
 
-    url = '{}/metadata'.format(USGS_API_JSON)
+    url = '{}/metadata'.format(USGS_API)
     payload = {
-        "jsonRequest": json_requests.metadata(dataset, node, entityids, api_key=api_key)
+        "jsonRequest": payloads.metadata(dataset, node, entityids, api_key=api_key)
     }
     r = requests.post(url, payload)
     response = r.json()
@@ -290,42 +288,34 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         Boolean flag. When true a subsequent query will be sent to the `metadataUrl` returned by
         the first query.
     :api_key:
-        API key for EROS. Not required for searching.
-
-    .. todo:: Export metadata from the search results e.g.
-
-        <numberReturned xsi:type="xsd:int">41</numberReturned>
-        <totalHits xsi:type="xsd:int">41</totalHits>
-        <firstRecord xsi:type="xsd:int">1</firstRecord>
-        <lastRecord xsi:type="xsd:int">41</lastRecord>
-        <nextRecord xsi:type="xsd:int">41</nextRecord>
+        API key for EROS. Required for searching.
     """
-    api_key = api_key if api_key else _get_api_key()
+    api_key = _get_api_key(api_key)
 
-    xml = soap.search(dataset, node, lat=lat, lng=lng, distance=100, ll=ll, ur=ur, start_date=start_date,
-                      end_date=end_date, where=where, max_results=max_results, starting_number=starting_number,
-                      sort_order=sort_order, api_key=api_key)
-    r = requests.post(USGS_API, xml)
+    url = '{}/search'.format(USGS_API)
+    payload = {
+        "jsonRequest": payloads.search(dataset, node,
+        lat=lat, lng=lng,
+        distance=100,
+        ll=ll, ur=ur,
+        start_date=start_date, end_date=end_date,
+        where=where,
+        max_results=10,
+        starting_number=starting_number,
+        sort_order=sort_order,
+        api_key=api_key
+    )}
+    r = requests.post(url, payload)
+    response = r.json()
 
-    # Find out what's going on with usgs servers!
-    try:
-        r.raise_for_status()
-    except:
-        print(r.text)
-
-    root = ElementTree.fromstring(r.text)
-    _check_for_usgs_error(root)
-
-    items = root.findall("SOAP-ENV:Body/ns1:searchResponse/return/results/item", NAMESPACES)
-
-    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
+    _check_for_usgs_error(response)
 
     if extended:
-        metadata_urls = map(_get_metadata_url, data)
+        metadata_urls = map(_get_metadata_url, response['data']['results'])
         results = _async_requests(metadata_urls)
-        data = map(lambda idx: _get_extended(data[idx], results[idx]), range(len(data)))
+        data = map(lambda idx: _get_extended(response['data']['results'][idx], results[idx]), range(len(response['data']['results'])))
 
-    return data
+    return response
 
 
 def submit_bulk_order():

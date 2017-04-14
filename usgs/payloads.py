@@ -1,84 +1,7 @@
 
-# Template XML requests required by the USGS Inventory Service
-# Requesting data like it's 1999
 
 import json
-from xml.etree.ElementTree import Element, SubElement, tostring
-from usgs import CATALOG_NODES, USGSApiKeyRequiredError, USGSCatalogNodeDoesNotExist, USGSDependencyRequired
-
-
-def create_root_request():
-    root = Element("soapenv:Envelope")
-    root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    root.set("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
-    root.set("xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/")
-    root.set("xmlns:soap", "http://earthexplorer.usgs.gov/inventory/soap")
-
-    header = SubElement(root, "soapenv:Header")
-    body = SubElement(root, "soapenv:Body")
-    
-    return (root, body)
-
-
-def create_request_type(parent, request_type):
-    el = SubElement(parent, "soap:%s" % request_type)
-    el.set("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/")
-    return el
-
-
-def create_api_key_element(parent, api_key):
-    el = SubElement(parent, "apiKey")
-    el.set("xsi:type", "xsd:string")
-    el.text = api_key
-
-
-def create_node_element(parent, node):
-    
-    if node not in CATALOG_NODES:
-        raise USGSCatalogNodeDoesNotExist("Catalog nodes include %s" % ", ".join(CATALOG_NODES))
-    
-    el = SubElement(parent, "node")
-    el.set("xsi:type", "xsd:string")
-    el.text = node
-
-
-def create_dataset_element(parent, dataset):
-    el = SubElement(parent, "datasetName")
-    el.set("xsi:type", "xsd:string")
-    el.text = dataset
-
-
-def create_entity_ids_element(parent, entityids):
-    
-    if isinstance(entityids, str):
-        
-        el = SubElement(parent, "entityId")
-        el.set("xsi:type", "xsd:string")
-        el.text = entityids
-    
-    else:
-        
-        el = SubElement(parent, "entityIds")
-        el.set("xsi:type", "soap:ArrayOfString")
-        
-        for entityid in entityids:
-            child = SubElement(el, "item")
-            child.set("xsi:type","xsd:string")
-            child.text = entityid
-
-
-def create_service_class_coordinate(parent, name, latitude=None, longitude=None):
-    
-    el = SubElement(parent, name)
-    el.set("xsi:type", "soap:Service_Class_Coordinate")
-    
-    lat_el = SubElement(el, "latitude")
-    lat_el.set("xsi:type", "xsd:double")
-    lat_el.text = str(latitude)
-    
-    lng_el = SubElement(el, "longitude")
-    lng_el.set("xsi:type", "xsd:double")
-    lng_el.text = str(longitude)
+from usgs import CATALOG_NODES, USGSDependencyRequired
 
 
 def clear_bulk_download_order(dataset, node, api_key=None):
@@ -92,19 +15,7 @@ def clear_bulk_download_order(dataset, node, api_key=None):
     :param api_key:
         API key is required.
     """
-    
-    if api_key is None:
-        raise USGSApiKeyRequiredError
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "clearBulkDownloadOrder")
-    
-    create_node_element(el, node)
-    create_dataset_element(el, dataset)
-    create_api_key_element(el, api_key)
-    
-    return tostring(root)
+    raise NotImplementedError
 
 
 def clear_order(dataset, node, api_key=None):
@@ -118,19 +29,7 @@ def clear_order(dataset, node, api_key=None):
     :param api_key:
         API key is required.
     """
-    
-    if api_key is None:
-        raise USGSApiKeyRequiredError
-    
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "clearOrder")
-    
-    create_node_element(el, node)
-    create_dataset_element(el, dataset)
-    create_api_key_element(el, api_key)
-    
-    return tostring(root)
+    raise NotImplementedError
 
 
 def dataset_fields(dataset, node, api_key=None):
@@ -281,85 +180,50 @@ def download_options(dataset, node, entityids, api_key=None):
     return json.dumps(payload)
 
 
-# def get_bulk_download_products(dataset, node, entityids, api_key):
-#     """
-#     Retrieve bulk download products on a scene-by-scene basis.
-#
-#     :param dataset:
-#
-#     :param node:
-#
-#     :param entityid:
-#         String or list of strings.
-#
-#     :param api_key:
-#         API key is required.
-#
-#     """
-#
-#     if api_key is None:
-#         raise USGSApiKeyRequiredError
-#
-#     root, body = create_root_request()
-#
-#     el = create_request_type(body, "getBulkDownloadProducts")
-#
-#     create_dataset_element(el, dataset)
-#     create_node_element(el, node)
-#     create_api_key_element(el, api_key)
-#     create_entity_ids_element(el, entityids)
-#
-#     return tostring(root)
-#
-#
-# def get_order_products(dataset, node, entityids, api_key=None):
-#     """
-#     Retrieve orderable products on a scene-by-scene basis.
-#
-#     :param dataset:
-#
-#     :param node:
-#
-#     :param entityid:
-#
-#     :param api_key:
-#         API key is required.
-#
-#     .. todo:: Support multiple scene request.
-#     """
-#
-#     if api_key is None:
-#         raise USGSApiKeyRequiredError
-#
-#     root, body = create_root_request()
-#
-#     el = create_request_type(body, "getOrderProducts")
-#
-#     create_dataset_element(el, dataset)
-#     create_node_element(el, node)
-#     create_api_key_element(el, api_key)
-#     create_entity_ids_element(el, entityids)
-#
-#     return tostring(root)
-#
-#
-# def item_basket(api_key=None):
-#     """
-#     Returns the current item basket for the current user.
-#
-#     :param api_key:
-#         API key is required.
-#     """
-#
-#     if api_key is None:
-#         raise USGSApiKeyRequiredError
-#
-#     root, body = create_root_request()
-#
-#     el = create_request_type(body, "itemBasket")
-#     create_api_key_element(el, api_key)
-#
-#     return tostring(root)
+def get_bulk_download_products(dataset, node, entityids, api_key):
+    """
+    Retrieve bulk download products on a scene-by-scene basis.
+
+    :param dataset:
+
+    :param node:
+
+    :param entityid:
+        String or list of strings.
+
+    :param api_key:
+        API key is required.
+
+    """
+    raise NotImplementedError
+
+
+def get_order_products(dataset, node, entityids, api_key=None):
+    """
+    Retrieve orderable products on a scene-by-scene basis.
+
+    :param dataset:
+
+    :param node:
+
+    :param entityid:
+
+    :param api_key:
+        API key is required.
+
+    .. todo:: Support multiple scene request.
+    """
+    raise NotImplementedError
+
+
+def item_basket(api_key=None):
+    """
+    Returns the current item basket for the current user.
+
+    :param api_key:
+        API key is required.
+    """
+    raise NotImplementedError
 
 
 def login(username, password):
@@ -431,7 +295,16 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None, where=None, max_results=50000, starting_number=1, sort_order="DESC", api_key=None):
+def search(dataset, node,
+    lat=None, lng=None,
+    distance=100,
+    ll=None, ur=None,
+    start_date=None, end_date=None,
+    where=None,
+    max_results=50000,
+    starting_number=1,
+    sort_order="DESC",
+    api_key=None):
     """
     :param dataset:
     
@@ -463,50 +336,43 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
     :param api_key:
         API key is not required.
     """
-    root, body = create_root_request()
-    
-    el = create_request_type(body, "search")
-    
-    create_dataset_element(el, dataset)
-    create_node_element(el, node)
-    
+
+    payload = {
+        "datasetName": dataset,
+        "node": node,
+        "apiKey": api_key,
+    }
+
     # Latitude and longitude take precedence over ll and ur
     if lat and lng:
-        
+
         try:
             import pyproj
             from shapely import geometry
         except ImportError:
             raise USGSDependencyRequired("Shapely and PyProj are required for spatial searches.")
-        
+
         prj = pyproj.Proj(proj='aeqd', lat_0=lat, lon_0=lng)
         half_distance = 0.5 * distance
         box = geometry.box(-half_distance, -half_distance, half_distance, half_distance)
-        
+
         lngs, lats = prj(*box.exterior.xy, inverse=True)
-        
+
         ll = { "longitude": min(*lngs), "latitude": min(*lats) }
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
-    
+
     if ll and ur:
-        
-        create_service_class_coordinate(el, "lowerLeft", latitude=ll["latitude"], longitude=ll["longitude"])
-        create_service_class_coordinate(el, "upperRight", latitude=ur["latitude"], longitude=ur["longitude"])
-        
+        payload["lowerLeft"] = ll
+        payload["upperRight"] = ur
+
     if start_date:
-        
-        start_date_el = SubElement(el, "startDate")
-        start_date_el.set("xsi:type", "xsd:string")
-        start_date_el.text = start_date
-        
+        payload["startDate"] = start_date
+
     if end_date:
-        
-        end_date_el = SubElement(el, "endDate")
-        end_date_el.set("xsi:type", "xsd:string")
-        end_date_el.text = end_date
-    
+        payload["endDate"] = end_date
+
     if where:
-        
+
         # TODO: Support more than AND key/value equality queries
         additional_criteria_el = SubElement(el, "additionalCriteria")
         
@@ -526,27 +392,15 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
             value_el.text = str(value)
 
     if max_results:
-        
-        max_results_el = SubElement(el, "maxResults")
-        max_results_el.set("xsi:type", "xsd:int")
-        max_results_el.text = str(max_results)
-        
+        payload["maxResults"] = max_results
+
     if starting_number:
-        
-        starting_number_el = SubElement(el, "startingNumber")
-        starting_number_el.set("xsi:type", "xsd:int")
-        starting_number_el.text = str(starting_number)
-        
+        payload["startingNumber"] = starting_number
+
     if sort_order:
-        
-        sort_order_el = SubElement(el, "sortOrder")
-        sort_order_el.set("xsi:type", "xsd:string")
-        sort_order_el.text = sort_order
-    
-    if api_key:
-        create_api_key_element(el, api_key)
-    
-    return tostring(root)
+        payload["sortOrder"] = sort_order
+
+    return json.dumps(payload)
 
 
 def submit_bulk_order():

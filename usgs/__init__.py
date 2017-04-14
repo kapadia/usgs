@@ -1,8 +1,8 @@
 
-__version__ = "0.1.9"
+__version__ = "0.2.0"
 
 # The USGS API endpoint
-USGS_API = "https://earthexplorer.usgs.gov/inventory/soap"
+USGS_API = "https://earthexplorer.usgs.gov/inventory/json"
 
 #
 # Four catalogs are available for querying
@@ -26,9 +26,6 @@ class USGSError(Exception):
     pass
 
 class USGSApiKeyRequiredError(Exception):
-    pass
-
-class USGSCatalogNodeDoesNotExist(Exception):
     pass
 
 class USGSAmbiguousNode(Exception):
