@@ -374,22 +374,20 @@ def search(dataset, node,
     if where:
 
         # TODO: Support more than AND key/value equality queries
-        additional_criteria_el = SubElement(el, "additionalCriteria")
-        
-        filter_type_el = SubElement(additional_criteria_el, "filterType")
-        filter_type_el.text = "and"
-        
-        child_filters_el = SubElement(additional_criteria_el, "childFilters")
-        for field_id, value in where.iteritems():
-            child_item_el = SubElement(child_filters_el, "item")
-            field_id_el = SubElement(child_item_el, "fieldId")
-            field_id_el.text = str(field_id)
-            item_filter_type_el = SubElement(child_item_el, "filterType")
-            item_filter_type_el.text = "value"
-            operand_el = SubElement(child_item_el, "operand")
-            operand_el.text = "="
-            value_el = SubElement(child_item_el, "value")
-            value_el.text = str(value)
+        # usgs search --node EE LANDSAT_8_C1 --start-date 20170410 --end-date 20170411 --where wrs-row 032 | jq ""
+        # LC81810322017101LGN00
+        payload["additionalCriteria"] = {
+            "filterType": "and",
+            "childFilters": [
+                {
+                    "filterType": "value",
+                    "fieldId": field_id,
+                    "value": value,
+                    "operand": "="
+                }
+                for field_id, value in where.iteritems()
+            ]
+        }
 
     if max_results:
         payload["maxResults"] = max_results

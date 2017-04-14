@@ -78,12 +78,12 @@ def usgs():
 @click.argument("password", envvar='USGS_PASSWORD')
 def login(username, password):
     api_key = api.login(username, password)
-    print(api_key)
+    click.echo(api_key)
 
 
 @click.command()
 def logout():
-    print(api.logout())
+    click.echo(api.logout())
 
 
 @click.command()
@@ -92,7 +92,7 @@ def logout():
 @click.option("--end-date")
 def datasets(node, start_date, end_date):
     data = api.datasets(None, node, start_date=start_date, end_date=end_date)
-    print(json.dumps(data))
+    click.echo(json.dumps(data))
 
 
 @click.command()
@@ -114,7 +114,7 @@ def metadata(dataset, scene_ids, node, extended, geojson, api_key):
         features = map(to_geojson_feature, data)
         data = { 'type': 'FeatureCollection', 'features': features }
     
-    print(json.dumps(data))
+    click.echo(json.dumps(data))
 
 
 @click.command()
@@ -122,10 +122,8 @@ def metadata(dataset, scene_ids, node, extended, geojson, api_key):
 @node_opt
 def dataset_fields(dataset, node):
     node = get_node(dataset, node)
-    
     data = api.dataset_fields(dataset, node)
-    
-    print(json.dumps(data))
+    click.echo(json.dumps(data))
 
 
 @click.command()
@@ -162,20 +160,20 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
     
     if where:
         # Query the dataset fields endpoint for queryable fields
-        fields = api.dataset_fields(dataset, node)
-        
+        resp = api.dataset_fields(dataset, node)
+
         def format_fieldname(s):
             return ''.join(c for c in s if c.isalnum()).lower()
-        
-        field_lut = { format_fieldname(field['name']): field['fieldId'] for field in fields }
+
+        field_lut = { format_fieldname(field['name']): field['fieldId'] for field in resp['data'] }
         where = { field_lut[format_fieldname(k)]: v for k, v in where if format_fieldname(k) in field_lut }
-    
+
     if lower_left:
         lower_left = dict(zip(['longitude', 'latitude'], lower_left))
         upper_right = dict(zip(['longitude', 'latitude'], upper_right))
-    
+
     data = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=lower_left, ur=upper_right, start_date=start_date, end_date=end_date, where=where, extended=extended, api_key=api_key)
-    
+
     if geojson:
         features = map(to_geojson_feature, data)
         data = { 'type': 'FeatureCollection', 'features': features }

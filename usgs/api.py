@@ -300,7 +300,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         ll=ll, ur=ur,
         start_date=start_date, end_date=end_date,
         where=where,
-        max_results=10,
+        max_results=max_results,
         starting_number=starting_number,
         sort_order=sort_order,
         api_key=api_key
