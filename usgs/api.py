@@ -6,7 +6,9 @@ import requests
 from requests_futures.sessions import FuturesSession
 
 from usgs import USGS_API, USGSError
-from usgs import soap, xsi
+from usgs import soap, xsi, json_requests
+
+USGS_API_JSON = "https://earthexplorer.usgs.gov/inventory/json"
 
 
 TMPFILE = os.path.join(expanduser("~"), ".usgs")
@@ -17,9 +19,7 @@ NAMESPACES = {
 }
 
 
-def _get_api_key():
-
-    api_key = None
+def _get_api_key(api_key):
 
     if os.path.exists(TMPFILE):
         with open(TMPFILE, "r") as f:
@@ -85,37 +85,31 @@ def clear_order():
     raise NotImplementedError
 
 
-def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
-
-    api_key = _get_api_key()
-
-    xml = soap.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
-    r = requests.post(USGS_API, xml)
-
-    root = ElementTree.fromstring(r.text)
-    _check_for_usgs_error(root)
-
-    items = root.findall("SOAP-ENV:Body/ns1:datasetsResponse/return/item", NAMESPACES)
-
-    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
-
-    return data
-
-
 def dataset_fields(dataset, node):
 
     api_key = _get_api_key()
 
-    xml = soap.dataset_fields(dataset, node, api_key=api_key)
-    r = requests.post(USGS_API, xml)
+    payload = {
+        "jsonRequest": json_requests.dataset_fields(dataset, node, api_key=api_key)
+    }
+    url = '{}/datasetfields'.format(USGS_API_JSON)
+    r = requests.post(url, payload)
 
-    root = ElementTree.fromstring(r.text)
-    _check_for_usgs_error(root)
+    return r.json()
 
-    items = root.findall("SOAP-ENV:Body/ns1:datasetFieldsResponse/return/item", NAMESPACES)
-    data = map(lambda item: {el.tag: xsi.get(el) for el in item}, items)
 
-    return data
+def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None):
+
+    api_key = _get_api_key()
+    
+    url = '{}/datasets'.format(USGS_API_JSON)
+
+    payload = {
+        "jsonRequest": json_requests.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
+    }
+    r = requests.post(url, payload)
+
+    return r.json()
 
 
 def download(dataset, node, entityids, product='STANDARD', api_key=None):
@@ -129,19 +123,15 @@ def download(dataset, node, entityids, product='STANDARD', api_key=None):
     varies depending on the product.
     """
 
-    api_key = api_key if api_key else _get_api_key()
+    api_key = _get_api_key(api_key)
 
-    xml = soap.download(dataset, node, entityids, [product], api_key=api_key)
-    r = requests.post(USGS_API, xml)
+    url = '{}/download'.format(USGS_API_JSON)
+    payload = {
+        "jsonRequest": json_requests.download(dataset, node, entityids, [product], api_key=api_key)
+    }
+    r = requests.post(url, payload)
 
-    root = ElementTree.fromstring(r.text)
-    _check_for_usgs_error(root)
-
-    items = root.findall("SOAP-ENV:Body/ns1:downloadResponse/return/item", NAMESPACES)
-
-    data = map(lambda el: xsi.get(el), items)
-
-    return data
+    return r.json()
 
 
 def download_options(dataset, node, entityids):
