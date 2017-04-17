@@ -116,10 +116,10 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, ap
         }
 
     if start_date:
-        payload["start_date"] = start_date
+        payload["startDate"] = start_date
 
     if end_date:
-        payload["end_date"] = end_date
+        payload["endDate"] = end_date
 
     return json.dumps(payload)
 
