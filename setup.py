@@ -25,7 +25,7 @@ setup(name='usgs',
       keywords='',
       author=u"Amit Kapadia",
       author_email='amit@planet.com',
-      url='https://github.com/mapbox/usgs',
+      url='https://github.com/kapadia/usgs',
       license='MIT',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
@@ -37,7 +37,7 @@ setup(name='usgs',
           'requests_futures>=0.9.5'
       ],
       extras_require={
-          'test': ['pytest'],
+          'test': ['pytest', 'mock'],
       },
       entry_points="""
       [console_scripts]
