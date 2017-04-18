@@ -54,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'usgs'
-copyright = u'2015, Amit Kapadia'
+copyright = u'2017, Amit Kapadia'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

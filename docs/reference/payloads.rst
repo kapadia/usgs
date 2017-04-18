@@ -2,5 +2,8 @@
 
 .. payloads:
 
+USGS Payloads
+=============
+
 .. automodule:: usgs.payloads
 	:members:
