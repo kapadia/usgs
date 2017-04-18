@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>usgs &mdash; usgs 0.1.6 documentation</title>
+  <title>usgs &mdash; usgs 0.2.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -30,11 +30,11 @@
   
 
   
-    <link rel="top" title="usgs 0.1.6 documentation" href="#"/>
+    <link rel="top" title="usgs 0.2.0 documentation" href="#"/>
         <link rel="next" title="USGS CLI" href="reference/cli.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -44,11 +44,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
-          <a href="#" class="fa fa-home"> usgs</a>
-        
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> usgs
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -56,36 +72,28 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
           
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="reference/cli.html">USGS CLI</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#login">Login</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#logout">Logout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#search">Search</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#metadata">Metadata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#download-options">Download Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference/cli.html#download-url">Download URL</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="reference/api.html">USGS API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference/api.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="reference/soap.html">USGS SOAP</a></li>
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/cli.html">USGS CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/api.html">USGS API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/payloads.html">USGS Payloads</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/ee.html">EarthExplorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/hdds.html">HDDSExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/catalog/lpcs.html">LPCSExplorer</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -100,31 +108,44 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="#">Docs</a> &raquo;</li>
       
     <li>usgs</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <div class="section" id="usgs">
 <h1>usgs<a class="headerlink" href="#usgs" title="Permalink to this headline">¶</a></h1>
 <p>usgs is a Python library for interfacing with the US Geologic Survey&#8217;s Inventory Service. The Inventory Service supports a variety of requests for accessing USGS datasets, including searching datasets, downloading data products, and accessing metadata on data products.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Some requests require an account with <a class="reference external" href="https://ers.cr.usgs.gov/register/">USGS&#8217;s EROS service</a>. The account must also have Machine to Machine privileges.</p>
+<p class="last">All requests require an account with <a class="reference external" href="https://ers.cr.usgs.gov/register/">USGS&#8217;s EROS service</a>. The account must also have Machine to Machine privileges.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">As of May 15, 2017 the USGS has deprecated their SOAP API. This library has been updated to use their JSON API. As a result most, if not all, responses through this client will have a different structure compared to the older SOAP version.</p>
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>pip install usgs
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install usgs
 </pre></div>
 </div>
 </div>
@@ -133,20 +154,20 @@
 <p>These two examples demonstrate how to access metadata for a Hyperion scene and Landsat 8 scene. Both datasets are part of the EarthExplorer catalog. Hyperion is designated by the dataset <code class="docutils literal"><span class="pre">EO1_HYP_PUB</span></code>, Landsat 8 is designated by <code class="docutils literal"><span class="pre">LANDSAT_8</span></code>.</p>
 <div class="section" id="python">
 <h3>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">api</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">api</span>
 
-<span class="c"># Set the EarthExplorer catalog</span>
-<span class="n">node</span> <span class="o">=</span> <span class="s">&#39;EE&#39;</span>
+<span class="c1"># Set the EarthExplorer catalog</span>
+<span class="n">node</span> <span class="o">=</span> <span class="s1">&#39;EE&#39;</span>
 
-<span class="c"># Set the Hyperion and Landsat 8 dataset</span>
-<span class="n">hyperion_dataset</span> <span class="o">=</span> <span class="s">&#39;EO1_HYP_PUB&#39;</span>
-<span class="n">landsat8_dataset</span> <span class="o">=</span> <span class="s">&#39;LANDSAT_8&#39;</span>
+<span class="c1"># Set the Hyperion and Landsat 8 dataset</span>
+<span class="n">hyperion_dataset</span> <span class="o">=</span> <span class="s1">&#39;EO1_HYP_PUB&#39;</span>
+<span class="n">landsat8_dataset</span> <span class="o">=</span> <span class="s1">&#39;LANDSAT_8&#39;</span>
 
-<span class="c"># Set the scene ids</span>
-<span class="n">hyperion_scene_id</span> <span class="o">=</span> <span class="s">&#39;EO1H1820422014302110K2_SG1_01&#39;</span>
-<span class="n">landsat8_scene_id</span> <span class="o">=</span> <span class="s">&#39;LC80290462015135LGN00&#39;</span>
+<span class="c1"># Set the scene ids</span>
+<span class="n">hyperion_scene_id</span> <span class="o">=</span> <span class="s1">&#39;EO1H1820422014302110K2_SG1_01&#39;</span>
+<span class="n">landsat8_scene_id</span> <span class="o">=</span> <span class="s1">&#39;LC80290462015135LGN00&#39;</span>
 
-<span class="c"># Submit requests to USGS servers</span>
+<span class="c1"># Submit requests to USGS servers</span>
 <span class="n">api</span><span class="o">.</span><span class="n">metadata</span><span class="p">(</span><span class="n">hyperion_dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="p">[</span><span class="n">hyperion_scene_id</span><span class="p">])</span>
 <span class="n">api</span><span class="o">.</span><span class="n">metadata</span><span class="p">(</span><span class="n">landsat8_dataset</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="p">[</span><span class="n">landsat8_scene_id</span><span class="p">])</span>
 </pre></div>
@@ -154,77 +175,93 @@
 </div>
 <div class="section" id="command-line">
 <h3>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01
-<span class="o">[</span>
-  <span class="o">{</span>
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 26.253489,
-      <span class="s2">&quot;longitude&quot;</span>: 21.53022
-    <span class="o">}</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29T00:00:00Z&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 26.240475,
-      <span class="s2">&quot;longitude&quot;</span>: 21.602509
-    <span class="o">}</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 24.365584,
-      <span class="s2">&quot;longitude&quot;</span>: 21.074194
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2014-11-01T13:18:02Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:58:59Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:59:31Z&quot;</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 24.352528,
-      <span class="s2">&quot;longitude&quot;</span>: 21.145425
-    <span class="o">}</span>,
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
-  <span class="o">}</span>
-<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01
+<span class="o">{</span>
+  <span class="s2">&quot;errorCode&quot;</span>: null,
+  <span class="s2">&quot;executionTime&quot;</span>: 1.6408669948578,
+  <span class="s2">&quot;data&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.253489,
+        <span class="s2">&quot;longitude&quot;</span>: 21.53022
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/1854/EO1H1820422014302110K2_SG1_01/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.240475,
+        <span class="s2">&quot;longitude&quot;</span>: 21.602509
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.365584,
+        <span class="s2">&quot;longitude&quot;</span>: 21.074194
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-03-22&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.352528,
+        <span class="s2">&quot;longitude&quot;</span>: 21.145425
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
+    <span class="o">}</span>
+  <span class="o">]</span>,
+  <span class="s2">&quot;api_version&quot;</span>: <span class="s2">&quot;1.2.1&quot;</span>,
+  <span class="s2">&quot;error&quot;</span>: <span class="s2">&quot;&quot;</span>
+<span class="o">}</span>
 
-<span class="nv">$ </span>usgs metadata --node EE LANDSAT_8 LC80290462015135LGN00
-<span class="o">[</span>
-  <span class="o">{</span>
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/4923/LC80290462015135LGN00/&quot;</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 21.27723,
-      <span class="s2">&quot;longitude&quot;</span>: -104.10944
-    <span class="o">}</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-05-15T17:17:09Z&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/landsat_8/2015/029/046/LC80290462015135LGN00.jpg&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=LANDSAT_8&amp;ordered=LC80290462015135LGN00&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: null,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 20.90999,
-      <span class="s2">&quot;longitude&quot;</span>: -102.32534
-    <span class="o">}</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: LC80290462015135LGN00, Acquisition Date: 15-MAY-15, Path: 29, Row: 46&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/LANDSAT_8/LC80290462015135LGN00/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 19.54002,
-      <span class="s2">&quot;longitude&quot;</span>: -104.50364
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2015-05-15T15:20:43Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-05-15T17:16:53Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;-104.50364,19.17102,-102.32534,21.27723&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;LC80290462015135LGN00&quot;</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-05-15T17:17:25Z&quot;</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;latitude&quot;</span>: 19.17102,
-      <span class="s2">&quot;longitude&quot;</span>: -102.73968
-    <span class="o">}</span>,
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
-  <span class="o">}</span>
-<span class="o">]</span>
+$ usgs metadata --node EE LANDSAT_8 LC80290462015135LGN00
+<span class="o">{</span>
+  <span class="s2">&quot;errorCode&quot;</span>: null,
+  <span class="s2">&quot;executionTime&quot;</span>: 1.7327969074249,
+  <span class="s2">&quot;data&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/4923/LC80290462015135LGN00/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 21.27723,
+        <span class="s2">&quot;longitude&quot;</span>: -104.10944
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/4923/LC80290462015135LGN00/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;LC80290462015135LGN00&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-05-15&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/landsat_8/2015/029/046/LC80290462015135LGN00.jpg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=LANDSAT_8&amp;ordered=LC80290462015135LGN00&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=LANDSAT_8&amp;ordered=LC80290462015135LGN00&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 20.90999,
+        <span class="s2">&quot;longitude&quot;</span>: -102.32534
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: LC80290462015135LGN00, Acquisition Date: 15-MAY-15, Path: 29, Row: 46&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/LANDSAT_8/LC80290462015135LGN00/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 19.54002,
+        <span class="s2">&quot;longitude&quot;</span>: -104.50364
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-02-07&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-05-15&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;-104.50364,19.17102,-102.32534,21.27723&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;LC80290462015135LGN00&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-05-15&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 19.17102,
+        <span class="s2">&quot;longitude&quot;</span>: -102.73968
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
+    <span class="o">}</span>
+  <span class="o">]</span>,
+  <span class="s2">&quot;api_version&quot;</span>: <span class="s2">&quot;1.2.1&quot;</span>,
+  <span class="s2">&quot;error&quot;</span>: <span class="s2">&quot;&quot;</span>
+<span class="o">}</span>
 </pre></div>
 </div>
 </div>
@@ -258,9 +295,9 @@
 <td>HDDS</td>
 <td><a class="reference external" href="http://hddsexplorer.usgs.gov">http://hddsexplorer.usgs.gov</a></td>
 </tr>
-<tr class="row-odd"><td>LPVSExplorer</td>
-<td>LPVS</td>
-<td><a class="reference external" href="http://lpvsexplorer.cr.usgs.gov/">http://lpvsexplorer.cr.usgs.gov/</a></td>
+<tr class="row-odd"><td><a class="reference internal" href="reference/catalog/lpcs.html#lpcs"><span>LPCSExplorer</span></a></td>
+<td>LPCS</td>
+<td><a class="reference external" href="http://lpcsexplorer.cr.usgs.gov">http://lpcsexplorer.cr.usgs.gov</a></td>
 </tr>
 </tbody>
 </table>
@@ -280,10 +317,11 @@
 <li class="toctree-l2"><a class="reference internal" href="reference/api.html#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference/soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/payloads.html">USGS Payloads</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/cwic.html">CWIC/LSI Explorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/ee.html">EarthExplorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/catalog/hdds.html">HDDSExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/catalog/lpcs.html">LPCSExplorer</a></li>
 </ul>
 </div>
 </div>
@@ -297,12 +335,13 @@
 </div>
 
 
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="reference/cli.html" class="btn btn-neutral float-right" title="USGS CLI">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reference/cli.html" class="btn btn-neutral float-right" title="USGS CLI" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -312,13 +351,14 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Amit Kapadia.
+        &copy; Copyright 2017, Amit Kapadia.
+
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
 </footer>
+
         </div>
       </div>
 
@@ -333,7 +373,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1.6',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

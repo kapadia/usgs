@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>USGS CLI &mdash; usgs 0.1.6 documentation</title>
+  <title>USGS CLI &mdash; usgs 0.2.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -30,12 +30,12 @@
   
 
   
-    <link rel="top" title="usgs 0.1.6 documentation" href="../index.html"/>
+    <link rel="top" title="usgs 0.2.0 documentation" href="../index.html"/>
         <link rel="next" title="USGS API" href="api.html"/>
         <link rel="prev" title="usgs" href="../index.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -45,11 +45,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
-          <a href="../index.html" class="fa fa-home"> usgs</a>
-        
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> usgs
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -57,13 +73,15 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
           
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-              <ul class="current">
+            
+            
+                <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="">USGS CLI</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#login">Login</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#logout">Logout</a></li>
@@ -73,20 +91,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#download-url">Download URL</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">USGS API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#examples">Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">USGS API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="payloads.html">USGS Payloads</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/ee.html">EarthExplorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog/lpcs.html">LPCSExplorer</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -101,49 +117,58 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
     <li>USGS CLI</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/reference/cli.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../_sources/reference/cli.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <span class="target" id="module-usgs.scripts"></span><div class="section" id="usgs-cli">
 <h1>USGS CLI<a class="headerlink" href="#usgs-cli" title="Permalink to this headline">¶</a></h1>
 <p>This library comes with a command line interface to expose many common requests, such as authenticating, searching, downloading, and obtaining metadata.</p>
 <p>Here&#8217;s an example of what can be done using the cli and GitHub Gists.</p>
-<div class="highlight-bash"><div class="highlight"><pre>usgs search --node EE EO1_HYP_PUB --start-date <span class="m">20150401</span> --end-date <span class="m">20150501</span> --geojson <span class="p">|</span> gist -f hyperion-20150401-20150501.geojson
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs search --node EE EO1_HYP_PUB --start-date <span class="m">20150401</span> --end-date <span class="m">20150501</span> --geojson <span class="p">|</span> gist -f hyperion-20150401-20150501.geojson
 </pre></div>
 </div>
 <div style="margin-top:10px; margin-bottom:20px">
   <iframe class='ghmap' width="640" height="400" src="https://render.githubusercontent.com/view/geojson/?url=https%3A%2F%2Fgist.githubusercontent.com%2Fkapadia%2F6e722427cecd9ac79971%2Fraw%2Fhyperion-20150401-20150501.geojson#aa859151-d85a-414d-865c-9704fae891a1" frameborder="0"></iframe>
 </div><div class="section" id="login">
 <h2>Login<a class="headerlink" href="#login" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs login <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs login <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="logout">
 <h2>Logout<a class="headerlink" href="#logout" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs <span class="nb">logout</span> <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs <span class="nb">logout</span> <span class="o">[</span>USGS username<span class="o">]</span> <span class="o">[</span>USGS password<span class="o">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="search">
 <h2>Search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs search <span class="o">[</span>dataset<span class="o">]</span> --start-date <span class="o">[</span>start date<span class="o">]</span> --end-date <span class="o">[</span>end date<span class="o">]</span> --longitude <span class="o">[</span>lng<span class="o">]</span> --latitude <span class="o">[</span>lat<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs search <span class="o">[</span>dataset<span class="o">]</span> --start-date <span class="o">[</span>start date<span class="o">]</span> --end-date <span class="o">[</span>end date<span class="o">]</span> --longitude <span class="o">[</span>lng<span class="o">]</span> --latitude <span class="o">[</span>lat<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
 </pre></div>
 </div>
 <p>Suppose you&#8217;re interested in declassified satellite imagery. The datasets <code class="docutils literal"><span class="pre">CORONA2</span></code> or <code class="docutils literal"><span class="pre">DECLASSII</span></code> can be queried. If you have a GeoJSON file with an AOI, you can pipe the file to <code class="docutils literal"><span class="pre">usgs</span> <span class="pre">search</span></code>.</p>
-<div class="highlight-bash"><div class="highlight"><pre>cat chile.geojson <span class="p">|</span> usgs search --node EE DECLASSII --start-date <span class="m">19700101</span> --end-date <span class="m">19800101</span> --geojson <span class="p">|</span> gist -f declassii-chile-1970s.geojson
+<div class="highlight-bash"><div class="highlight"><pre><span></span>cat chile.geojson <span class="p">|</span> usgs search --node EE DECLASSII --start-date <span class="m">19700101</span> --end-date <span class="m">19800101</span> --geojson <span class="p">|</span> gist -f declassii-chile-1970s.geojson
 </pre></div>
 </div>
 <div style="margin-top:10px; margin-bottom:20px">
@@ -164,250 +189,271 @@ window.onresize();
 </script></div>
 <div class="section" id="metadata">
 <h2>Metadata<a class="headerlink" href="#metadata" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs metadata <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id 1<span class="o">]</span> <span class="o">[</span>entity/scene id 2<span class="o">]</span> ... <span class="o">[</span>entity/scene id n<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs metadata <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id 1<span class="o">]</span> <span class="o">[</span>entity/scene id 2<span class="o">]</span> ... <span class="o">[</span>entity/scene id n<span class="o">]</span>
 </pre></div>
 </div>
 <p>Suppose you want metadata from a couple scenes taken by Hyperion.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01 EO1H1830422015093110KF_TR2_01 <span class="p">|</span> jq <span class="s2">&quot;&quot;</span>
-<span class="o">[</span>
-  <span class="o">{</span>
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.145425,
-      <span class="s2">&quot;latitude&quot;</span>: 24.352528
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01 EO1H1830422015093110KF_TR2_01 <span class="p">|</span> jq <span class="s2">&quot;&quot;</span>
+<span class="o">{</span>
+  <span class="s2">&quot;errorCode&quot;</span>: null,
+  <span class="s2">&quot;executionTime&quot;</span>: 1.676698923111,
+  <span class="s2">&quot;data&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.253489,
+        <span class="s2">&quot;longitude&quot;</span>: 21.53022
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/1854/EO1H1820422014302110K2_SG1_01/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.240475,
+        <span class="s2">&quot;longitude&quot;</span>: 21.602509
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.365584,
+        <span class="s2">&quot;longitude&quot;</span>: 21.074194
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-03-22&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.352528,
+        <span class="s2">&quot;longitude&quot;</span>: 21.145425
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
     <span class="o">}</span>,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.602509,
-      <span class="s2">&quot;latitude&quot;</span>: 26.240475
-    <span class="o">}</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29T00:00:00Z&quot;</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.53022,
-      <span class="s2">&quot;latitude&quot;</span>: 26.253489
-    <span class="o">}</span>,
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.074194,
-      <span class="s2">&quot;latitude&quot;</span>: 24.365584
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2014-11-01T13:18:02Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:58:59Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:59:31Z&quot;</span>
-  <span class="o">}</span>,
-  <span class="o">{</span>
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.293527,
-      <span class="s2">&quot;latitude&quot;</span>: 24.787699
-    <span class="o">}</span>,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.489455,
-      <span class="s2">&quot;latitude&quot;</span>: 25.650833
-    <span class="o">}</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/eo-1/hyp/183/42/2015/EO11830422015093110KF_TR2_01.jpeg&quot;</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-04-03T00:00:00Z&quot;</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.41565,
-      <span class="s2">&quot;latitude&quot;</span>: 25.663285
-    <span class="o">}</span>,
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1830422015093110KF_TR2_01/&quot;</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1830422015093110KF_TR2_01, Acquisition Date: 03-APR-15, Target Path: 183, Target Row: 42&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1830422015093110KF_TR2_01/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.220225,
-      <span class="s2">&quot;latitude&quot;</span>: 24.800065
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2015-04-07T12:18:01Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-04-03T07:44:06Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;20.220225,24.787699,20.489455,25.663285&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-04-03T07:44:21Z&quot;</span>
-  <span class="o">}</span>
-<span class="o">]</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1830422015093110KF_TR2_01/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 25.663285,
+        <span class="s2">&quot;longitude&quot;</span>: 20.41565
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/1854/EO1H1830422015093110KF_TR2_01/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/eo-1/hyp/183/42/2015/EO11830422015093110KF_TR2_01.jpeg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 25.650833,
+        <span class="s2">&quot;longitude&quot;</span>: 20.489455
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1830422015093110KF_TR2_01, Acquisition Date: 03-APR-15, Target Path: 183, Target Row: 42&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1830422015093110KF_TR2_01/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.800065,
+        <span class="s2">&quot;longitude&quot;</span>: 20.220225
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-03-22&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;20.220225,24.787699,20.489455,25.663285&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.787699,
+        <span class="s2">&quot;longitude&quot;</span>: 20.293527
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
+    <span class="o">}</span>
+  <span class="o">]</span>,
+  <span class="s2">&quot;api_version&quot;</span>: <span class="s2">&quot;1.2.1&quot;</span>,
+  <span class="s2">&quot;error&quot;</span>: <span class="s2">&quot;&quot;</span>
+<span class="o">}</span>
 </pre></div>
 </div>
 <p>Unfortunately, this is not all the metadata available for each scene. More metadata is found behind the <code class="docutils literal"><span class="pre">metadataUrl</span></code>. Using the <code class="docutils literal"><span class="pre">extended</span></code> flag will send a second request to USGS, and aggregrate the results in the returned JSON.</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01 EO1H1830422015093110KF_TR2_01 --extended <span class="p">|</span> jq <span class="s2">&quot;&quot;</span>
-<span class="o">[</span>
-  <span class="o">{</span>
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.145425,
-      <span class="s2">&quot;latitude&quot;</span>: 24.352528
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ usgs metadata --node EE EO1_HYP_PUB EO1H1820422014302110K2_SG1_01 EO1H1830422015093110KF_TR2_01 --extended <span class="p">|</span> jq <span class="s2">&quot;&quot;</span>
+<span class="o">{</span>
+  <span class="s2">&quot;errorCode&quot;</span>: null,
+  <span class="s2">&quot;executionTime&quot;</span>: 1.5633571147919,
+  <span class="s2">&quot;data&quot;</span>: <span class="o">[</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.253489,
+        <span class="s2">&quot;longitude&quot;</span>: 21.53022
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/1854/EO1H1820422014302110K2_SG1_01/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 26.240475,
+        <span class="s2">&quot;longitude&quot;</span>: 21.602509
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.365584,
+        <span class="s2">&quot;longitude&quot;</span>: 21.074194
+      <span class="o">}</span>,
+      <span class="s2">&quot;extended&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;NE Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;35&#39;20.41&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;NW Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;30&#39;58.05&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;Entity ID&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+        <span class="s2">&quot;Sun Elevation&quot;</span>: <span class="s2">&quot;38.506879&quot;</span>,
+        <span class="s2">&quot;NW Corner Lat dec&quot;</span>: <span class="s2">&quot;26.178639&quot;</span>,
+        <span class="s2">&quot;Station&quot;</span>: <span class="s2">&quot;SG1&quot;</span>,
+        <span class="s2">&quot;Center Latitude dec&quot;</span>: <span class="s2">&quot;25.233517&quot;</span>,
+        <span class="s2">&quot;Target Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
+        <span class="s2">&quot;SE Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;08&#39;06.46&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;Look Angle&quot;</span>: <span class="s2">&quot;2.2046&quot;</span>,
+        <span class="s2">&quot;SW Corner Long dec&quot;</span>: <span class="s2">&quot;21.063363&quot;</span>,
+        <span class="s2">&quot;Scene Start Time&quot;</span>: <span class="s2">&quot;2014:302:07:58:59.273&quot;</span>,
+        <span class="s2">&quot;Cloud Cover&quot;</span>: <span class="s2">&quot;10% to 19% Cloud Cover&quot;</span>,
+        <span class="s2">&quot;NW Corner Lat&quot;</span>: <span class="s2">&quot;26&amp;amp;deg;10&#39;43.10&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;SW Corner Lat dec&quot;</span>: <span class="s2">&quot;24.302885&quot;</span>,
+        <span class="s2">&quot;Orbit Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
+        <span class="s2">&quot;NE Corner Lat&quot;</span>: <span class="s2">&quot;26&amp;amp;deg;09&#39;50.63&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Target Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
+        <span class="s2">&quot;Date Entered&quot;</span>: <span class="s2">&quot;2014/10/29&quot;</span>,
+        <span class="s2">&quot;NW Corner Long dec&quot;</span>: <span class="s2">&quot;21.516126&quot;</span>,
+        <span class="s2">&quot;Processing Level&quot;</span>: <span class="s2">&quot;L1T Product Available&quot;</span>,
+        <span class="s2">&quot;Center Longtude dec&quot;</span>: <span class="s2">&quot;21.325905&quot;</span>,
+        <span class="s2">&quot;NE Corner Lat dec&quot;</span>: <span class="s2">&quot;26.164064&quot;</span>,
+        <span class="s2">&quot;SE Corner Long dec&quot;</span>: <span class="s2">&quot;21.135127&quot;</span>,
+        <span class="s2">&quot;Center Latitude&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;14&#39;00.66&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;SW Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;03&#39;48.11&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;NE Corner Long dec&quot;</span>: <span class="s2">&quot;21.589002&quot;</span>,
+        <span class="s2">&quot;SE Corner Lat dec&quot;</span>: <span class="s2">&quot;24.288481&quot;</span>,
+        <span class="s2">&quot;Acquisition Date&quot;</span>: <span class="s2">&quot;2014/10/29&quot;</span>,
+        <span class="s2">&quot;Scene Stop Time&quot;</span>: <span class="s2">&quot;2014:302:07:59:31.273&quot;</span>,
+        <span class="s2">&quot;SE Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;17&#39;18.53&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Satellite Inclination&quot;</span>: <span class="s2">&quot;97.96&quot;</span>,
+        <span class="s2">&quot;Orbit Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
+        <span class="s2">&quot;Center Longitude&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;19&#39;33.26&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;SW Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;18&#39;10.39&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Sun Azimuth&quot;</span>: <span class="s2">&quot;134.735736&quot;</span>
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-03-22&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.352528,
+        <span class="s2">&quot;longitude&quot;</span>: 21.145425
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
     <span class="o">}</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:59:31Z&quot;</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1820422014302110K2_SG1_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/eo-1/hyp/182/42/2014/EO11820422014302110K2_SG1_01.jpeg&quot;</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2014-10-29T00:00:00Z&quot;</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;extended&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;Sun Azimuth&quot;</span>: <span class="s2">&quot;134.735736&quot;</span>,
-      <span class="s2">&quot;SW Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;18&#39;10.39&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Center Longitude&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;08&#39;06.46&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;Orbit Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
-      <span class="s2">&quot;Orbit Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
-      <span class="s2">&quot;SW Corner Lat dec&quot;</span>: <span class="s2">&quot;24.302885&quot;</span>,
-      <span class="s2">&quot;NW Corner Lat&quot;</span>: <span class="s2">&quot;26&amp;amp;deg;10&#39;43.10&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Cloud Cover&quot;</span>: <span class="s2">&quot;10% to 19% Cloud Cover&quot;</span>,
-      <span class="s2">&quot;Scene Start Time&quot;</span>: <span class="s2">&quot;2014:302:07:58:59.273&quot;</span>,
-      <span class="s2">&quot;SW Corner Long dec&quot;</span>: <span class="s2">&quot;21.063363&quot;</span>,
-      <span class="s2">&quot;Look Angle&quot;</span>: <span class="s2">&quot;2.2046&quot;</span>,
-      <span class="s2">&quot;SE Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;08&#39;06.46&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NE Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;35&#39;20.41&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NW Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;30&#39;58.05&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;Entity ID&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>,
-      <span class="s2">&quot;Sun Elevation&quot;</span>: <span class="s2">&quot;38.506879&quot;</span>,
-      <span class="s2">&quot;NW Corner Lat dec&quot;</span>: <span class="s2">&quot;26.178639&quot;</span>,
-      <span class="s2">&quot;Station&quot;</span>: <span class="s2">&quot;SG1&quot;</span>,
-      <span class="s2">&quot;Center Latitude dec&quot;</span>: <span class="s2">&quot;24.288481&quot;</span>,
-      <span class="s2">&quot;Target Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
-      <span class="s2">&quot;NE Corner Lat&quot;</span>: <span class="s2">&quot;26&amp;amp;deg;09&#39;50.63&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Target Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
-      <span class="s2">&quot;Date Entered&quot;</span>: <span class="s2">&quot;2014/10/29&quot;</span>,
-      <span class="s2">&quot;NW Corner Long dec&quot;</span>: <span class="s2">&quot;21.516126&quot;</span>,
-      <span class="s2">&quot;Processing Level&quot;</span>: <span class="s2">&quot;L1T Product Available&quot;</span>,
-      <span class="s2">&quot;Center Longtude dec&quot;</span>: <span class="s2">&quot;21.135127&quot;</span>,
-      <span class="s2">&quot;NE Corner Lat dec&quot;</span>: <span class="s2">&quot;26.164064&quot;</span>,
-      <span class="s2">&quot;SE Corner Long dec&quot;</span>: <span class="s2">&quot;21.135127&quot;</span>,
-      <span class="s2">&quot;Center Latitude&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;17&#39;18.53&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;SW Corner Long&quot;</span>: <span class="s2">&quot;21&amp;amp;deg;03&#39;48.11&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NE Corner Long dec&quot;</span>: <span class="s2">&quot;21.589002&quot;</span>,
-      <span class="s2">&quot;SE Corner Lat dec&quot;</span>: <span class="s2">&quot;24.288481&quot;</span>,
-      <span class="s2">&quot;Acquisition Date&quot;</span>: <span class="s2">&quot;2014/10/29&quot;</span>,
-      <span class="s2">&quot;Scene Stop Time&quot;</span>: <span class="s2">&quot;2014:302:07:59:31.273&quot;</span>,
-      <span class="s2">&quot;SE Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;17&#39;18.53&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Satellite Inclination&quot;</span>: <span class="s2">&quot;97.96&quot;</span>
-    <span class="o">}</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.53022,
-      <span class="s2">&quot;latitude&quot;</span>: 26.253489
-    <span class="o">}</span>,
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1820422014302110K2_SG1_01/&quot;</span>,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.602509,
-      <span class="s2">&quot;latitude&quot;</span>: 26.240475
-    <span class="o">}</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1820422014302110K2_SG1_01, Acquisition Date: 29-OCT-14, Target Path: 182, Target Row: 42&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1820422014302110K2_SG1_01/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 21.074194,
-      <span class="s2">&quot;latitude&quot;</span>: 24.365584
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2014-11-01T13:18:02Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2014-10-29T07:58:59Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;21.074194,24.352528,21.602509,26.253489&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1820422014302110K2_SG1_01&quot;</span>
-  <span class="o">}</span>,
-  <span class="o">{</span>
-    <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.293527,
-      <span class="s2">&quot;latitude&quot;</span>: 24.787699
-    <span class="o">}</span>,
-    <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-04-03T07:44:21Z&quot;</span>,
-    <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
-    <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/browse/eo-1/hyp/183/42/2015/EO11830422015093110KF_TR2_01.jpeg&quot;</span>,
-    <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-04-03T00:00:00Z&quot;</span>,
-    <span class="s2">&quot;ordered&quot;</span>: <span class="nb">false</span>,
-    <span class="s2">&quot;extended&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;Sun Azimuth&quot;</span>: <span class="s2">&quot;107.463027&quot;</span>,
-      <span class="s2">&quot;SW Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;44&#39;15.46&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Center Longitude&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;16&#39;43.78&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;Orbit Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
-      <span class="s2">&quot;Orbit Row&quot;</span>: <span class="s2">&quot;43&quot;</span>,
-      <span class="s2">&quot;SW Corner Lat dec&quot;</span>: <span class="s2">&quot;24.737627&quot;</span>,
-      <span class="s2">&quot;NW Corner Lat&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;35&#39;16.23&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Cloud Cover&quot;</span>: <span class="s2">&quot;0 to 9% Cloud Cover&quot;</span>,
-      <span class="s2">&quot;Scene Start Time&quot;</span>: <span class="s2">&quot;2015:093:07:44:06.278&quot;</span>,
-      <span class="s2">&quot;SW Corner Long dec&quot;</span>: <span class="s2">&quot;20.20492&quot;</span>,
-      <span class="s2">&quot;Look Angle&quot;</span>: <span class="s2">&quot;-10.588&quot;</span>,
-      <span class="s2">&quot;SE Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;16&#39;43.78&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NE Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;28&#39;20.11&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NW Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;23&#39;52.21&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;Entity ID&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
-      <span class="s2">&quot;Sun Elevation&quot;</span>: <span class="s2">&quot;42.984461&quot;</span>,
-      <span class="s2">&quot;NW Corner Lat dec&quot;</span>: <span class="s2">&quot;25.587842&quot;</span>,
-      <span class="s2">&quot;Station&quot;</span>: <span class="s2">&quot;TR2&quot;</span>,
-      <span class="s2">&quot;Center Latitude dec&quot;</span>: <span class="s2">&quot;24.723703&quot;</span>,
-      <span class="s2">&quot;Target Path&quot;</span>: <span class="s2">&quot;183&quot;</span>,
-      <span class="s2">&quot;NE Corner Lat&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;34&#39;25.92&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Target Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
-      <span class="s2">&quot;Date Entered&quot;</span>: <span class="s2">&quot;2015/04/03&quot;</span>,
-      <span class="s2">&quot;NW Corner Long dec&quot;</span>: <span class="s2">&quot;20.397836&quot;</span>,
-      <span class="s2">&quot;Processing Level&quot;</span>: <span class="s2">&quot;L1T Product Available&quot;</span>,
-      <span class="s2">&quot;Center Longtude dec&quot;</span>: <span class="s2">&quot;20.278828&quot;</span>,
-      <span class="s2">&quot;NE Corner Lat dec&quot;</span>: <span class="s2">&quot;25.573867&quot;</span>,
-      <span class="s2">&quot;SE Corner Long dec&quot;</span>: <span class="s2">&quot;20.278828&quot;</span>,
-      <span class="s2">&quot;Center Latitude&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;43&#39;25.33&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;SW Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;12&#39;17.71&amp;quot;E&quot;</span>,
-      <span class="s2">&quot;NE Corner Long dec&quot;</span>: <span class="s2">&quot;20.472254&quot;</span>,
-      <span class="s2">&quot;SE Corner Lat dec&quot;</span>: <span class="s2">&quot;24.723703&quot;</span>,
-      <span class="s2">&quot;Acquisition Date&quot;</span>: <span class="s2">&quot;2015/04/03&quot;</span>,
-      <span class="s2">&quot;Scene Stop Time&quot;</span>: <span class="s2">&quot;2015:093:07:44:21.278&quot;</span>,
-      <span class="s2">&quot;SE Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;43&#39;25.33&amp;quot;N&quot;</span>,
-      <span class="s2">&quot;Satellite Inclination&quot;</span>: <span class="s2">&quot;97.98&quot;</span>
-    <span class="o">}</span>,
-    <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.41565,
-      <span class="s2">&quot;latitude&quot;</span>: 25.663285
-    <span class="o">}</span>,
-    <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1830422015093110KF_TR2_01/&quot;</span>,
-    <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.489455,
-      <span class="s2">&quot;latitude&quot;</span>: 25.650833
-    <span class="o">}</span>,
-    <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1830422015093110KF_TR2_01, Acquisition Date: 03-APR-15, Target Path: 183, Target Row: 42&quot;</span>,
-    <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;http://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1830422015093110KF_TR2_01/INVSVC/&quot;</span>,
-    <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
-      <span class="s2">&quot;longitude&quot;</span>: 20.220225,
-      <span class="s2">&quot;latitude&quot;</span>: 24.800065
-    <span class="o">}</span>,
-    <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2015-04-07T12:18:01Z&quot;</span>,
-    <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-04-03T07:44:06Z&quot;</span>,
-    <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;20.220225,24.787699,20.489455,25.663285&quot;</span>,
-    <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>
-  <span class="o">}</span>
-<span class="o">]</span>
+    <span class="o">{</span>
+      <span class="s2">&quot;metadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/metadata/xml/1854/EO1H1830422015093110KF_TR2_01/&quot;</span>,
+      <span class="s2">&quot;upperLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 25.663285,
+        <span class="s2">&quot;longitude&quot;</span>: 20.41565
+      <span class="o">}</span>,
+      <span class="s2">&quot;fgdcMetadataUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/fgdc/1854/EO1H1830422015093110KF_TR2_01/save_xml&quot;</span>,
+      <span class="s2">&quot;displayId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
+      <span class="s2">&quot;acquisitionDate&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;browseUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/browse/eo-1/hyp/183/42/2015/EO11830422015093110KF_TR2_01.jpeg&quot;</span>,
+      <span class="s2">&quot;dataAccessUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;orderUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/order/process?dataset_name=EO1_HYP_PUB&amp;ordered=EO1H1830422015093110KF_TR2_01&amp;node=INVSVC&quot;</span>,
+      <span class="s2">&quot;upperRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 25.650833,
+        <span class="s2">&quot;longitude&quot;</span>: 20.489455
+      <span class="o">}</span>,
+      <span class="s2">&quot;summary&quot;</span>: <span class="s2">&quot;Entity ID: EO1H1830422015093110KF_TR2_01, Acquisition Date: 03-APR-15, Target Path: 183, Target Row: 42&quot;</span>,
+      <span class="s2">&quot;downloadUrl&quot;</span>: <span class="s2">&quot;https://earthexplorer.usgs.gov/download/external/options/EO1_HYP_PUB/EO1H1830422015093110KF_TR2_01/INVSVC/&quot;</span>,
+      <span class="s2">&quot;lowerLeftCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.800065,
+        <span class="s2">&quot;longitude&quot;</span>: 20.220225
+      <span class="o">}</span>,
+      <span class="s2">&quot;extended&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;NE Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;28&#39;20.11&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;NW Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;23&#39;52.21&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;Entity ID&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
+        <span class="s2">&quot;Sun Elevation&quot;</span>: <span class="s2">&quot;42.984461&quot;</span>,
+        <span class="s2">&quot;NW Corner Lat dec&quot;</span>: <span class="s2">&quot;25.587842&quot;</span>,
+        <span class="s2">&quot;Station&quot;</span>: <span class="s2">&quot;TR2&quot;</span>,
+        <span class="s2">&quot;Center Latitude dec&quot;</span>: <span class="s2">&quot;25.15576&quot;</span>,
+        <span class="s2">&quot;Target Path&quot;</span>: <span class="s2">&quot;183&quot;</span>,
+        <span class="s2">&quot;SE Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;16&#39;43.78&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;Look Angle&quot;</span>: <span class="s2">&quot;-10.588&quot;</span>,
+        <span class="s2">&quot;SW Corner Long dec&quot;</span>: <span class="s2">&quot;20.20492&quot;</span>,
+        <span class="s2">&quot;Scene Start Time&quot;</span>: <span class="s2">&quot;2015:093:07:44:06.278&quot;</span>,
+        <span class="s2">&quot;Cloud Cover&quot;</span>: <span class="s2">&quot;0 to 9% Cloud Cover&quot;</span>,
+        <span class="s2">&quot;NW Corner Lat&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;35&#39;16.23&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;SW Corner Lat dec&quot;</span>: <span class="s2">&quot;24.737627&quot;</span>,
+        <span class="s2">&quot;Orbit Row&quot;</span>: <span class="s2">&quot;43&quot;</span>,
+        <span class="s2">&quot;NE Corner Lat&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;34&#39;25.92&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Target Row&quot;</span>: <span class="s2">&quot;42&quot;</span>,
+        <span class="s2">&quot;Date Entered&quot;</span>: <span class="s2">&quot;2015/04/03&quot;</span>,
+        <span class="s2">&quot;NW Corner Long dec&quot;</span>: <span class="s2">&quot;20.397836&quot;</span>,
+        <span class="s2">&quot;Processing Level&quot;</span>: <span class="s2">&quot;L1T Product Available&quot;</span>,
+        <span class="s2">&quot;Center Longtude dec&quot;</span>: <span class="s2">&quot;20.33846&quot;</span>,
+        <span class="s2">&quot;NE Corner Lat dec&quot;</span>: <span class="s2">&quot;25.573867&quot;</span>,
+        <span class="s2">&quot;SE Corner Long dec&quot;</span>: <span class="s2">&quot;20.278828&quot;</span>,
+        <span class="s2">&quot;Center Latitude&quot;</span>: <span class="s2">&quot;25&amp;amp;deg;09&#39;20.74&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;SW Corner Long&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;12&#39;17.71&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;NE Corner Long dec&quot;</span>: <span class="s2">&quot;20.472254&quot;</span>,
+        <span class="s2">&quot;SE Corner Lat dec&quot;</span>: <span class="s2">&quot;24.723703&quot;</span>,
+        <span class="s2">&quot;Acquisition Date&quot;</span>: <span class="s2">&quot;2015/04/03&quot;</span>,
+        <span class="s2">&quot;Scene Stop Time&quot;</span>: <span class="s2">&quot;2015:093:07:44:21.278&quot;</span>,
+        <span class="s2">&quot;SE Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;43&#39;25.33&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Satellite Inclination&quot;</span>: <span class="s2">&quot;97.98&quot;</span>,
+        <span class="s2">&quot;Orbit Path&quot;</span>: <span class="s2">&quot;182&quot;</span>,
+        <span class="s2">&quot;Center Longitude&quot;</span>: <span class="s2">&quot;20&amp;amp;deg;20&#39;18.46&amp;quot;E&quot;</span>,
+        <span class="s2">&quot;SW Corner Lat&quot;</span>: <span class="s2">&quot;24&amp;amp;deg;44&#39;15.46&amp;quot;N&quot;</span>,
+        <span class="s2">&quot;Sun Azimuth&quot;</span>: <span class="s2">&quot;107.463027&quot;</span>
+      <span class="o">}</span>,
+      <span class="s2">&quot;modifiedDate&quot;</span>: <span class="s2">&quot;2017-03-22&quot;</span>,
+      <span class="s2">&quot;startTime&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;sceneBounds&quot;</span>: <span class="s2">&quot;20.220225,24.787699,20.489455,25.663285&quot;</span>,
+      <span class="s2">&quot;ordered&quot;</span>: false,
+      <span class="s2">&quot;entityId&quot;</span>: <span class="s2">&quot;EO1H1830422015093110KF_TR2_01&quot;</span>,
+      <span class="s2">&quot;endTime&quot;</span>: <span class="s2">&quot;2015-04-03&quot;</span>,
+      <span class="s2">&quot;lowerRightCoordinate&quot;</span>: <span class="o">{</span>
+        <span class="s2">&quot;latitude&quot;</span>: 24.787699,
+        <span class="s2">&quot;longitude&quot;</span>: 20.293527
+      <span class="o">}</span>,
+      <span class="s2">&quot;bulkOrdered&quot;</span>: <span class="nb">false</span>
+    <span class="o">}</span>
+  <span class="o">]</span>,
+  <span class="s2">&quot;api_version&quot;</span>: <span class="s2">&quot;1.2.1&quot;</span>,
+  <span class="s2">&quot;error&quot;</span>: <span class="s2">&quot;&quot;</span>
+<span class="o">}</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="download-options">
 <h2>Download Options<a class="headerlink" href="#download-options" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs download-options <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs download-options <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="download-url">
 <h2>Download URL<a class="headerlink" href="#download-url" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre>usgs download-url <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span> --product <span class="o">[</span>product<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usgs download-url <span class="o">[</span>dataset<span class="o">]</span> <span class="o">[</span>entity/scene id<span class="o">]</span> --node <span class="o">[</span>node<span class="o">]</span> --product <span class="o">[</span>product<span class="o">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="USGS API">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="USGS API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral" title="usgs"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral" title="usgs" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -416,13 +462,14 @@ window.onresize();
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Amit Kapadia.
+        &copy; Copyright 2017, Amit Kapadia.
+
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
 </footer>
+
         </div>
       </div>
 
@@ -437,7 +484,7 @@ window.onresize();
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.6',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

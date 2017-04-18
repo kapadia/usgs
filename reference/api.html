@@ -5,16 +5,16 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>USGS API &mdash; usgs 0.1.6 documentation</title>
+  <title>USGS API &mdash; usgs 0.2.0 documentation</title>
   
 
   
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -30,12 +30,12 @@
   
 
   
-    <link rel="top" title="usgs 0.1.6 documentation" href="../index.html"/>
-        <link rel="next" title="USGS SOAP" href="soap.html"/>
+    <link rel="top" title="usgs 0.2.0 documentation" href="../index.html"/>
+        <link rel="next" title="USGS Payloads" href="payloads.html"/>
         <link rel="prev" title="USGS CLI" href="cli.html"/> 
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -45,11 +45,27 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-nav-search">
-        
-          <a href="../index.html" class="fa fa-home"> usgs</a>
-        
-        
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> usgs
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -57,36 +73,31 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-      </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        
           
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#login">Login</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#logout">Logout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#search">Search</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#metadata">Metadata</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#download-options">Download Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cli.html#download-url">Download URL</a></li>
-</ul>
-</li>
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cli.html">USGS CLI</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">USGS API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="soap.html">USGS SOAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="payloads.html">USGS Payloads</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/cwic.html">CWIC/LSI Explorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/ee.html">EarthExplorer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog/hdds.html">HDDSExplorer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog/lpcs.html">LPCSExplorer</a></li>
 </ul>
 
+            
           
-        
+        </div>
       </div>
-      &nbsp;
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -101,53 +112,62 @@
       
       <div class="wy-nav-content">
         <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
     <li>USGS API</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/reference/api.txt" rel="nofollow"> View page source</a>
+          
+            <a href="../_sources/reference/api.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main" class="document">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <span class="target" id="module-usgs"></span><div class="section" id="usgs-api">
 <h1>USGS API<a class="headerlink" href="#usgs-api" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal"><span class="pre">where</span></code> parameter used for searching a USGS dataset is best understood by example.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">api</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">usgs</span> <span class="kn">import</span> <span class="n">api</span>
 
 
 <span class="k">def</span> <span class="nf">submit_where_query</span><span class="p">():</span>
 
-    <span class="c"># USGS uses numerical codes to identify queryable fields</span>
-    <span class="c"># To see which fields are queryable for a specific dataset,</span>
-    <span class="c"># send off a request to dataset-fields</span>
+    <span class="c1"># USGS uses numerical codes to identify queryable fields</span>
+    <span class="c1"># To see which fields are queryable for a specific dataset,</span>
+    <span class="c1"># send off a request to dataset-fields</span>
 
-    <span class="n">fields</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">dataset_fields</span><span class="p">(</span><span class="s">&#39;LANDSAT_8&#39;</span><span class="p">,</span> <span class="s">&#39;EE&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">dataset_fields</span><span class="p">(</span><span class="s1">&#39;LANDSAT_8_C1&#39;</span><span class="p">,</span> <span class="s1">&#39;EE&#39;</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
         <span class="k">print</span> <span class="n">field</span>
 
-    <span class="c"># WRS Path happens to have the field id 10036</span>
+    <span class="c1"># WRS Path happens to have the field id 20514</span>
     <span class="n">where</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">10036</span><span class="p">:</span> <span class="s">&#39;043&#39;</span>
+        <span class="mi">20514</span><span class="p">:</span> <span class="s1">&#39;043&#39;</span>
     <span class="p">}</span>
-    <span class="n">scenes</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;LANDSAT_8&#39;</span><span class="p">,</span> <span class="s">&#39;EE&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s">&#39;2015-04-01&#39;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s">&#39;2015-05-01&#39;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;LANDSAT_8_C1&#39;</span><span class="p">,</span> <span class="s1">&#39;EE&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="s1">&#39;2017-04-01&#39;</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="s1">&#39;2017-05-01&#39;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">extended</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;results&#39;</span><span class="p">]:</span>
         <span class="k">print</span> <span class="n">scene</span>
 </pre></div>
 </div>
 <span class="target" id="module-usgs.api"></span><dl class="function">
 <dt id="usgs.api.download">
-<code class="descclassname">usgs.api.</code><code class="descname">download</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>product</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.download" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.api.</code><code class="descname">download</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>product='STANDARD'</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.download" title="Permalink to this definition">¶</a></dt>
 <dd><p>Though USGS supports multiple products in a single request, there&#8217;s
 ambiguity in the returned list. This wrapper only allows a single
 product per request.</p>
@@ -158,7 +178,7 @@ varies depending on the product.</p>
 
 <dl class="function">
 <dt id="usgs.api.metadata">
-<code class="descclassname">usgs.api.</code><code class="descname">metadata</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>sceneids</em>, <em>extended=False</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.metadata" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">usgs.api.</code><code class="descname">metadata</code><span class="sig-paren">(</span><em>dataset</em>, <em>node</em>, <em>entityids</em>, <em>extended=False</em>, <em>api_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/usgs/api.html#metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#usgs.api.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Request metadata for a given scene in a USGS dataset.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -167,7 +187,7 @@ varies depending on the product.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>dataset</strong> &#8211; </li>
 <li><strong>node</strong> &#8211; </li>
-<li><strong>sceneids</strong> &#8211; </li>
+<li><strong>entityids</strong> &#8211; </li>
 <li><strong>extended</strong> &#8211; Send a second request to the metadata url to get extended metadata on the scene.</li>
 <li><strong>api_key</strong> &#8211; </li>
 </ul>
@@ -219,35 +239,27 @@ submitting a dataset_fields query.</p>
 the first query.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Api_key:</th><td class="field-body"><p class="first last">API key for EROS. Not required for searching.</p>
+<tr class="field-odd field"><th class="field-name">Api_key:</th><td class="field-body"><p class="first last">API key for EROS. Required for searching.</p>
 </td>
 </tr>
 </tbody>
 </table>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p>Export metadata from the search results e.g.</p>
-<p class="last">&lt;numberReturned xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/numberReturned&gt;
-&lt;totalHits xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/totalHits&gt;
-&lt;firstRecord xsi:type=&#8221;xsd:int&#8221;&gt;1&lt;/firstRecord&gt;
-&lt;lastRecord xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/lastRecord&gt;
-&lt;nextRecord xsi:type=&#8221;xsd:int&#8221;&gt;41&lt;/nextRecord&gt;</p>
-</div>
 </dd></dl>
 
 </div>
 </div>
 
 
+           </div>
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="soap.html" class="btn btn-neutral float-right" title="USGS SOAP">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="payloads.html" class="btn btn-neutral float-right" title="USGS Payloads" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="cli.html" class="btn btn-neutral" title="USGS CLI"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="cli.html" class="btn btn-neutral" title="USGS CLI" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -256,13 +268,14 @@ the first query.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Amit Kapadia.
+        &copy; Copyright 2017, Amit Kapadia.
+
     </p>
   </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-  
 </footer>
+
         </div>
       </div>
 
@@ -277,7 +290,7 @@ the first query.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'0.1.6',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
