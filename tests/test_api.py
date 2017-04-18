@@ -4,7 +4,17 @@ import pytest
 import mock
 
 from usgs import api
-from .fakes import FakePostMetadata, FakeDataSets, FakeDataSetsFields
+from .MockPost import MockPost
+
+
+def check_root_keys(response):
+
+    expected_keys = ["errorCode", "executionTime", "data", "api_version", "error"]
+    for key in expected_keys:
+        if not response.has_key(key):
+            return False
+
+    return True
 
 
 def test_clear_bulk_download_order():
@@ -15,7 +25,20 @@ def test_clear_order():
     pytest.skip()
 
 
-@mock.patch('usgs.api.requests.post', FakeDataSets)
+@mock.patch('usgs.api.requests.post', MockPost('dataset-fields.json'))
+def test_dataset_fields():
+
+    expected_keys = ["fieldId", "name", "valueList", "fieldLink"]
+    response = api.dataset_fields("LANDSAT_8_C1", "EE")
+
+    assert check_root_keys(response)
+
+    for item in response['data']:
+        for key in expected_keys:
+            assert item.get(key) is not None
+
+
+@mock.patch('usgs.api.requests.post', MockPost('datasets.json'))
 def test_datasets():
 
     expected_keys = [
@@ -24,30 +47,33 @@ def test_datasets():
         "supportBulkDownload", "bulkDownloadOrderLimit",
         "supportOrder", "orderLimit", "totalScenes"
     ]
+    response = api.datasets(None, "EE")
 
-    results = api.datasets(None, "EE")
-    for item in results:
+    assert check_root_keys(response)
+
+    for item in response['data']:
         for key in expected_keys:
             assert item.get(key) is not None
 
 
-@mock.patch('usgs.api.requests.post', FakeDataSetsFields)
-def test_dataset_fields():
-
-    expected_keys = ["fieldId", "name", "valueList", "fieldLink"]
-
-    results = api.dataset_fields("LANDSAT_8", "EE")
-    for item in results:
-        for key in expected_keys:
-            assert item.get(key) is not None
-
-
+@mock.patch('usgs.api.requests.post', MockPost('download.json'))
 def test_download():
-    pytest.skip()
+    response = api.download("LANDSAT_8_C1", "EE", ["LC80810712017104LGN00"], product='STANDARD')
+    assert check_root_keys(response)
+    assert len(response['data']) == 1
 
 
+@mock.patch('usgs.api.requests.post', MockPost('download-options.json'))
 def test_download_options():
-    pytest.skip()
+
+    expected_keys = ["available", "storageLocation", "url", "productName", "filesize", "downloadCode"]
+    response = api.download_options("LANDSAT_8_C1", "EE", ["LC80810712017104LGN00"])
+
+    assert check_root_keys(response)
+
+    for item in response["data"][0]["downloadOptions"]:
+        for key in expected_keys:
+            assert item.get(key) is not None
 
 
 def test_get_bulk_download_products():
@@ -66,23 +92,7 @@ def test_item_basket():
     pytest.skip()
 
 
-@pytest.mark.skipif(os.environ.get("USGS_USERNAME") is None, reason="requires USGS credentials")
-@pytest.mark.skipif(os.environ.get("USGS_PASSWORD") is None, reason="requires USGS credentials")
-def test_login():
-
-    username = os.environ.get("USGS_USERNAME")
-    password = os.environ.get("USGS_PASSWORD")
-    api_key = api.login(username, password)
-
-    assert isinstance(api_key, str)
-
-
-@pytest.mark.skipif(not os.path.exists(os.path.join("/", "tmp", "usgs")), reason="requires USGS credentials")
-def test_logout():
-    assert api.logout()
-
-
-@mock.patch('usgs.api.requests.post', FakePostMetadata)
+@mock.patch('usgs.api.requests.post', MockPost('metadata.json'))
 def test_metadata():
 
     expected_keys = [
@@ -94,8 +104,10 @@ def test_metadata():
         "modifiedDate", "summary"
     ]
 
-    results = api.metadata("LANDSAT_8", "EE", "LC80360332014357LGN00")
-    for item in results:
+    response = api.metadata("LANDSAT_8_C1", "EE", ["LC80810712017104LGN00"])
+    assert check_root_keys(response)
+
+    for item in response['data']:
         for key in expected_keys:
             assert item.get(key) is not None
 
@@ -108,23 +120,16 @@ def test_remove_order_scene():
     pytest.skip()
 
 
-def test_search_request():
-    pytest.skip()
+@mock.patch('usgs.api.requests.post', MockPost('search.json'))
+def test_search():
+    expected_keys = ["totalHits", "firstRecord", "nextRecord", "results", "numberReturned", "lastRecord"]
 
+    response = api.search("LANDSAT_8_C1", "EE", start_date='20170401', end_date='20170402', max_results=10)
+    assert check_root_keys(response)
 
-def test_submit_bulk_order():
-    pytest.skip()
+    assert len(response['data']["results"]) == 10
 
-
-def test_submit_order():
-    pytest.skip()
-
-
-def test_update_bulk_download_scene():
-    pytest.skip()
-
-
-def test_update_order_scene():
-    pytest.skip()
-
+    data = response['data']
+    for key in expected_keys:
+        assert key in data
 
