@@ -22,18 +22,18 @@ The ``where`` parameter used for searching a USGS dataset is best understood by 
         # To see which fields are queryable for a specific dataset,
         # send off a request to dataset-fields
 
-        fields = api.dataset_fields('LANDSAT_8', 'EE')
+        results = api.dataset_fields('LANDSAT_8_C1', 'EE')
 
-        for field in fields:
+        for field in results['data']:
             print field
 
-        # WRS Path happens to have the field id 10036
+        # WRS Path happens to have the field id 20514
         where = {
-            10036: '043'
+            20514: '043'
         }
-        scenes = api.search('LANDSAT_8', 'EE', where=where, start_date='2015-04-01', end_date='2015-05-01', max_results=10, extended=True)
+        results = api.search('LANDSAT_8_C1', 'EE', where=where, start_date='2017-04-01', end_date='2017-05-01', max_results=10, extended=True)
 
-        for scene in scenes:
+        for scene in results['data']['results']:
             print scene
 
 
