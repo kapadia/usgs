@@ -20,7 +20,7 @@ EARTH_EXPLORER_CATALOG_NODE = "EE"
 HDDS_EXPLORER_CATALOG_NODE = "HDDS"
 
 # http://lpvsexplorer.cr.usgs.gov/
-LPVS_EXPLORER_CATALOG_NODE = "LPVS"
+LPCS_EXPLORER_CATALOG_NODE = "LPCS"
 
 class USGSError(Exception):
     pass
