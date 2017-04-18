@@ -6,6 +6,10 @@ usgs is a Python library for interfacing with the US Geologic Survey's Inventory
 
 .. note:: All requests require an account with `USGS's EROS service <https://ers.cr.usgs.gov/register/>`_. The account must also have Machine to Machine privileges.
 
+
+.. note:: As of May 15, 2017 the USGS has deprecated their SOAP API. This library has been updated to use their JSON API. As a result most, if not all, responses through this client will have a different structure compared to the older SOAP version.
+
+
 Installation
 ------------
 
