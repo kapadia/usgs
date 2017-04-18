@@ -6,4 +6,4 @@ USGS API
 
 Documentation is available at:
 
-http://mapbox.github.io/usgs/
+http://kapadia.github.io/usgs/
