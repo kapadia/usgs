@@ -98,7 +98,7 @@ def dataset_fields(dataset, node, api_key=None):
 def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
 
     api_key = _get_api_key(api_key)
-    
+
     url = '{}/datasets'.format(USGS_API)
 
     payload = {
@@ -184,6 +184,9 @@ def login(username, password, save=True):
 
     response = r.json()
     api_key = response["data"]
+
+    if api_key is None:
+        raise USGSError(response["error"])
 
     if save:
         with open(TMPFILE, "w") as f:
