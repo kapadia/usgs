@@ -1,5 +1,3 @@
-
-import os
 import pytest
 import mock
 
@@ -11,7 +9,7 @@ def check_root_keys(response):
 
     expected_keys = ["errorCode", "executionTime", "data", "api_version", "error"]
     for key in expected_keys:
-        if not response.has_key(key):
+        if key not in response:
             return False
 
     return True
