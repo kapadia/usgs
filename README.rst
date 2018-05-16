@@ -7,3 +7,6 @@ USGS API
 Documentation is available at:
 
 http://kapadia.github.io/usgs/
+
+
+*the project is currently unmaintained and there are no future releases scheduled at this time.*
