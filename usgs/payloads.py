@@ -385,7 +385,7 @@ def search(dataset, node,
                     "value": value,
                     "operand": "="
                 }
-                for field_id, value in where.iteritems()
+                for field_id, value in iter(where.items())
             ]
         }
 
