@@ -128,6 +128,9 @@ def test_search():
     assert check_root_keys(response)
 
     assert len(response['data']["results"]) == 10
+    for item in response['data']['results']:
+        pr = item['displayId'].split('_')[2]
+        assert pr[-3:] == '032'
 
     data = response['data']
     for key in expected_keys:
