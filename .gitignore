@@ -56,3 +56,6 @@ docs/_build/
 target/
 
 *.geojson
+
+# IDEA IDE
+.idea/
