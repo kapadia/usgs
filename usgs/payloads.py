@@ -242,7 +242,9 @@ def login(username, password):
 
     payload = {
         "username": username,
-        "password": password
+        "password": password,
+        "authType": "",
+        "catalogId": "EE"
     }
 
     return json.dumps(payload)
@@ -365,11 +367,15 @@ def search(dataset, node,
         payload["lowerLeft"] = ll
         payload["upperRight"] = ur
 
-    if start_date:
-        payload["startDate"] = start_date
+    if start_date or end_date:
+        payload["temporalFilter"] = {
+            "dateField": "search_date"
+        }
 
-    if end_date:
-        payload["endDate"] = end_date
+        if start_date:
+            payload["temporalFilter"]["startDate"] = start_date
+        if end_date:
+            payload["temporalFilter"]["endDate"] = end_date
 
     if where:
 

@@ -17,7 +17,7 @@ NAMESPACES = {
 
 def _get_api_key(api_key):
 
-    if os.path.exists(TMPFILE):
+    if api_key is None and os.path.exists(TMPFILE):
         with open(TMPFILE, "r") as f:
             api_key = f.read()
 
@@ -308,7 +308,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         sort_order=sort_order,
         api_key=api_key
     )}
-    r = requests.post(url, payload)
+    r = requests.get(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
