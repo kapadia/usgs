@@ -110,7 +110,7 @@ class PayloadsTest(unittest.TestCase):
 
     def test_search(self):
 
-        expected = """{"node": "EE", "datasetName": "GLS2005", "apiKey": "USERS API KEY", "upperRight": {"latitude": 90, "longitude": -120}, "maxResults": 3, "startingNumber": 1, "sortOrder": "ASC", "lowerLeft": {"latitude": 75, "longitude": -135}, "temporalFilter": {"dateField": "search_date", "endDate": "2007-12-01T00:00:00Z", "startDate": "2006-01-01T00:00:00Z"}}"""
+        expected = """{"node": "EE", "datasetName": "GLS2005", "apiKey": "USERS API KEY", "spatialFilter": {"upperRight": {"latitude": 90, "longitude": -120}, "lowerLeft": {"latitude": 75, "longitude": -135}, "filterType": "mbr"}, "maxResults": 3, "startingNumber": 1, "sortOrder": "ASC", "temporalFilter": {"dateField": "search_date", "endDate": "2007-12-01T00:00:00Z", "startDate": "2006-01-01T00:00:00Z"}}"""
 
         ll = {"longitude": -135, "latitude": 75}
         ur = {"longitude": -120, "latitude": 90}
@@ -119,6 +119,7 @@ class PayloadsTest(unittest.TestCase):
 
         payload = payloads.search("GLS2005", "EE", ll=ll, ur=ur, start_date=start_date, end_date=end_date, max_results=3,
                               sort_order="ASC", api_key="USERS API KEY")
+
         assert compare_json(payload, expected)
 
 

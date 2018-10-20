@@ -162,10 +162,11 @@ def dataset_fields(dataset, node):
 @click.option("--lower-left", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
 @click.option("--upper-right", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
 @click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
+@click.option('--max-results', default=None, type=int)
 @click.option('--geojson', is_flag=True)
 @click.option("--extended", is_flag=True, help="Probe for more metadata.")
 @api_key_opt
-def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, geojson, extended, api_key):
+def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, max_results, geojson, extended, api_key):
 
     node = get_node(dataset, node)
     
@@ -196,7 +197,13 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
         lower_left = dict(zip(['longitude', 'latitude'], lower_left))
         upper_right = dict(zip(['longitude', 'latitude'], upper_right))
 
-    result = api.search(dataset, node, lat=latitude, lng=longitude, distance=distance, ll=lower_left, ur=upper_right, start_date=start_date, end_date=end_date, where=where, extended=extended, api_key=api_key)
+    result = api.search(
+        dataset, node,
+        lat=latitude, lng=longitude, distance=distance,
+        ll=lower_left, ur=upper_right,
+        start_date=start_date, end_date=end_date,
+        where=where, max_results=max_results,
+        extended=extended, api_key=api_key)
 
     if geojson:
         result = to_geojson(result)

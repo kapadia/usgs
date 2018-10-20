@@ -364,8 +364,11 @@ def search(dataset, node,
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
 
     if ll and ur:
-        payload["lowerLeft"] = ll
-        payload["upperRight"] = ur
+        payload["spatialFilter"] = {
+            "filterType": "mbr",
+            "lowerLeft": ll,
+            "upperRight": ur
+        }
 
     if start_date or end_date:
         payload["temporalFilter"] = {
