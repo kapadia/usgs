@@ -1,6 +1,7 @@
 
 
 import json
+import math
 from usgs import CATALOG_NODES, USGSDependencyRequired
 
 
@@ -297,6 +298,27 @@ def remove_order_scene():
     raise NotImplementedError
 
 
+def great_circle_dist(lat, lng, dist):
+    lat = math.radians(lat)
+    lng = math.radians(lng)
+    brng = math.radians(45.0)
+    ibrng = math.radians(225.0)
+
+    earth_radius = 6371000.0
+    dR = (dist / 2.0)/ earth_radius
+
+    lat1 = math.asin( math.sin(lat)*math.cos(dR) +
+        math.cos(lat)*math.sin(dR)*math.cos(brng) );
+    lng1 = lng + math.atan2(math.sin(brng)*math.sin(dR)*math.cos(lat),
+        math.cos(dR)-math.sin(lat)*math.sin(lat1));
+
+    lat2 = math.asin( math.sin(lat)*math.cos(dR) +
+        math.cos(lat)*math.sin(dR)*math.cos(ibrng) );
+    lng2 = lng + math.atan2(math.sin(ibrng)*math.sin(dR)*math.cos(lat),
+        math.cos(dR)-math.sin(lat)*math.sin(lat2));
+
+    return [math.degrees(lat1), math.degrees(lat2)], [math.degrees(lng1), math.degrees(lng2)]
+
 def search(dataset, node,
     lat=None, lng=None,
     distance=100,
@@ -348,20 +370,12 @@ def search(dataset, node,
     # Latitude and longitude take precedence over ll and ur
     if lat and lng:
 
-        try:
-            import pyproj
-            from shapely import geometry
-        except ImportError:
-            raise USGSDependencyRequired("Shapely and PyProj are required for spatial searches.")
-
-        prj = pyproj.Proj(proj='aeqd', lat_0=lat, lon_0=lng)
-        half_distance = 0.5 * distance
-        box = geometry.box(-half_distance, -half_distance, half_distance, half_distance)
-
-        lngs, lats = prj(*box.exterior.xy, inverse=True)
+        lats, lngs = great_circle_dist(lat, lng, distance / 2.0)
 
         ll = { "longitude": min(*lngs), "latitude": min(*lats) }
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
+
+        print("search box: {b1} {b2}".format(b1=ll, b2=ur))
 
     if ll and ur:
         payload["spatialFilter"] = {
