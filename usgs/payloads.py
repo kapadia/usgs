@@ -319,6 +319,7 @@ def great_circle_dist(lat, lng, dist):
 
     return [math.degrees(lat1), math.degrees(lat2)], [math.degrees(lng1), math.degrees(lng2)]
 
+
 def search(dataset, node,
     lat=None, lng=None,
     distance=100,
@@ -374,8 +375,6 @@ def search(dataset, node,
 
         ll = { "longitude": min(*lngs), "latitude": min(*lats) }
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
-
-        print("search box: {b1} {b2}".format(b1=ll, b2=ur))
 
     if ll and ur:
         payload["spatialFilter"] = {
