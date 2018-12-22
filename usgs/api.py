@@ -171,11 +171,11 @@ def item_basket():
     raise NotImplementedError
 
 
-def login(username, password, save=True):
+def login(username, password, save=True, catalogId='EE'):
 
     url = '{}/login'.format(USGS_API)
     payload = {
-        "jsonRequest": payloads.login(username, password)
+        "jsonRequest": payloads.login(username, password, catalogId=catalogId)
     }
 
     r = requests.post(url, payload)

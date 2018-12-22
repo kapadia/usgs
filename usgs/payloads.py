@@ -227,7 +227,7 @@ def item_basket(api_key=None):
     raise NotImplementedError
 
 
-def login(username, password):
+def login(username, password, catalogId='EE'):
     """
     This method requires SSL be used due to the sensitive nature of
     users passwords. Upon a successful login, an API key will be
@@ -245,7 +245,7 @@ def login(username, password):
         "username": username,
         "password": password,
         "authType": "",
-        "catalogId": "EE"
+        "catalogId": catalogId
     }
 
     return json.dumps(payload)
