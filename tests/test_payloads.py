@@ -123,6 +123,22 @@ class PayloadsTest(unittest.TestCase):
         assert compare_json(payload, expected)
 
 
+    def test_search2(self):
+
+        expected = """{"node": "EE", "datasetName": "GLS2005", "apiKey": "USERS API KEY", "spatialFilter": {"upperRight": {"latitude": 85.00158953883317, "longitude": -124.98175340746137}, "lowerLeft": {"latitude": 84.99840995696343, "longitude": -125.01823502237109}, "filterType": "mbr"}, "maxResults": 3, "startingNumber": 1, "sortOrder": "ASC", "temporalFilter": {"dateField": "search_date", "endDate": "2007-12-01T00:00:00Z", "startDate": "2006-01-01T00:00:00Z"}}"""
+
+        lat = 85
+        lng = -125
+        dist = 1000
+        start_date = "2006-01-01T00:00:00Z"
+        end_date = "2007-12-01T00:00:00Z"
+
+        payload = payloads.search("GLS2005", "EE", lat=lat, lng=lng, distance=dist, start_date=start_date, end_date=end_date, max_results=3,
+                              sort_order="ASC", api_key="USERS API KEY")
+
+        assert compare_json(payload, expected), "wrong result: {r} \n for expected: {e}".format(r=payload, e=expected)
+
+
     def test_submit_bulk_order(self):
         pytest.skip("Not implemented")
 

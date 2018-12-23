@@ -1,5 +1,5 @@
 
-__version__ = "0.2.5"
+__version__ = "0.2.7"
 
 # The USGS API endpoint
 USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
@@ -8,7 +8,7 @@ USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
 # Four catalogs are available for querying
 #
 
-CATALOG_NODES = ["CWIC", "EE", "HDDS", "LPVS"]
+CATALOG_NODES = ["CWIC", "EE", "HDDS", "LPCS"]
 
 # http://lsiexplorer.cr.usgs.gov/
 CWIC_LSI_EXPLORER_CATALOG_NODE = "CWIC"
