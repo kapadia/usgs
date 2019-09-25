@@ -95,14 +95,14 @@ def dataset_fields(dataset, node, api_key=None):
     return response
 
 
-def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
+def datasets(dataset, public_only = False, geojson= None, min_rect=None, start_date=None, end_date=None, api_key=None):
 
     api_key = _get_api_key(api_key)
 
     url = '{}/datasets'.format(USGS_API)
 
     payload = {
-        "jsonRequest": payloads.datasets(dataset, node, ll=ll, ur=ur, start_date=start_date, end_date=end_date, api_key=api_key)
+        "jsonRequest": payloads.datasets(dataset, public_only=public_only, geojson=geojson, min_rect=min_rect, start_date=start_date, end_date=end_date, api_key=api_key)
     }
     r = requests.post(url, payload)
     response = r.json()

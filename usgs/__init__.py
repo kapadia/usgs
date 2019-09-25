@@ -2,7 +2,7 @@
 __version__ = "0.2.7"
 
 # The USGS API endpoint
-USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
+USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.1"
 
 #
 # Four catalogs are available for querying

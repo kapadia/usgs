@@ -55,7 +55,7 @@ def dataset_fields(dataset, node, api_key=None):
     })
 
 
-def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
+def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date=None, end_date=None, api_key=None):
     """
     This method is used to find datasets available for searching.
     By passing no parameters except node, all available datasets
@@ -90,37 +90,36 @@ def datasets(dataset, node, ll=None, ur=None, start_date=None, end_date=None, ap
         Used for searching scene acquisition - will accept anything
         that the PHP strtotime function can understand
     
-    :param node:
-        The requested Catalog
-    
     :param api_key:
         API key is not required.
         
     """
 
     payload = {
-        "node": node,
-        "apiKey": api_key
+        "apiKey": api_key,
+        "publicOnly": public_only
     }
 
     if dataset:
         payload["datasetName"] = dataset
 
-    if ll and ur:
-        payload["lowerLeft"] = {
-            "latitude": ll["latitude"],
-            "longitude": ll["longitude"]
-        }
-        payload["upperRight"] = {
-            "latitude": ur["latitude"],
-            "longitude": ur["longitude"]
+    if geojson and min_rect:
+        raise Exception("Only one of 'geojson' or 'min_rect' should be specified.")
+
+    if geojson:
+        payload["spatialFilter"] = {
+            "filterType": "geojson",
+            "geeJson": geojson
         }
 
-    if start_date:
-        payload["startDate"] = start_date
+    if start_date and end_date:
+        payload["temporalFilter"] = {
+            "startDate": start_date,
+            "endDate": end_date
+        }
 
-    if end_date:
-        payload["endDate"] = end_date
+    else:
+        raise Exception("A `start_date` and `end_date` are both required if one is specified.")
 
     return json.dumps(payload)
 
