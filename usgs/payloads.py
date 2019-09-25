@@ -112,6 +112,13 @@ def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date
             "geeJson": geojson
         }
 
+    if ll and ur:
+        payload["spatialFilter"] = {
+            "filterType": "mbr",
+            "lowerLeft": ll,
+            "upperRight": ur
+        }
+
     if start_date and end_date:
         payload["temporalFilter"] = {
             "startDate": start_date,
@@ -319,7 +326,7 @@ def great_circle_dist(lat, lng, dist):
     return [math.degrees(lat1), math.degrees(lat2)], [math.degrees(lng1), math.degrees(lng2)]
 
 
-def search(dataset, node,
+def search(dataset, node, geojson=None,
     lat=None, lng=None,
     distance=100,
     ll=None, ur=None,
@@ -367,20 +374,29 @@ def search(dataset, node,
         "apiKey": api_key,
     }
 
-    # Latitude and longitude take precedence over ll and ur
-    if lat and lng:
+    if geojson and (ll and ur) or geojson and (lat and lng):
+        raise Exception("Only one of 'geojson' or `ll` and `ur` or `lat` and `lng` should be specified.")
 
-        lats, lngs = great_circle_dist(lat, lng, distance / 2.0)
-
-        ll = { "longitude": min(*lngs), "latitude": min(*lats) }
-        ur = { "longitude": max(*lngs), "latitude": max(*lats) }
-
-    if ll and ur:
+    if geojson:
         payload["spatialFilter"] = {
-            "filterType": "mbr",
-            "lowerLeft": ll,
-            "upperRight": ur
+            "filterType": "geojson",
+            "geeJson": geojson
         }
+    else:
+        # Latitude and longitude take precedence over ll and ur
+        if lat and lng:
+
+            lats, lngs = great_circle_dist(lat, lng, distance / 2.0)
+
+            ll = { "longitude": min(*lngs), "latitude": min(*lats) }
+            ur = { "longitude": max(*lngs), "latitude": max(*lats) }
+
+        if ll and ur:
+            payload["spatialFilter"] = {
+                "filterType": "mbr",
+                "lowerLeft": ll,
+                "upperRight": ur
+            }
 
     if start_date or end_date:
         payload["temporalFilter"] = {

@@ -252,7 +252,7 @@ def remove_order_scene():
     raise NotImplementedError
 
 
-def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None,
+def search(dataset, node, geojson=None, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None,
            where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
     """
 
@@ -260,6 +260,8 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
         USGS dataset (e.g. EO1_HYP_PUB, LANDSAT_8)
     :param node:
         USGS node representing a dataset catalog (e.g. CWIC, EE, HDDS, LPVS)
+    :param geojson:
+        A string or geojson.base.GeoJSON object of geometry type Polygon
     :param lat:
         Latitude
     :param lng:
@@ -297,7 +299,7 @@ def search(dataset, node, lat=None, lng=None, distance=100, ll=None, ur=None, st
 
     url = '{}/search'.format(USGS_API)
     payload = {
-        "jsonRequest": payloads.search(dataset, node,
+        "jsonRequest": payloads.search(dataset, node, geojson=None,
         lat=lat, lng=lng,
         distance=100,
         ll=ll, ur=ur,
