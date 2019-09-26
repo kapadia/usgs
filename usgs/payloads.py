@@ -337,7 +337,9 @@ def search(dataset, node, geojson=None,
     distance=100,
     ll=None, ur=None,
     start_date=None, end_date=None,
-    where=None,
+    additional_criteria=None,
+    where_and=None,
+    where_or=None,
     max_results=50000,
     starting_number=1,
     sort_order="DESC",
@@ -361,8 +363,11 @@ def search(dataset, node, geojson=None,
     
     :param end_date:
     
-    :param where:
-        Specify additional search criteria
+    :param where_and:
+        Specify additional search criteria with and logic
+
+    :param where_or:
+        Specify additional search criteria with or logic
     
     :param max_results:
     
@@ -414,8 +419,13 @@ def search(dataset, node, geojson=None,
         if end_date:
             payload["temporalFilter"]["endDate"] = end_date
 
-    if where:
+    if additional_criteria and where_and or additional_criteria and where_or or where_and and where_or:
+        raise("Can only use either 'additional_criteria' or 'where_and' or 'where_or'")
 
+    if additional_criteria:
+        payload["additionalCriteria"] = additional_criteria
+
+    if where_and:
         # TODO: Support more than AND key/value equality queries
         # usgs search --node EE LANDSAT_8_C1 --start-date 20170410 --end-date 20170411 --where wrs-row 032 | jq ""
         # LC81810322017101LGN00
@@ -429,6 +439,20 @@ def search(dataset, node, geojson=None,
                     "operand": "="
                 }
                 for field_id, value in iter(where.items())
+            ]
+        }
+
+    if where_or:
+        payload["additionalCriteria"] = {
+            "filterType": "or",
+            "childFilters": [
+                {
+                    "filterType": "value",
+                    "fieldId": field_id,
+                    "valueList": value,
+                    "operand": "="
+                }
+                for field_id, value in iter(where_or_dict.items())
             ]
         }
 

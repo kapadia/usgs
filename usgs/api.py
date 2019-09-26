@@ -253,7 +253,7 @@ def remove_order_scene():
 
 
 def search(dataset, node, geojson=None, lat=None, lng=None, distance=100, ll=None, ur=None, start_date=None, end_date=None,
-           where=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
+           additional_criteria=None, where_and=None, where_or=None, max_results=50000, starting_number=1, sort_order="DESC", extended=False, api_key=None):
     """
 
     :param dataset:
@@ -278,11 +278,19 @@ def search(dataset, node, geojson=None, lat=None, lng=None, distance=100, ll=Non
         Start date for when a scene has been acquired
     :param end_date:
         End date for when a scene has been acquired
-    :where:
+    :where_and:
         Dictionary representing key/values for finer grained conditional
-        queries. Only a subset of metadata fields are supported. Available
+        queries. Only the metadata fields that work with and are supported. Available
         fields depend on the value of `dataset`, and maybe be found by
         submitting a dataset_fields query.
+    :where_or:
+        Dictionary representing key/values for finer grained conditional
+        queries. Only the metadata fields that work with or are supported. Available
+        fields depend on the value of `dataset`, and maybe be found by
+        submitting a dataset_fields query.
+    :additionalCriteria:
+        JSON dictionary containing all search filters, can combine or and and filters together.
+        This can be created from scratch using the template in the payloads.search function conditions.
     :max_results:
         Maximum results returned by the server
     :starting_number:
@@ -304,7 +312,9 @@ def search(dataset, node, geojson=None, lat=None, lng=None, distance=100, ll=Non
         distance=100,
         ll=ll, ur=ur,
         start_date=start_date, end_date=end_date,
-        where=where,
+        additional_criteria= additional_criteria,
+        where_and=where_and,
+        where_or=where_or,
         max_results=max_results,
         starting_number=starting_number,
         sort_order=sort_order,
