@@ -55,7 +55,7 @@ def dataset_fields(dataset, node, api_key=None):
     })
 
 
-def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date=None, end_date=None, api_key=None):
+def datasets(dataset, public_only=False, geojson=None, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
     """
     This method is used to find datasets available for searching.
     By passing no parameters except node, all available datasets
@@ -69,6 +69,9 @@ def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date
     
     :param dataset:
         Dataset Identifier
+
+    :param geojson:
+        A string or geojson.base.GeoJSON object of geometry type Polygon.
     
     :param ll:
         Lower left corner of an AOI bounding box - in decimal form
@@ -103,8 +106,8 @@ def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date
     if dataset:
         payload["datasetName"] = dataset
 
-    if geojson and min_rect:
-        raise Exception("Only one of 'geojson' or 'min_rect' should be specified.")
+    if geojson and ll or geojson and ur or geojson and (ll and ur):
+        raise Exception("Only one of 'geojson' or 'll' and 'ur' should be specified.")
 
     if geojson:
         payload["spatialFilter"] = {
@@ -113,10 +116,13 @@ def datasets(dataset, public_only=False, geojson=None, min_rect=None, start_date
         }
 
     if ll and ur:
-        payload["spatialFilter"] = {
-            "filterType": "mbr",
-            "lowerLeft": ll,
-            "upperRight": ur
+        payload["lowerLeft"] = {
+            "latitude": ll["latitude"],
+            "longitude": ll["longitude"]
+        }
+        payload["upperRight"] = {
+            "latitude": ur["latitude"],
+            "longitude": ur["longitude"]
         }
 
     if start_date and end_date:
