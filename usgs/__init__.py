@@ -1,5 +1,5 @@
 
-__version__ = "0.2.7"
+__version__ = "0.2.8"
 
 # The USGS API endpoint
 USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"

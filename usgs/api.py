@@ -2,7 +2,10 @@
 import os
 from os.path import expanduser
 from xml.etree import ElementTree
+from urllib3.util.retry import Retry
+
 import requests
+from requests.adapters import HTTPAdapter
 from requests_futures.sessions import FuturesSession
 
 from usgs import USGS_API, USGSError
@@ -178,7 +181,11 @@ def login(username, password, save=True, catalogId='EE'):
         "jsonRequest": payloads.login(username, password, catalogId=catalogId)
     }
 
-    r = requests.post(url, payload)
+    session = requests.Session()
+    retries = Retry(total=5, backoff_factor=2)
+    session.mount(USGS_API, HTTPAdapter(max_retries=retries))
+
+    r = session.post(url, payload)
     if r.status_code is not 200:
         raise USGSError(r.text)
 
