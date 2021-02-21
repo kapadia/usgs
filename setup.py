@@ -1,12 +1,6 @@
 from codecs import open as codecs_open
 from setuptools import setup, find_packages
 
-
-# Get the long description from the relevant file
-with codecs_open('README.rst', encoding='utf-8') as f:
-    long_description = f.read()
-
-
 # Parse the version from the fiona/rasterio module.
 with open('usgs/__init__.py') as f:
     for line in f:
@@ -20,7 +14,6 @@ with open('usgs/__init__.py') as f:
 setup(name='usgs',
       version=version,
       description=u"Access the USGS inventory service",
-      long_description=long_description,
       classifiers=[],
       keywords='',
       author=u"Amit Kapadia",
