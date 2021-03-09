@@ -27,7 +27,8 @@ setup(name='usgs',
       install_requires=[
           'click>=4.0',
           'requests>=2.7.0',
-          'requests_futures>=0.9.5'
+          'requests_futures>=0.9.5',
+          'python-dateutil>=2.8.1'
       ],
       extras_require={
           'test': ['pytest', 'mock'],

@@ -1,26 +1,21 @@
 
-__version__ = "0.2.8"
+__version__ = "0.3.0"
 
 # The USGS API endpoint
-USGS_API = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
+USGS_API_DEPRECATED = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
+USGS_API = "https://m2m.cr.usgs.gov/api/api/json/stable"
 
 #
-# Four catalogs are available for querying
+# Two catalogs are available for querying
 #
 
-CATALOG_NODES = ["CWIC", "EE", "HDDS", "LPCS"]
-
-# http://lsiexplorer.cr.usgs.gov/
-CWIC_LSI_EXPLORER_CATALOG_NODE = "CWIC"
+CATALOG_NODES = ["EE", "HDDS"]
 
 # http://earthexplorer.usgs.gov/
 EARTH_EXPLORER_CATALOG_NODE = "EE"
 
 # http://hddsexplorer.usgs.gov/
 HDDS_EXPLORER_CATALOG_NODE = "HDDS"
-
-# http://lpvsexplorer.cr.usgs.gov/
-LPCS_EXPLORER_CATALOG_NODE = "LPCS"
 
 class USGSError(Exception):
     pass

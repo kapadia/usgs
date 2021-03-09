@@ -1,26 +1,9 @@
 
-import os, json
+import os
+import json
 import click
+from datetime import datetime
 from usgs import api
-
-
-def get_node(dataset, node):
-    """
-    .. todo:: Move to more appropriate place in module.
-    """
-    
-    if node is None:
-        
-        cur_dir = os.path.dirname(os.path.realpath(__file__))
-        data_dir = os.path.join(cur_dir, "..", "data")
-        dataset_path = os.path.join(data_dir, "datasets.json")
-        
-        with open(dataset_path, "r") as f:
-            datasets = json.loads(f.read())
-        
-        node = datasets[dataset].upper()
-    
-    return node
 
 
 def to_coordinates(bounds):
@@ -90,20 +73,75 @@ def get_bbox(f):
 
 
 api_key_opt = click.option("--api-key", help="API key returned from USGS servers after logging in.", default=None)
-node_opt = click.option("--node", help="The node corresponding to the dataset (CWIC, EE, HDDS, LPVS).", default=None)
-
+catalog_opt = click.option("--catalog", help="The catalog corresponding to the dataset. One of EE or HDDS).", default=None, type=click.Choice(['EE', 'HDDS']))
+dataset_opt = click.option("--dataset", help="The name of a dataset, e.g. landsat_8_c1")
+start_date_opt = click.option("--start-date", default=None, help="The start date of a dataset or acquisition")
+end_date_opt = click.option("--end-date", default=None, help="The start date of a dataset or acquisition")
 
 @click.group()
 def usgs():
     pass
+
+@click.command()
+@click.argument("username", envvar='USGS_USERNAME')
+@click.argument("password", envvar='USGS_PASSWORD')
+def cycle_token(username, password):
+
+    credential_filepath = os.path.join(os.path.expanduser("~"), ".usgs")
+    with open(credential_filepath) as f:
+        credentials = json.load(f)
+
+    created = datetime.strptime(credentials['created'], "%Y-%m-%dT%H:%M:%S.%f")
+    token_lifetime = (datetime.now() - created).seconds
+    approx_two_hours = 2 * 60 * 60 - 60
+    click.echo('The token lifetime is {} seconds'.format(token_lifetime))
+    if token_lifetime > approx_two_hours:
+        api.logout()
+        api.login(username, password)
+
+
+@click.command()
+@click.argument("dataset")
+def dataset_filters(dataset):
+    data = api.dataset_filters(dataset)
+    click.echo(json.dumps(data))
+
+
+@click.command()
+@catalog_opt
+@dataset_opt
+@start_date_opt
+@end_date_opt
+def dataset_search(catalog, dataset, start_date, end_date):
+    data = api.datasets(
+        dataset=dataset, catalog=catalog, start_date=start_date, end_date=end_date)
+    click.echo(json.dumps(data))
+
+
+@click.command()
+@click.argument("dataset")
+@click.argument("scene-ids", nargs=-1)
+@api_key_opt
+def download_options(dataset, scene_ids, api_key):
+    data = api.download_options(dataset, scene_ids)
+    click.echo(json.dumps(data))
+
+
+@click.command()
+@click.argument("dataset")
+@click.argument("entity_id")
+@click.option("--product-id", required=True)
+@api_key_opt
+def download_request(dataset, entity_id, product_id, api_key):
+    data = api.download_request(dataset, entity_id, product_id)
+    click.echo(json.dumps(data))
 
 
 @click.command()
 @click.argument("username", envvar='USGS_USERNAME')
 @click.argument("password", envvar='USGS_PASSWORD')
 def login(username, password):
-    api_key = api.login(username, password)
-    click.echo(api_key)
+    click.echo(api.login(username, password))
 
 
 @click.command()
@@ -112,28 +150,12 @@ def logout():
 
 
 @click.command()
-@click.argument("node")
-@click.option("--start-date")
-@click.option("--end-date")
-def datasets(node, start_date, end_date):
-    data = api.datasets(None, node, start_date=start_date, end_date=end_date)
-    click.echo(json.dumps(data))
-
-
-@click.command()
 @click.argument("dataset")
-@click.argument("scene-ids", nargs=-1)
-@node_opt
-@click.option("--extended", is_flag=True, help="Probe for more metadata.")
+@click.argument("scene-id", nargs=1)
 @click.option('--geojson', is_flag=True)
 @api_key_opt
-def metadata(dataset, scene_ids, node, extended, geojson, api_key):
-
-    if len(scene_ids) == 0:
-        scene_ids = map(lambda s: s.strip(), click.open_file('-').readlines())
-
-    node = get_node(dataset, node)
-    result = api.metadata(dataset, node, scene_ids, extended=extended, api_key=api_key)
+def scene_metadata(dataset, scene_id, geojson, api_key):
+    result = api.scene_metadata(dataset, scene_id, api_key=api_key)
 
     if geojson:
         result = to_geojson(result)
@@ -143,33 +165,24 @@ def metadata(dataset, scene_ids, node, extended, geojson, api_key):
 
 @click.command()
 @click.argument("dataset")
-@node_opt
-def dataset_fields(dataset, node):
-    node = get_node(dataset, node)
-    data = api.dataset_fields(dataset, node)
-    click.echo(json.dumps(data))
-
-
-@click.command()
-@click.argument("dataset")
-@node_opt
 @click.argument("aoi", default="-", required=False)
+@click.option('--max-results', default=None, type=int)
+@click.option('--metadata-type', type=click.Choice(['summary', 'full']))
 @click.option("--start-date")
 @click.option("--end-date")
-@click.option("--longitude")
-@click.option("--latitude")
-@click.option("--distance", help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
 @click.option("--lower-left", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
 @click.option("--upper-right", nargs=2, help="Longitude/latitude specifying the lower left of the search window")
+@click.option("--longitude", type=float)
+@click.option("--latitude", type=float)
+@click.option("--distance", type=float, help="Radius - in units of meters - used to search around the specified longitude/latitude.", default=100)
 @click.option("--where", nargs=2, multiple=True, help="Supply additional search criteria.")
-@click.option('--max-results', default=None, type=int)
-@click.option('--geojson', is_flag=True)
-@click.option("--extended", is_flag=True, help="Probe for more metadata.")
 @api_key_opt
-def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distance, lower_left, upper_right, where, max_results, geojson, extended, api_key):
+def scene_search(
+    dataset, aoi, max_results, metadata_type,
+    start_date, end_date, lower_left, upper_right,
+    longitude, latitude, distance,
+    where, api_key):
 
-    node = get_node(dataset, node)
-    
     if aoi == "-":
         src = click.open_file('-')
         if not src.isatty():
@@ -197,52 +210,21 @@ def search(dataset, node, aoi, start_date, end_date, longitude, latitude, distan
         lower_left = dict(zip(['longitude', 'latitude'], lower_left))
         upper_right = dict(zip(['longitude', 'latitude'], upper_right))
 
-    result = api.search(
-        dataset, node,
-        lat=latitude, lng=longitude, distance=distance,
-        ll=lower_left, ur=upper_right,
+    result = api.scene_search(
+        dataset, max_results=max_results, metadata_type=metadata_type,
         start_date=start_date, end_date=end_date,
-        where=where, max_results=max_results,
-        extended=extended, api_key=api_key)
-
-    if geojson:
-        result = to_geojson(result)
+        ll=lower_left, ur=upper_right,
+        lng=longitude, lat=latitude, distance=distance)
 
     print(json.dumps(result))
 
 
-@click.command()
-@click.argument("dataset")
-@click.argument("scene-ids", nargs=-1)
-@node_opt
-@api_key_opt
-def download_options(dataset, scene_ids, node, api_key):
-    
-    node = get_node(dataset, node)
-    
-    data = api.download_options(dataset, node, scene_ids)
-    print(json.dumps(data))
-
-
-@click.command()
-@click.argument("dataset")
-@click.argument("scene_ids", nargs=-1)
-@click.option("--product", nargs=1, required=True)
-@node_opt
-@api_key_opt
-def download_url(dataset, scene_ids, product, node, api_key):
-    
-    node = get_node(dataset, node)
-    
-    data = api.download(dataset, node, scene_ids, product)
-    click.echo(json.dumps(data))
-
-
+usgs.add_command(cycle_token, "cycle-token")
+usgs.add_command(dataset_filters, "dataset-filters")
+usgs.add_command(download_options, "download-options")
+usgs.add_command(download_request, "download-request")
+usgs.add_command(dataset_search, "dataset-search")
 usgs.add_command(login)
 usgs.add_command(logout)
-usgs.add_command(datasets)
-usgs.add_command(dataset_fields, "dataset-fields")
-usgs.add_command(metadata)
-usgs.add_command(search)
-usgs.add_command(download_options, "download-options")
-usgs.add_command(download_url, "download-url")
+usgs.add_command(scene_metadata, "scene-metadata")
+usgs.add_command(scene_search, "scene-search")
