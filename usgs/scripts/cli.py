@@ -60,7 +60,7 @@ def to_geojson(result):
 
 def explode(coords):
     for e in coords:
-        if isinstance(e, (float, int, long)):
+        if isinstance(e, (float, int)):
             yield coords
             break
         else:
@@ -113,7 +113,7 @@ def dataset_filters(dataset):
 @start_date_opt
 @end_date_opt
 def dataset_search(catalog, dataset, start_date, end_date):
-    data = api.datasets(
+    data = api.dataset_search(
         dataset=dataset, catalog=catalog, start_date=start_date, end_date=end_date)
     click.echo(json.dumps(data))
 
@@ -183,16 +183,15 @@ def scene_search(
     longitude, latitude, distance,
     where, api_key):
 
-    if aoi == "-":
-        src = click.open_file('-')
+    if aoi:
+        src = click.open_file('-') if aoi == "-" else click.open_file(aoi)
         if not src.isatty():
             lines = src.readlines()
-            
             if len(lines) > 0:
-                
                 aoi = json.loads(''.join([ line.strip() for line in lines ]))
-            
-                bbox = map(get_bbox, aoi.get('features') or [aoi])[0]
+                bbox = [
+                    get_bbox(feature) for feature in aoi.get('features')
+                ][0]
                 lower_left = bbox[0:2]
                 upper_right = bbox[2:4]
     

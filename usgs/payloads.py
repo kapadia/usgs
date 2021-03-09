@@ -16,19 +16,19 @@ def dataset_filters(dataset):
         "datasetName": dataset,
     })
 
-def download_options(dataset, entityids):
+def download_options(dataset, entity_ids):
     """
     The download options request is used to discover downloadable products for
     each dataset. If a download is marked as not available, an order must be
     placed to generate that product.
     
     :param str dataset:
-    :param str entityIds:
+    :param str entity_ids:
     """
 
     payload = {
         "datasetName": dataset,
-        "entityIds": entityids
+        "entityIds": entity_ids
     }
 
     return json.dumps(payload)
@@ -129,26 +129,19 @@ def login(username, password):
     return json.dumps(payload)
 
 
-def scene_metadata(dataset, node, entityids, api_key=None):
+def scene_metadata(dataset, entity_id):
     """
     The use of the metadata request is intended for those who have
     acquired scene IDs from a different source. It will return the
     same metadata that is available via the search request.
     
     :param dataset:
-    
-    :param node:
-    
-    :param sceneid:
-    
-    :param api_key:
+    :param entity_id:
     """
-
     payload = {
-        "apiKey": api_key,
         "datasetName": dataset,
-        "node": node,
-        "entityIds": entityids
+        "entityId": entity_id,
+        "metadataType": "full"
     }
 
     return json.dumps(payload)
@@ -178,7 +171,8 @@ def great_circle_dist(lat, lng, dist):
 def scene_search(
     dataset, max_results=None, metadata_type=None, start_date=None,
     end_date=None, ll=None, ur=None,
-    lat=None, lng=None, distance=100):
+    lat=None, lng=None, distance=100,
+    where=None):
 
     payload = defaultdict(dict, {
         "datasetName": dataset,
@@ -204,6 +198,14 @@ def scene_search(
             "filterType": "mbr",
             "lowerLeft": ll,
             "upperRight": ur
+        }
+    
+    if where is not None:
+        payload["sceneFilter"]["metadataFilter"] = {
+            "filterType": "value",
+            "filterId": where["filter_id"],
+            "value": where["value"],
+            "operand": "="
         }
 
     return json.dumps(payload)

@@ -65,12 +65,12 @@ def dataset_filters(dataset, api_key=None):
 
     return response
 
-def download_options(dataset, entityids, api_key=None):
+def download_options(dataset, entity_ids, api_key=None):
     api_key = _get_api_key(api_key)
     session = _create_session(api_key)
 
     url = '{}/download-options'.format(USGS_API)
-    payload = payloads.download_options(dataset, entityids)
+    payload = payloads.download_options(dataset, entity_ids)
 
     r = session.post(url, payload)
     response = r.json()
@@ -152,22 +152,19 @@ def logout():
 
     return response
 
-def scene_metadata(dataset, entityid, api_key=None):
+def scene_metadata(dataset, entity_id, api_key=None):
     """
     Request metadata for a given scene in a USGS dataset.
 
-    :param dataset:
-    :param entityids:
-    :param api_key:
+    :param str dataset:
+    :param str entity_id:
+    :param str api_key:
     """
     api_key = _get_api_key(api_key)
 
     url = '{}/scene-metadata'.format(USGS_API)
-    payload = json.dumps({
-        "datasetName": dataset,
-        "entityId": entityid,
-        "metadataType": "full"
-    })
+    payload = payloads.scene_metadata(dataset, entity_id)
+
     session = _create_session(api_key)
     r = session.post(url, payload)
     response = r.json()
@@ -205,7 +202,7 @@ def scene_search(dataset,
         Dictionary representing key/values for finer grained conditional
         queries. Only a subset of metadata fields are supported. Available
         fields depend on the value of `dataset`, and maybe be found by
-        submitting a dataset_fields query.
+        submitting a dataset_filters query.
     :max_results:
         Maximum results returned by the server
     :starting_number:
