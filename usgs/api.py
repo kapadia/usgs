@@ -219,8 +219,7 @@ def scene_search(dataset,
     payload = payloads.scene_search(
         dataset, max_results=max_results, metadata_type=metadata_type,
         start_date=start_date, end_date=end_date,
-        ll=ll, ur=ur, lat=lat, lng=lng, distance=distance)
-
+        ll=ll, ur=ur, lat=lat, lng=lng, distance=distance, where=where)
 
     r = session.post(url, payload)
     response = r.json()
