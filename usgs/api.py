@@ -3,7 +3,6 @@ import os
 import json
 from datetime import datetime
 from urllib3.util.retry import Retry
-from dateutil.parser import parse
 
 import requests
 from requests.adapters import HTTPAdapter

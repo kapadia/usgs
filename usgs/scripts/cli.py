@@ -166,7 +166,7 @@ def scene_metadata(dataset, scene_id, geojson, api_key):
 @click.command()
 @click.argument("dataset")
 @click.argument("aoi", default="-", required=False)
-@click.option('--max-results', default=None, type=int)
+@click.option('--max-results', default=5000, type=int)
 @click.option('--metadata-type', type=click.Choice(['summary', 'full']))
 @click.option("--start-date")
 @click.option("--end-date")
@@ -205,9 +205,12 @@ def scene_search(
         field_lut = { format_fieldname(field['name']): field['fieldId'] for field in resp['data'] }
         where = { field_lut[format_fieldname(k)]: v for k, v in where if format_fieldname(k) in field_lut }
 
-    if lower_left:
+    if len(lower_left) > 0:
         lower_left = dict(zip(['longitude', 'latitude'], lower_left))
         upper_right = dict(zip(['longitude', 'latitude'], upper_right))
+    else:
+        lower_left = None
+        upper_right = None
 
     result = api.scene_search(
         dataset, max_results=max_results, metadata_type=metadata_type,

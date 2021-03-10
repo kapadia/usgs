@@ -187,20 +187,20 @@ def scene_search(
         }
 
     # Latitude and longitude take precedence over ll and ur
-    if (lat is not None) and (lng is not None):
+    if lat and lng:
         lats, lngs = great_circle_dist(lat, lng, distance / 2.0)
 
         ll = { "longitude": min(*lngs), "latitude": min(*lats) }
         ur = { "longitude": max(*lngs), "latitude": max(*lats) }
 
-    if (ll is not None) and (ur is not None):
+    if ll and ur:
         payload["sceneFilter"]["spatialFilter"] = {
             "filterType": "mbr",
             "lowerLeft": ll,
             "upperRight": ur
         }
     
-    if where is not None:
+    if where:
         payload["sceneFilter"]["metadataFilter"] = {
             "filterType": "value",
             "filterId": where["filter_id"],
