@@ -12,5 +12,7 @@ http://kapadia.github.io/usgs/
 ChangeLog
 ========
 
- 0.2.6   Carl.andrson@nltgis.com
-         Remove dependency on pyproj and shapely and use great circle computation to expand a point search to a box
+0.3.0   Update the USGS Machine to Machine API from 1.4 to 1.5
+
+0.2.6   Carl.andrson@nltgis.com
+        Remove dependency on pyproj and shapely and use great circle computation to expand a point search to a box
