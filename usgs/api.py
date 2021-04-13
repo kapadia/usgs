@@ -126,7 +126,7 @@ def login(username, password, save=True):
     api_key = response["data"]
 
     if api_key is None:
-        raise USGSError(response["error"])
+        raise USGSError(response.get("errorMessage", "Authentication failed"))
 
     if save:
         with open(TMPFILE, "w") as f:
