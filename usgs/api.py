@@ -119,7 +119,7 @@ def login(username, password, save=True):
     session = _create_session(api_key=None)
     created = datetime.now().isoformat()
     r = session.post(url, payload)
-    if r.status_code is not 200:
+    if r.status_code != 200:
         raise USGSError(r.text)
 
     response = r.json()
