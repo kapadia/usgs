@@ -21,7 +21,7 @@ def download_options(dataset, entity_ids):
     The download options request is used to discover downloadable products for
     each dataset. If a download is marked as not available, an order must be
     placed to generate that product.
-    
+
     :param str dataset:
     :param str entity_ids:
     """
@@ -68,7 +68,7 @@ def dataset_search(dataset, catalog, start_date=None, end_date=None, ll=None, ur
     :param start_date:
         Used for searching scene acquisition - will accept anything
         that the PHP strtotime function can understand
-    
+
     :param end_date:
         Used for searching scene acquisition - will accept anything
         that the PHP strtotime function can understand
@@ -76,13 +76,13 @@ def dataset_search(dataset, catalog, start_date=None, end_date=None, ll=None, ur
     :param ll:
         Lower left corner of an AOI bounding box - in decimal form
         Longitude/Latitude dictionary
-        
+
         e.g. { "longitude": 0.0, "latitude": 0.0 }
-    
+
     :param ur:
         Upper right corner of an AOI bounding box - in decimal form
         Longitude/Latitude dictionary
-        
+
         e.g. { "longitude": 0.0, "latitude": 0.0 }
     """
 
@@ -104,7 +104,7 @@ def dataset_search(dataset, catalog, start_date=None, end_date=None, ll=None, ur
                 "latitude": ll["latitude"],
                 "longitude": ll["longitude"]
             },
-            "upperRight": {                
+            "upperRight": {
                 "latitude": ur["latitude"],
                 "longitude": ur["longitude"]
             }
@@ -117,7 +117,7 @@ def login(username, password):
     Upon a successful login, an API key will be returned. This key will be active
     for two hours and should be destroyed upon final use of the service by calling
     the logout method.
-    
+
     :param str username:
     :param str password:
     """
@@ -134,7 +134,7 @@ def scene_metadata(dataset, entity_id):
     The use of the metadata request is intended for those who have
     acquired scene IDs from a different source. It will return the
     same metadata that is available via the search request.
-    
+
     :param dataset:
     :param entity_id:
     """
@@ -172,11 +172,12 @@ def scene_search(
     dataset, max_results=None, metadata_type=None, start_date=None,
     end_date=None, ll=None, ur=None,
     lat=None, lng=None, distance=100,
-    where=None):
+    where=None, starting_number=None):
 
     payload = defaultdict(dict, {
         "datasetName": dataset,
         "maxResults": max_results,
+        "startingNumber": starting_number,
         "metadata_type": metadata_type
     })
 
@@ -199,7 +200,7 @@ def scene_search(
             "lowerLeft": ll,
             "upperRight": ur
         }
-    
+
     if where:
         payload["sceneFilter"]["metadataFilter"] = {
             "filterType": "value",
