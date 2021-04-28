@@ -56,3 +56,9 @@ docs/_build/
 target/
 
 *.geojson
+
+# pyenv
+.python-version
+
+# VSCode
+.vscode
