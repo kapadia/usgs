@@ -105,7 +105,7 @@ def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None
         dataset=dataset, catalog=catalog, start_date=start_date, end_date=end_date,
         ll=ll, ur=ur)
 
-    r = session.post(url, json.dumps(payload))
+    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
