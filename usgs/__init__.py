@@ -1,5 +1,5 @@
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 # The USGS API endpoint
 USGS_API_DEPRECATED = "https://earthexplorer.usgs.gov/inventory/json/v/1.4.0"
