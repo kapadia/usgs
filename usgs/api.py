@@ -141,16 +141,24 @@ def login(username, password, save=True):
     return response
 
 def logout():
+    """
+    Log out by deactivating and removing the stored API key, if one exists.
+    """
+    if not os.path.exists(TMPFILE):
+        return
+    
     url = '{}/logout'.format(USGS_API)
     session = _create_session(api_key=None)
 
     r = session.post(url)
     response = r.json()
 
-    _check_for_usgs_error(response)
+    try:
+        _check_for_usgs_error(response)
+    except USGSAuthExpiredError:
+        pass
 
-    if os.path.exists(TMPFILE):
-        os.remove(TMPFILE)
+    os.remove(TMPFILE)
 
     return response
 
