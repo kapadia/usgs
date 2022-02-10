@@ -8,7 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests_futures.sessions import FuturesSession
 
-from usgs import USGS_API, USGSError, __version__
+from usgs import USGS_API, USGSError, USGSAuthExpiredError, __version__
 from usgs import payloads
 
 
@@ -31,6 +31,9 @@ def _check_for_usgs_error(data):
         return
 
     error = data['errorMessage']
+
+    if error_code == 'AUTH_EXPIRED':
+        raise USGSAuthExpiredError("API key has expired. Try logging out and logging back in.")
 
     raise USGSError('%s: %s' % (error_code, error))
 
