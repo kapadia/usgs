@@ -8,7 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests_futures.sessions import FuturesSession
 
-from usgs import USGS_API, USGSError, __version__
+from usgs import USGS_API, USGSError, USGSAuthExpiredError, __version__
 from usgs import payloads
 
 
@@ -31,6 +31,9 @@ def _check_for_usgs_error(data):
         return
 
     error = data['errorMessage']
+
+    if error_code == 'AUTH_EXPIRED':
+        raise USGSAuthExpiredError("API key has expired. Try logging out and logging back in.")
 
     raise USGSError('%s: %s' % (error_code, error))
 
@@ -113,16 +116,27 @@ def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None
     return response
 
 def login(username, password, save=True):
+    """
+    Log in, creating a temporary API key and optionally storing it for later use.
+    
+    :param str username: Username of the USGS account to log in with.
+    :param str password: Password of the USGS account to log in with.
+    :param bool save: If true, the API key will be stored in a local file (~/.usgs)
+        until `api.logout` is called to remove it. The stored key will be used by
+        other functions to authenticate requests whenever an API key is not explicitly
+        provided.
+    """
     url = '{}/login'.format(USGS_API)
     payload = payloads.login(username, password)
 
     session = _create_session(api_key=None)
     created = datetime.now().isoformat()
+    
     r = session.post(url, payload)
-    if r.status_code != 200:
-        raise USGSError(r.text)
-
     response = r.json()
+
+    _check_for_usgs_error(response)
+
     api_key = response["data"]
 
     if api_key is None:
@@ -138,16 +152,24 @@ def login(username, password, save=True):
     return response
 
 def logout():
+    """
+    Log out by deactivating and removing the stored API key, if one exists.
+    """
+    if not os.path.exists(TMPFILE):
+        return
+    
     url = '{}/logout'.format(USGS_API)
     session = _create_session(api_key=None)
 
     r = session.post(url)
     response = r.json()
 
-    _check_for_usgs_error(response)
+    try:
+        _check_for_usgs_error(response)
+    except USGSAuthExpiredError:
+        pass
 
-    if os.path.exists(TMPFILE):
-        os.remove(TMPFILE)
+    os.remove(TMPFILE)
 
     return response
 

@@ -28,3 +28,6 @@ class USGSAmbiguousNode(Exception):
 
 class USGSDependencyRequired(ImportError):
     pass
+
+class USGSAuthExpiredError(Exception):
+    pass
