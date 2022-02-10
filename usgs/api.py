@@ -116,16 +116,27 @@ def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None
     return response
 
 def login(username, password, save=True):
+    """
+    Log in, creating a temporary API key and optionally storing it for later use.
+    
+    :param str username: Username of the USGS account to log in with.
+    :param str password: Password of the USGS account to log in with.
+    :param bool save: If true, the API key will be stored in a local file (~/.usgs)
+        until `api.logout` is called to remove it. The stored key will be used by
+        other functions to authenticate requests whenever an API key is not explicitly
+        provided.
+    """
     url = '{}/login'.format(USGS_API)
     payload = payloads.login(username, password)
 
     session = _create_session(api_key=None)
     created = datetime.now().isoformat()
+    
     r = session.post(url, payload)
-    if r.status_code != 200:
-        raise USGSError(r.text)
-
     response = r.json()
+
+    _check_for_usgs_error(response)
+
     api_key = response["data"]
 
     if api_key is None:
