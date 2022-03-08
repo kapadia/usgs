@@ -12,6 +12,8 @@ http://kapadia.github.io/usgs/
 ChangeLog
 ========
 
+0.3.3   Implements the download options endpoint (@aazuspan)
+
 0.3.0   Update the USGS Machine to Machine API from 1.4 to 1.5
 
 0.2.6   Carl.andrson@nltgis.com
