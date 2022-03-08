@@ -33,6 +33,18 @@ def download_options(dataset, entity_ids):
 
     return json.dumps(payload)
 
+def dataset_download_options(dataset):
+    """
+    The dataset download options request is used to discover downloadable
+    products for a specified dataset. Unlike the `download_options` request,
+    this does not check product availability.
+
+    :param str dataset: Used to identify the which dataset to return results for.
+    """
+    payload = {"datasetName": dataset}
+
+    return json.dumps(payload)
+
 def download_request(dataset, entity_id, product_id):
     """
     The use of this request will be to obtain valid data download URLs.
