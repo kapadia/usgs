@@ -81,6 +81,27 @@ def download_options(dataset, entity_ids, api_key=None):
 
     return response
 
+def dataset_download_options(dataset, api_key=None):
+    """
+    The dataset download options method is used to discover downloadable
+    products for a specified dataset. Unlike the `download_options` method,
+    this does not check product availability.
+
+    :param str dataset: Used to identify the which dataset to return results for.
+    """
+    api_key = _get_api_key(api_key)
+    session = _create_session(api_key)
+
+    url = '{}/dataset-download-options'.format(USGS_API)
+    payload = payloads.dataset_download_options(dataset)
+
+    r = session.post(url, payload)
+    response = r.json()
+
+    _check_for_usgs_error(response)
+
+    return response
+
 def download_request(dataset, entity_id, product_id, api_key=None):
     """
     This method is used to insert the requested downloads into the download queue

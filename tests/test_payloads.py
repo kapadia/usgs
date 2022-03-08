@@ -24,6 +24,12 @@ class PayloadsTest(unittest.TestCase):
         assert compare_json(payload, expected)
 
 
+    def test_dataset_download_options(self):
+        expected = """{"datasetName": "LANDSAT_8_C1"}"""
+        payload = payloads.dataset_download_options("LANDSAT_8_C1")
+        assert compare_json(payload, expected)
+
+
     def test_download_request(self):
         expected = """{"downloads": [{"entityId": "LC80130292014100LGN00", "productId": "5e83d0b84df8d8c2"}], "downloadApplication": "EE"}"""
         payload = payloads.download_request("LANDSAT_8_C1", "LC80130292014100LGN00", "5e83d0b84df8d8c2")
