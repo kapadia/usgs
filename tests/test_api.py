@@ -38,6 +38,17 @@ def test_download_options():
         for key in expected_keys:
             assert key in item
 
+@mock.patch('usgs.api.requests.Session.post', MockPost('dataset-download-options.json'))
+def test_dataset_download_options():
+    expected_keys = ['productId', 'productCode', 'productName']
+    response = api.dataset_download_options("LANDSAT_8_C1")
+
+    assert check_root_keys(response)
+
+    for item in response["data"]:
+        for key in expected_keys:
+            assert key in item
+
 @mock.patch('usgs.api.requests.Session.post', MockPost('download-request.json'))
 def test_download_request():
 
