@@ -190,7 +190,7 @@ def scene_search(
         "datasetName": dataset,
         "maxResults": max_results,
         "startingNumber": starting_number,
-        "metadata_type": metadata_type
+        "metadataType": metadata_type
     })
 
     if (start_date is not None) and (end_date is not None):

@@ -66,7 +66,7 @@ class PayloadsTest(unittest.TestCase):
 
 
     def test_scene_search(self):
-        expected = """{"datasetName": "GLS2005", "maxResults": 3, "metadata_type": null, "sceneFilter": {"acquisitionFilter": {"start": "2006-01-01T00:00:00Z", "end": "2007-12-01T00:00:00Z"}, "spatialFilter": {"filterType": "mbr", "lowerLeft": {"longitude": -135, "latitude": 75}, "upperRight": {"longitude": -120, "latitude": 90}}}}"""
+        expected = """{"datasetName": "GLS2005", "maxResults": 3, "metadataType": null, "sceneFilter": {"acquisitionFilter": {"start": "2006-01-01T00:00:00Z", "end": "2007-12-01T00:00:00Z"}, "spatialFilter": {"filterType": "mbr", "lowerLeft": {"longitude": -135, "latitude": 75}, "upperRight": {"longitude": -120, "latitude": 90}}}}"""
 
         ll = {"longitude": -135, "latitude": 75}
         ur = {"longitude": -120, "latitude": 90}
@@ -82,7 +82,7 @@ class PayloadsTest(unittest.TestCase):
 
     def test_scene_search_radial_distance(self):
 
-        expected = """{"datasetName": "GLS2005", "maxResults": 3, "metadata_type": null, "sceneFilter": {"acquisitionFilter": {"start": "2006-01-01T00:00:00Z", "end": "2007-12-01T00:00:00Z"}, "spatialFilter": {"filterType": "mbr", "lowerLeft": {"longitude": -125.01823502237109, "latitude": 84.99840995696343}, "upperRight": {"longitude": -124.98175340746137, "latitude": 85.00158953883317}}}}"""
+        expected = """{"datasetName": "GLS2005", "maxResults": 3, "metadataType": null, "sceneFilter": {"acquisitionFilter": {"start": "2006-01-01T00:00:00Z", "end": "2007-12-01T00:00:00Z"}, "spatialFilter": {"filterType": "mbr", "lowerLeft": {"longitude": -125.01823502237109, "latitude": 84.99840995696343}, "upperRight": {"longitude": -124.98175340746137, "latitude": 85.00158953883317}}}}"""
 
         lat = 85
         lng = -125
