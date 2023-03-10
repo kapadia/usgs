@@ -55,12 +55,12 @@ def _create_session(api_key):
 
 def dataset_filters(dataset, api_key=None):
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/dataset-filters'.format(USGS_API)
-    payload = payloads.dataset_filters(dataset)
+    with _create_session(api_key) as session:
+        url = '{}/dataset-filters'.format(USGS_API)
+        payload = payloads.dataset_filters(dataset)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -69,12 +69,12 @@ def dataset_filters(dataset, api_key=None):
 
 def download_options(dataset, entity_ids, api_key=None):
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/download-options'.format(USGS_API)
-    payload = payloads.download_options(dataset, entity_ids)
+    with _create_session(api_key) as session:
+        url = '{}/download-options'.format(USGS_API)
+        payload = payloads.download_options(dataset, entity_ids)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -90,12 +90,12 @@ def dataset_download_options(dataset, api_key=None):
     :param str dataset: Used to identify the which dataset to return results for.
     """
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/dataset-download-options'.format(USGS_API)
-    payload = payloads.dataset_download_options(dataset)
+    with _create_session(api_key) as session:
+        url = '{}/dataset-download-options'.format(USGS_API)
+        payload = payloads.dataset_download_options(dataset)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -108,12 +108,12 @@ def download_request(dataset, entity_id, product_id, api_key=None):
     and returns the available download URLs.
     """
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/download-request'.format(USGS_API)
-    payload = payloads.download_request(dataset, entity_id, product_id)
+    with _create_session(api_key) as session:
+        url = '{}/download-request'.format(USGS_API)
+        payload = payloads.download_request(dataset, entity_id, product_id)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -122,14 +122,14 @@ def download_request(dataset, entity_id, product_id, api_key=None):
 
 def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None, end_date=None, api_key=None):
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/dataset-search'.format(USGS_API)
-    payload = payloads.dataset_search(
-        dataset=dataset, catalog=catalog, start_date=start_date, end_date=end_date,
-        ll=ll, ur=ur)
+    with _create_session(api_key) as session:
+        url = '{}/dataset-search'.format(USGS_API)
+        payload = payloads.dataset_search(
+            dataset=dataset, catalog=catalog, start_date=start_date,
+            end_date=end_date, ll=ll, ur=ur)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -139,7 +139,7 @@ def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None
 def login(username, password, save=True):
     """
     Log in, creating a temporary API key and optionally storing it for later use.
-    
+
     :param str username: Username of the USGS account to log in with.
     :param str password: Password of the USGS account to log in with.
     :param bool save: If true, the API key will be stored in a local file (~/.usgs)
@@ -150,10 +150,10 @@ def login(username, password, save=True):
     url = '{}/login'.format(USGS_API)
     payload = payloads.login(username, password)
 
-    session = _create_session(api_key=None)
-    created = datetime.now().isoformat()
-    
-    r = session.post(url, payload)
+    with _create_session(api_key=None) as session:
+        created = datetime.now().isoformat()
+        r = session.post(url, payload)
+
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -178,11 +178,12 @@ def logout():
     """
     if not os.path.exists(TMPFILE):
         return
-    
-    url = '{}/logout'.format(USGS_API)
-    session = _create_session(api_key=None)
 
-    r = session.post(url)
+    url = '{}/logout'.format(USGS_API)
+
+    with _create_session(api_key=None) as session:
+        r = session.post(url)
+
     response = r.json()
 
     try:
@@ -207,8 +208,9 @@ def scene_metadata(dataset, entity_id, api_key=None):
     url = '{}/scene-metadata'.format(USGS_API)
     payload = payloads.scene_metadata(dataset, entity_id)
 
-    session = _create_session(api_key)
-    r = session.post(url, payload)
+    with _create_session(api_key) as session:
+        r = session.post(url, payload)
+
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -255,16 +257,16 @@ def scene_search(dataset,
         API key for EROS. Required for searching.
     """
     api_key = _get_api_key(api_key)
-    session = _create_session(api_key)
 
-    url = '{}/scene-search'.format(USGS_API)
-    payload = payloads.scene_search(
-        dataset, max_results=max_results, metadata_type=metadata_type,
-        start_date=start_date, end_date=end_date,
-        ll=ll, ur=ur, lat=lat, lng=lng, distance=distance, where=where,
-        starting_number=starting_number)
+    with _create_session(api_key) as session:
+        url = '{}/scene-search'.format(USGS_API)
+        payload = payloads.scene_search(
+            dataset, max_results=max_results, metadata_type=metadata_type,
+            start_date=start_date, end_date=end_date,
+            ll=ll, ur=ur, lat=lat, lng=lng, distance=distance, where=where,
+            starting_number=starting_number)
+        r = session.post(url, payload)
 
-    r = session.post(url, payload)
     response = r.json()
 
     _check_for_usgs_error(response)
