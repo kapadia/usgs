@@ -1,5 +1,5 @@
 import pytest
-import mock
+from unittest import mock
 
 from usgs import api
 from .MockPost import MockPost

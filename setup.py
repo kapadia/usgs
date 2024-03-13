@@ -30,7 +30,7 @@ setup(name='usgs',
           'requests_futures>=0.9.5'
       ],
       extras_require={
-          'test': ['pytest', 'mock'],
+          'test': ['pytest'],
       },
       entry_points="""
       [console_scripts]
