@@ -184,7 +184,7 @@ def scene_search(
     dataset, max_results=None, metadata_type=None, start_date=None,
     end_date=None, ll=None, ur=None,
     lat=None, lng=None, distance=100,
-    where=None, starting_number=None):
+    where=None, starting_number=None, scene_filter=None):
 
     payload = defaultdict(dict, {
         "datasetName": dataset,
@@ -220,5 +220,8 @@ def scene_search(
             "value": where["value"],
             "operand": "="
         }
+
+    if scene_filter is not None:
+        payload["sceneFilter"].update(scene_filter)
 
     return json.dumps(payload)
