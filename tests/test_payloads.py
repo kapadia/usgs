@@ -94,3 +94,32 @@ class PayloadsTest(unittest.TestCase):
             "GLS2005", lat=lat, lng=lng, distance=dist, start_date=start_date, end_date=end_date, max_results=3)
 
         assert compare_json(payload, expected), "wrong result: {r} \n for expected: {e}".format(r=payload, e=expected)
+
+
+    def test_scene_search_with_scene_filter(self):
+        expected = """{"datasetName": "GLS2005", "maxResults": 3, "startingNumber": null, "metadataType": null, "sceneFilter": {"acquisitionFilter": {"start": "2006-01-01T00:00:00Z", "end": "2007-12-01T00:00:00Z"}, "ingestFilter": {"start": "2010-01-01", "end": "2012-01-31"}}}"""
+
+        start_date = "2006-01-01T00:00:00Z"
+        end_date = "2007-12-01T00:00:00Z"
+        scene_filter = {"ingestFilter": {"start": "2010-01-01", "end": "2012-01-31"}}
+
+        payload = payloads.scene_search(
+            "GLS2005", start_date=start_date, end_date=end_date,
+            max_results=3, scene_filter=scene_filter)
+
+        assert compare_json(payload, expected), "wrong result: {r} \n for expected: {e}".format(r=payload, e=expected)
+
+
+    def test_scene_search_scene_filter_overrides(self):
+        # scene_filter should override values set by other parameters
+        expected = """{"datasetName": "GLS2005", "maxResults": 3, "startingNumber": null, "metadataType": null, "sceneFilter": {"acquisitionFilter": {"start": "2010-01-01", "end": "2010-12-31"}}}"""
+
+        start_date = "2006-01-01T00:00:00Z"
+        end_date = "2007-12-01T00:00:00Z"
+        scene_filter = {"acquisitionFilter": {"start": "2010-01-01", "end": "2010-12-31"}}
+
+        payload = payloads.scene_search(
+            "GLS2005", start_date=start_date, end_date=end_date,
+            max_results=3, scene_filter=scene_filter)
+
+        assert compare_json(payload, expected), "wrong result: {r} \n for expected: {e}".format(r=payload, e=expected)
