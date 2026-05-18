@@ -24,6 +24,13 @@ def _get_api_key(api_key):
 
     return api_key
 
+def _check_for_requests_error(response, message_context=""):
+    try:
+        response.raise_for_status()
+    except requests.HTTPError as e:
+        msg = f"HTTP error occurred during {message_context} request, {e}"
+        raise USGSError(msg) from e
+
 def _check_for_usgs_error(data):
 
     error_code = data['errorCode']
@@ -61,6 +68,8 @@ def dataset_filters(dataset, api_key=None):
         payload = payloads.dataset_filters(dataset)
         r = session.post(url, payload)
 
+    _check_for_requests_error(r, "dataset filters")
+
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -74,6 +83,8 @@ def download_options(dataset, entity_ids, api_key=None):
         url = '{}/download-options'.format(USGS_API)
         payload = payloads.download_options(dataset, entity_ids)
         r = session.post(url, payload)
+
+    _check_for_requests_error(r, "download options")
 
     response = r.json()
 
@@ -96,6 +107,8 @@ def dataset_download_options(dataset, api_key=None):
         payload = payloads.dataset_download_options(dataset)
         r = session.post(url, payload)
 
+    _check_for_requests_error(r, "dataset download options")
+
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -114,6 +127,8 @@ def download_request(dataset, entity_id, product_id, api_key=None):
         payload = payloads.download_request(dataset, entity_id, product_id)
         r = session.post(url, payload)
 
+    _check_for_requests_error(r, "download request")
+
     response = r.json()
 
     _check_for_usgs_error(response)
@@ -129,6 +144,8 @@ def dataset_search(dataset=None, catalog=None, ll=None, ur=None, start_date=None
             dataset=dataset, catalog=catalog, start_date=start_date,
             end_date=end_date, ll=ll, ur=ur)
         r = session.post(url, payload)
+
+    _check_for_requests_error(r, "dataset search")
 
     response = r.json()
 
@@ -153,6 +170,8 @@ def login(username, token, save=True):
     with _create_session(api_key=None) as session:
         created = datetime.now().isoformat()
         r = session.post(url, payload)
+
+    _check_for_requests_error(r, "login")
 
     response = r.json()
 
@@ -181,19 +200,21 @@ def logout():
 
     url = '{}/logout'.format(USGS_API)
 
-    with _create_session(api_key=None) as session:
-        r = session.post(url)
-
-    response = r.json()
-
     try:
-        _check_for_usgs_error(response)
-    except USGSAuthExpiredError:
-        pass
+        with _create_session(api_key=None) as session:
+            r = session.post(url)
 
-    os.remove(TMPFILE)
+        _check_for_requests_error(r, "logout")
 
-    return response
+        response = r.json()
+        try:
+            _check_for_usgs_error(response)
+        except USGSAuthExpiredError:
+            pass
+
+        return response
+    finally:
+        os.remove(TMPFILE)
 
 def scene_metadata(dataset, entity_id, api_key=None):
     """
@@ -210,6 +231,8 @@ def scene_metadata(dataset, entity_id, api_key=None):
 
     with _create_session(api_key) as session:
         r = session.post(url, payload)
+
+    _check_for_requests_error(r, "scene metadata")
 
     response = r.json()
 
@@ -269,6 +292,8 @@ def scene_search(dataset,
             ll=ll, ur=ur, lat=lat, lng=lng, distance=distance, where=where,
             scene_filter=scene_filter, starting_number=starting_number)
         r = session.post(url, payload)
+
+    _check_for_requests_error(r, "scene search")
 
     response = r.json()
 
