@@ -1,7 +1,9 @@
-import pytest
+import unittest
 from unittest import mock
 
-from usgs import api
+import requests
+
+from usgs import api, USGSError
 from .MockPost import MockPost
 
 
@@ -111,3 +113,74 @@ def test_scene_search():
 
     for expected_key in expected_keys:
         assert expected_key in response['data']["results"][0]
+
+
+class HttpErrorTests(unittest.TestCase):
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_dataset_filters_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.dataset_filters("LANDSAT_8_C1")
+        assert "HTTP error occurred during dataset filters request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_download_options_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.download_options("LANDSAT_8_C1", ["LC82260782020217LGN00"])
+        assert "HTTP error occurred during download options request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_dataset_download_options_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.dataset_download_options("LANDSAT_8_C1")
+        assert "HTTP error occurred during dataset download options request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_download_request_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.download_request(
+                "LANDSAT_8_C1", "LC82260782020217LGN00", "5e83d0b84df8d8c2")
+        assert "HTTP error occurred during download request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_dataset_search_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.dataset_search()
+        assert "HTTP error occurred during dataset search request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_login_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.login("user", "token", save=False)
+        assert "HTTP error occurred during login request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_scene_metadata_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.scene_metadata("LANDSAT_8_C1", "LC82260782020217LGN00")
+        assert "HTTP error occurred during scene metadata request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    def test_scene_search_http_error(self):
+        with self.assertRaises(USGSError) as cm:
+            api.scene_search("LANDSAT_8_C1")
+        assert "HTTP error occurred during scene search request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+
+    @mock.patch('usgs.api.requests.Session.post', MockPost(status_code=500, reason="Server Error"))
+    @mock.patch('usgs.api.os.remove')
+    @mock.patch('usgs.api.os.path.exists', return_value=True)
+    def test_logout_http_error(self, mock_exists, mock_remove):
+        with self.assertRaises(USGSError) as cm:
+            api.logout()
+        assert "HTTP error occurred during logout request" in str(cm.exception)
+        assert isinstance(cm.exception.__cause__, requests.HTTPError)
+        # credentials file is always removed on logout, even when the request fails
+        mock_remove.assert_called_once()
