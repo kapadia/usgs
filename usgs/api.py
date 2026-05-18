@@ -222,38 +222,41 @@ def scene_search(dataset,
         start_date=None, end_date=None,
         ll=None, ur=None,
         lat=None, lng=None, distance=100,
-        where=None, starting_number=1, sort_order="DESC", api_key=None):
+        where=None, scene_filter=None, starting_number=1, sort_order="DESC", api_key=None):
     """
-    :param dataset:
+    :param str dataset:
         USGS dataset (e.g. EO1_HYP_PUB, LANDSAT_8)
-    :param lat:
+    :param str lat:
         Latitude
-    :param lng:
+    :param str lng:
         Longitude
-    :param distance:
+    :param int distance:
         Distance in meters used to for a radial search
-    :param ll:
+    :param dict ll:
         Dictionary of longitude/latitude coordinates for the lower left corner
         of a bounding box search. e.g. { "longitude": 0.0, "latitude": 0.0 }
-    :param ur:
+    :param dict ur:
         Dictionary of longitude/latitude coordinates for the upper right corner
         of a bounding box search. e.g. { "longitude": 0.0, "latitude": 0.0 }
-    :param start_date:
+    :param str start_date:
         Start date for when a scene has been acquired
-    :param end_date:
+    :param str end_date:
         End date for when a scene has been acquired
-    :where:
+    :param dict where:
         Dictionary representing key/values for finer grained conditional
         queries. Only a subset of metadata fields are supported. Available
         fields depend on the value of `dataset`, and maybe be found by
         submitting a dataset_filters query.
-    :max_results:
+    :param int max_results:
         Maximum results returned by the server
-    :starting_number:
+    :param dict scene_filter:
+        Additional filters to apply to the "sceneFilter". Can override filters set using other parameters.
+        e.g. {"ingestFilter": {"start": "2010-01-01", "end": "2012-01-31"}}
+    :param int starting_number:
         Starting offset for results of a query.
-    :sort_order:
+    :param str sort_order:
         Order in which results are sorted. Ascending or descending w.r.t the acquisition date.
-    :api_key:
+    :param str api_key:
         API key for EROS. Required for searching.
     """
     api_key = _get_api_key(api_key)
@@ -264,7 +267,7 @@ def scene_search(dataset,
             dataset, max_results=max_results, metadata_type=metadata_type,
             start_date=start_date, end_date=end_date,
             ll=ll, ur=ur, lat=lat, lng=lng, distance=distance, where=where,
-            starting_number=starting_number)
+            scene_filter=scene_filter, starting_number=starting_number)
         r = session.post(url, payload)
 
     response = r.json()
