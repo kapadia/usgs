@@ -1,4 +1,4 @@
-pytest==2.8.7
+pytest==9.0.3
 click>=4.0
 requests>=2.7.0
 requests_futures>=0.9.5
